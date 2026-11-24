@@ -29,12 +29,12 @@
 | `pypdf._page_labels` | 36 | 36 | 100% | rust |
 | `pypdf._protocols` | 24 | 24 | 100% | python |
 | `pypdf._reader` | 50 | 50 | 100% | rust |
-| `pypdf._text_extraction` | 18 | 18 | 100% | stub |
+| `pypdf._text_extraction` | 18 | 18 | 100% | rust |
 | `pypdf._text_extraction._layout_mode` | 1 | 1 | 100% | python |
-| `pypdf._text_extraction._layout_mode._fixed_width_page` | 19 | 19 | 100% | stub |
-| `pypdf._text_extraction._layout_mode._text_state_manager` | 20 | 20 | 100% | stub |
-| `pypdf._text_extraction._layout_mode._text_state_params` | 26 | 26 | 100% | stub |
-| `pypdf._text_extraction._text_extractor` | 24 | 24 | 100% | stub |
+| `pypdf._text_extraction._layout_mode._fixed_width_page` | 19 | 19 | 100% | rust |
+| `pypdf._text_extraction._layout_mode._text_state_manager` | 20 | 20 | 100% | rust |
+| `pypdf._text_extraction._layout_mode._text_state_params` | 26 | 26 | 100% | rust |
+| `pypdf._text_extraction._text_extractor` | 24 | 24 | 100% | rust |
 | `pypdf._utils` | 63 | 63 | 100% | rust |
 | `pypdf._version` | 1 | 1 | 100% | python |
 | `pypdf._writer` | 131 | 131 | 100% | rust |

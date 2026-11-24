@@ -63,12 +63,20 @@ python tools/manifest/check.py --require 100
 
 ## 状态
 
-见 [`docs/SYMBOL_COVERAGE.md`](docs/SYMBOL_COVERAGE.md)（自动生成）。
+**移植完成，全部门禁通过。** 详细证据见 [`docs/FIDELITY_REPORT.md`](docs/FIDELITY_REPORT.md)。
 
-- **P0 地基**：完成。基线 `2691 passed / 25 skipped / 8 xfailed / 0 failed`；103 个场景在 `PYTHONHASHSEED` 变化下输出完全一致；PyO3 对象模型探针通过；**图像字节一致探针通过**（JPEG/PNG 与 Pillow 逐字节相同）。
-- **P1 骨架**：完成。Rust 工作区 + PyO3 扩展 + 59 个 Python 模块骨架 + 自动注册构建 + 符号覆盖/门禁工具；Python 兼容浮点格式化经 20 万随机值验证零差异。
-- **P2/P3 移植中**：已落地 `pypdf.pagerange`（64/64）、`pypdf._utils`（179/179）、`pypdf._codecs._codecs`（18/18 可达）、`pypdf.generic._base`（可达部分全绿）；进行中：`generic/_data_structures`、`generic/_utils`、`filters`；随后 `_reader`/`_page`/`_writer`/`text_extraction`/`_encryption`/`annotations`/`xmp`。
-- 架构结论（P2 实测修订）：**所有类保持 Python 定义，Rust 承载全部算法逻辑**——因为官方测试统计 `sys.settrace` 精确帧数并断言 `isinstance`/MRO/`pickle` 行为。详见 [docs/PORTING_GUIDE.md](docs/PORTING_GUIDE.md) §1。
+| 门禁 | 结果 |
+|---|---|
+| BUILD | PASS（`maturin develop --release`） |
+| A1 官方测试 | **PASS** — `2691 passed / 25 skipped / 8 xfailed / 0 failed`，与基线**逐用例** `MATCH` |
+| A2/A3/A4 差分 | **PASS** — 103 场景 `IDENTICAL`；writer 专项 53/53 文档**逐字节**一致 |
+| A5 图像字节一致 | **PASS** — JPEG/PNG 与 Pillow 逐字节相同；110 个 PDF 图像/附件 sha256 一致 |
+| A6 符号覆盖 | **PASS** — **1934/1934 = 100.00%**（59 模块） |
+| A7 模糊 + 浮点 | **PASS** — 200 变异 PDF `IDENTICAL`；20 万随机 f64 零差异 |
+
+实测耗时：全量官方测试约 51 秒（10 核并行）；`./scripts/gate.sh` 一键复现全部门禁。
+
+架构：**所有 pypdf 类保持 Python 定义（shim），全部算法逻辑在 Rust**（PyO3 `#[pyfunction]`）——为满足官方测试对 `sys.settrace` 精确帧计数、`isinstance`/MRO/`pickle`/猴子补丁的断言。依赖（zlib/Pillow/fontTools/cryptography/bidi/XMP）全部经 PyO3 调用同一解释器实现，保证字节一致。已知且经判定不可观测的偏差见 [`docs/KNOWN_ISSUES.md`](docs/KNOWN_ISSUES.md)。
 
 ## 许可证
 
