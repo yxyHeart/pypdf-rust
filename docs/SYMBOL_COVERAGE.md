@@ -25,7 +25,7 @@
 | `pypdf._crypt_providers._pycryptodome` | 15 | 15 | 100% | rust |
 | `pypdf._doc_common` | 89 | 89 | 100% | rust |
 | `pypdf._encryption` | 58 | 58 | 100% | rust |
-| `pypdf._page` | 108 | 108 | 100% | stub |
+| `pypdf._page` | 108 | 108 | 100% | rust |
 | `pypdf._page_labels` | 36 | 36 | 100% | rust |
 | `pypdf._protocols` | 24 | 24 | 100% | python |
 | `pypdf._reader` | 50 | 50 | 100% | stub |

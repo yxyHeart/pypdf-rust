@@ -129,6 +129,18 @@
 
 ---
 
+## `pypdf._page`
+
+| # | 偏差 | 可观测性 | 处置 |
+|---|---|---|---|
+| G1 | `Transformation._to_cm` 用 `float()` + `pyfmt::py_float_fixed(…,4)` 生成 `cm` 操作符 | 对 float/int/`FloatObject`/`NumberObject` 完全一致；仅自定义 `__format__` 的假设类型会不同（类型别名限定为 float） | 已接受 |
+| G2 | 三个私有 `#[pyclass]` 可调用对象替代上游 lambda | 私有于 `pypdf._pypdf`，非公共 API | 已接受 |
+| G3 | shim 保留定义/协议胶水（`ImageFile` dataclass、纯赋值 `__init__`、property 构造、两个 `__iter__` 生成器）与仓库标准的 `_xxx_impl` 私有别名 | 无 | 无偏差 |
+
+差分证据：314 个 PageObject/Transformation/box/merge/内容流场景、26 个 writer 关联场景、33 个文本提取编排场景、41 个图像场景、11 个 action 场景 → **0 diff**。移植中修复 2 个上游 bug 兼容点：`_merge_page` 的 `AttributeError` 回退路径、`_VirtualList.__getitem__` 切片闭包用 `range` 而非 `index.indices()`。
+
+---
+
 ## 工具链备注
 
 - `tools/fuzz/*` 的语料是对 `resources/` 做确定性结构变异生成；在模块未移植完成前，dev 与 oracle 的差异来自 stub 行为（`TypeError: 'NoneType' ...`），属于"未完成"而非偏差。

@@ -260,5 +260,10 @@
     "mode": "rust",
     "phase": "P9",
     "module_rs": "appearance_mod.rs"
+  },
+  "pypdf._page": {
+    "mode": "rust",
+    "phase": "P6",
+    "module_rs": "page_mod.rs"
   }
 }
