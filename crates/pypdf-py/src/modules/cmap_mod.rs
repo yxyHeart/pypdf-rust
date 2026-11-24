@@ -468,7 +468,7 @@ fn parse_bfchar_impl<'py>(
         )?;
         return Ok(());
     }
-    if !lst_length.is_multiple_of(2) {
+    if lst_length % 2 != 0 {
         let values = PyDict::new(py);
         values.set_item("line", line)?;
         logger_warning(

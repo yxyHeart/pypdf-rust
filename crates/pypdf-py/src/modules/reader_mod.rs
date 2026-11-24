@@ -665,7 +665,7 @@ fn reader_pdf_header(py: Python<'_>, slf: &Bound<'_, PyAny>) -> PyResult<String>
 // @pypdf: pypdf._reader.PdfReader.xmp_metadata
 #[pyfunction]
 fn reader_xmp_metadata<'py>(
-    py: Python<'py>,
+    _py: Python<'py>,
     slf: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let encryption = slf.getattr("_encryption")?;
@@ -1836,7 +1836,7 @@ fn reader_load_recovery_cache<'py>(
 // @pypdf: pypdf._reader.PdfReader._read_standard_xref_table__handle_size
 #[pyfunction]
 #[allow(non_snake_case)]
-fn reader_read_standard_xref_table__handle_size<'py>(
+fn reader_read_standard_xref_table_handle_size<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
     stream: &Bound<'py, PyAny>,
@@ -2010,17 +2010,11 @@ fn reader_read_standard_xref_table(
                     xref.get_item(&generation)?.set_item(&num, &offset)?;
                 }
                 let is_free = entry_type == b"f";
-                match xref_free_entry.get_item(&generation) {
-                    Ok(entry) => {
-                        entry.set_item(&num, is_free)?;
-                    }
-                    Err(_) => {}
+                if let Ok(entry) = xref_free_entry.get_item(&generation) {
+                    entry.set_item(&num, is_free)?;
                 }
-                match xref_free_entry.get_item(py_int(py, 65_535)) {
-                    Ok(entry) => {
-                        entry.set_item(&num, is_free)?;
-                    }
-                    Err(_) => {}
+                if let Ok(entry) = xref_free_entry.get_item(py_int(py, 65_535)) {
+                    entry.set_item(&num, is_free)?;
                 }
             }
             count += 1;
@@ -2237,7 +2231,7 @@ fn reader_read_xref<'py>(
                     Err(error)
                 } else if is_instance_of_module(
                     py,
-                    &error.value(py),
+                    error.value(py),
                     "pypdf.errors",
                     "LimitReachedError",
                 )? {
@@ -2627,11 +2621,7 @@ fn reader_find_pdf_objects<'py>(
     let int = int_class(py)?;
     let mut result: Vec<Bound<'py, PyAny>> = Vec::new();
     let mut index: usize = 0;
-    loop {
-        let found = match find_subslice(&data, b" obj", index) {
-            Some(found) => found,
-            None => break,
-        };
+    while let Some(found) = find_subslice(&data, b" obj", index) {
         index = found + 4;
 
         let mut index_before_space = found as i128 - 1;
@@ -2702,11 +2692,7 @@ fn reader_find_pdf_trailers<'py>(
     let data_length = data.len();
     let mut result: Vec<Bound<'py, PyAny>> = Vec::new();
     let mut index: usize = 0;
-    loop {
-        let found = match find_subslice(&data, b"trailer", index) {
-            Some(found) => found,
-            None => break,
-        };
+    while let Some(found) = find_subslice(&data, b"trailer", index) {
         index = found + 7;
         let mut index_after_trailer = found + 7; // len(b"trailer")
 
@@ -3282,7 +3268,7 @@ pub fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     )?)?;
     module.add_function(wrap_pyfunction!(reader_load_recovery_cache, module)?)?;
     module.add_function(wrap_pyfunction!(
-        reader_read_standard_xref_table__handle_size,
+        reader_read_standard_xref_table_handle_size,
         module
     )?)?;
     module.add_function(wrap_pyfunction!(reader_read_standard_xref_table, module)?)?;

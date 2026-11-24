@@ -4,9 +4,7 @@
 //! Python (CPython 3.14) and must be regenerated whenever the generator changes.
 
 use pypdf_rs_core::prng::SplitMix64;
-use pypdf_rs_core::pyfmt::{
-    float_myrepr, py_float_fixed, py_float_repr, MyReprError,
-};
+use pypdf_rs_core::pyfmt::{float_myrepr, py_float_fixed, py_float_repr, MyReprError};
 
 const PYFMT_GOLDEN: &str = include_str!("data/pyfmt_golden.tsv");
 const PRNG_GOLDEN: &str = include_str!("data/prng_golden.tsv");
@@ -30,12 +28,19 @@ fn float_formatting_matches_cpython() {
 
         assert_eq!(py_float_repr(value), fields[1], "repr mismatch {context}");
         assert_eq!(py_float_repr(value), fields[2], "str mismatch {context}");
-        assert_eq!(py_float_repr(value), fields[1], "repr/str disagree {context}");
+        assert_eq!(
+            py_float_repr(value),
+            fields[1],
+            "repr/str disagree {context}"
+        );
 
         match float_myrepr(value) {
             Ok(text) => assert_eq!(text, fields[3], "myrepr mismatch {context}"),
             Err(MyReprError::Overflow) => {
-                assert_eq!(fields[3], "!OverflowError", "myrepr error mismatch {context}")
+                assert_eq!(
+                    fields[3], "!OverflowError",
+                    "myrepr error mismatch {context}"
+                )
             }
             Err(MyReprError::ValueError) => {
                 assert_eq!(fields[3], "!ValueError", "myrepr error mismatch {context}")
@@ -51,7 +56,10 @@ fn float_formatting_matches_cpython() {
         }
         checked += 1;
     }
-    assert!(checked > 6000, "expected thousands of vectors, got {checked}");
+    assert!(
+        checked > 6000,
+        "expected thousands of vectors, got {checked}"
+    );
 }
 
 #[test]

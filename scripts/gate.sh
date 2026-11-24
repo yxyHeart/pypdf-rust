@@ -36,7 +36,7 @@ else
 fi
 
 step "A2/A3/A4 differential oracle"
-"$ORACLE" tools/oracle/audit.py --out .audit/oracle --seed 42 > .audit/gate/oracle.log 2>&1
+PYTHONHASHSEED=0 "$ORACLE" tools/oracle/audit.py --out .audit/oracle --seed 42 > .audit/gate/oracle.log 2>&1
 PYTHONHASHSEED=0 "$DEV" tools/oracle/audit.py --out .audit/rust --seed 42 > .audit/gate/rust-oracle.log 2>&1
 if PYTHONHASHSEED=0 "$ORACLE" tools/oracle/compare.py .audit/oracle .audit/rust > .audit/gate/compare.log 2>&1; then
     record A2A3A4 PASS

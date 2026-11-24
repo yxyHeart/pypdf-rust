@@ -137,7 +137,7 @@ from pypdf._pypdf import (
     reader_read_object_header as _read_object_header,
     reader_read_pdf15_xref_stream as _read_pdf15_xref_stream,
     reader_read_standard_xref_table as _read_standard_xref_table,
-    reader_read_standard_xref_table__handle_size as _read_standard_xref_table__handle_size,
+    reader_read_standard_xref_table_handle_size as _read_standard_xref_table__handle_size,
     reader_read_xref as _read_xref,
     reader_read_xref_other_error as _read_xref_other_error,
     reader_read_xref_subsections as _read_xref_subsections,

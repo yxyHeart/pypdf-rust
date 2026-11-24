@@ -63,10 +63,6 @@ fn py_none<'py>(py: Python<'py>) -> Bound<'py, PyAny> {
     py.None().into_bound(py)
 }
 
-fn py_str<'py>(py: Python<'py>, value: &str) -> Bound<'py, PyAny> {
-    PyString::new(py, value).into_any()
-}
-
 fn py_list<'py>(py: Python<'py>, items: Vec<Bound<'py, PyAny>>) -> PyResult<Bound<'py, PyAny>> {
     Ok(PyList::new(py, items)?.into_any())
 }

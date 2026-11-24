@@ -383,7 +383,6 @@ def main() -> int:
                     "type": type(exc).__name__,
                     "mod": type(exc).__module__,
                     "msg": str(exc),
-                    "traceback_tail": traceback.format_exc().strip().splitlines()[-6:],
                 }
         results[name] = {
             "scenario": name,

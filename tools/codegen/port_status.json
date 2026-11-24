@@ -275,5 +275,30 @@
     "mode": "rust",
     "phase": "P5",
     "module_rs": "reader_mod.rs"
+  },
+  "pypdf._text_extraction": {
+    "mode": "rust",
+    "phase": "P7",
+    "module_rs": "text_extraction_mod.rs"
+  },
+  "pypdf._text_extraction._text_extractor": {
+    "mode": "rust",
+    "phase": "P7",
+    "module_rs": "text_extraction_mod.rs"
+  },
+  "pypdf._text_extraction._layout_mode._fixed_width_page": {
+    "mode": "rust",
+    "phase": "P7",
+    "module_rs": "text_extraction_mod.rs"
+  },
+  "pypdf._text_extraction._layout_mode._text_state_manager": {
+    "mode": "rust",
+    "phase": "P7",
+    "module_rs": "text_extraction_mod.rs"
+  },
+  "pypdf._text_extraction._layout_mode._text_state_params": {
+    "mode": "rust",
+    "phase": "P7",
+    "module_rs": "text_extraction_mod.rs"
   }
 }

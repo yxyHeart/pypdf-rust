@@ -8,11 +8,7 @@ use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyTuple};
 
 /// Fetch a class object from a pypdf module, e.g. `("pypdf.generic", "NameObject")`.
-pub fn pypdf_class<'py>(
-    py: Python<'py>,
-    module: &str,
-    name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
+pub fn pypdf_class<'py>(py: Python<'py>, module: &str, name: &str) -> PyResult<Bound<'py, PyAny>> {
     py.import(module)?.getattr(name)
 }
 
@@ -95,12 +91,7 @@ pub fn logger_warning(
 }
 
 /// `warnings.warn(message, category, stacklevel=...)`.
-pub fn warn(
-    py: Python<'_>,
-    message: &str,
-    category: &str,
-    stacklevel: usize,
-) -> PyResult<()> {
+pub fn warn(py: Python<'_>, message: &str, category: &str, stacklevel: usize) -> PyResult<()> {
     let warnings = py.import("warnings")?;
     let category = py.import("builtins")?.getattr(category)?;
     let kwargs = PyDict::new(py);

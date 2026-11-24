@@ -16,10 +16,20 @@ pub fn py_float_repr(value: f64) -> String {
         return "nan".to_string();
     }
     if value.is_infinite() {
-        return if value.is_sign_positive() { "inf" } else { "-inf" }.to_string();
+        return if value.is_sign_positive() {
+            "inf"
+        } else {
+            "-inf"
+        }
+        .to_string();
     }
     if value == 0.0 {
-        return if value.is_sign_negative() { "-0.0" } else { "0.0" }.to_string();
+        return if value.is_sign_negative() {
+            "-0.0"
+        } else {
+            "0.0"
+        }
+        .to_string();
     }
 
     let (negative, digits, decpt) = shortest_digits(value);
@@ -128,7 +138,12 @@ pub fn py_float_fixed(value: f64, precision: usize) -> String {
         return "nan".to_string();
     }
     if value.is_infinite() {
-        return if value.is_sign_positive() { "inf" } else { "-inf" }.to_string();
+        return if value.is_sign_positive() {
+            "inf"
+        } else {
+            "-inf"
+        }
+        .to_string();
     }
     format!("{value:.precision$}")
 }

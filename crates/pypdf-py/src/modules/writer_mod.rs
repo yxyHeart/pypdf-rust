@@ -910,18 +910,18 @@ fn writermod_pdfwriter_property_set_xmp_metadata<'py>(
         return Ok(none(py));
     }
     let metadata = gget(&root, &metadata_key, &py.None().into_bound(py))?;
-    let metadata_stream;
-    if !is_inst(&metadata, "IndirectObject")? {
+    
+    let metadata_stream = if !is_inst(&metadata, "IndirectObject")? {
         if !is_none(&metadata) {
             del_item(&root, &metadata_key)?;
         }
         let new_stream = stream_obj(py)?;
         let stream_reference = call1(&slf, "_add_object", new_stream)?;
         set_item(&root, &metadata_key, &stream_reference)?;
-        metadata_stream = call0(&stream_reference, "get_object")?;
+        call0(&stream_reference, "get_object")?
     } else {
-        metadata_stream = call0(&metadata, "get_object")?;
-    }
+        call0(&metadata, "get_object")?
+    };
     let xmp_class = py.import("pypdf.xmp")?.getattr("XmpInformation")?;
     let bytes_data = if is_instance_of(&value, &xmp_class)? {
         let stream = get(&value, "stream")?;
@@ -1037,16 +1037,16 @@ fn writermod_pdfwriter_get_object<'py>(
     let slf = arg(args, 0)?;
     let indirect_reference = arg(args, 1)?;
     let objects = get(&slf, "_objects")?;
-    let obj;
-    if is_inst_builtin(&indirect_reference, "int")? {
+    
+    let obj = if is_inst_builtin(&indirect_reference, "int")? {
         let index = to_i64(&indirect_reference)? - 1;
-        obj = objects.get_item(index)?;
+        objects.get_item(index)?
     } else if !eq(&get(&indirect_reference, "pdf")?, &slf)? {
         return Err(value_error(py, "PDF must be self"));
     } else {
         let index = to_i64(&get(&indirect_reference, "idnum")?)? - 1;
-        obj = objects.get_item(index)?;
-    }
+        objects.get_item(index)?
+    };
     if is_none(&obj) {
         let text = pyutil::py_repr(&indirect_reference)?;
         return Err(pdf_read_error(py, &format!("Object {text} not found!")));
@@ -1064,15 +1064,15 @@ fn writermod_pdfwriter_private_replace_object<'py>(
     let slf = arg(args, 0)?;
     let indirect_reference = arg(args, 1)?;
     let mut obj = arg(args, 2)?;
-    let idnum: usize;
-    if is_inst(&indirect_reference, "IndirectObject")? {
+    
+    let idnum: usize = if is_inst(&indirect_reference, "IndirectObject")? {
         if !eq(&get(&indirect_reference, "pdf")?, &slf)? {
             return Err(value_error(py, "PDF must be self"));
         }
-        idnum = to_usize(&get(&indirect_reference, "idnum")?)?;
+        to_usize(&get(&indirect_reference, "idnum")?)?
     } else {
-        idnum = to_usize(&indirect_reference)?;
-    }
+        to_usize(&indirect_reference)?
+    };
     let objects = get(&slf, "_objects")?;
     let current = objects.get_item(idnum - 1)?;
     let generation = to_usize(&get(&get(&current, "indirect_reference")?, "generation")?)?;
@@ -1861,7 +1861,7 @@ fn writermod_pdfwriter_list_objects_in_increment<'py>(
             result.push(get(&obj, "indirect_reference")?);
         }
     }
-    Ok(array_obj(py, result)?)
+    array_obj(py, result)
 }
 
 // @pypdf: pypdf._writer.PdfWriter._write_increment
@@ -1951,10 +1951,14 @@ fn writermod_pdfwriter_private_write_increment<'py>(
         let info_reference = get(&info, "indirect_reference")?;
         let idnum = to_usize(&get(&info_reference, "idnum")?)?;
         let info_hash = call0(&info, "hash_bin")?;
-        if idnum - 1 >= original_hash_count
+        // Upstream computes `idnum - 1` in Python, where `idnum == 0` yields -1
+        // (the last original hash).  Use signed arithmetic to avoid a usize
+        // underflow that would diverge from upstream for idnum == 0.
+        let index = idnum as i64 - 1;
+        if index >= original_hash_count as i64
             || !eq(
                 &info_hash,
-                &get_item(&original_hash, &py_int(py, (idnum - 1) as i64))?,
+                &get_item(&original_hash, &py_int(py, index))?,
             )?
         {
             init_data.push((
@@ -2058,7 +2062,7 @@ fn writermod_pdfwriter_private_write_pdf_structure<'py>(
 #[pyfunction]
 #[pyo3(signature = (*args))]
 fn writermod_pdfwriter_private_write_xref_table<'py>(
-    py: Python<'py>,
+    _py: Python<'py>,
     args: &Bound<'py, PyTuple>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let slf = arg(args, 0)?;
@@ -2224,22 +2228,22 @@ fn writer_replace_in_obj<'py>(
     crossref: &Bound<'py, PyAny>,
     unreferenced: &Bound<'py, PyAny>,
 ) -> PyResult<()> {
-    let pairs: Vec<(Bound<'py, PyAny>, Bound<'py, PyAny>)>;
-    if is_inst(obj, "DictionaryObject")? {
+    
+    let pairs: Vec<(Bound<'py, PyAny>, Bound<'py, PyAny>)> = if is_inst(obj, "DictionaryObject")? {
         let mut collected = Vec::new();
         for pair in items(&call0(obj, "items")?)? {
             collected.push((pair.get_item(0)?, pair.get_item(1)?));
         }
-        pairs = collected;
+        collected
     } else if is_inst(obj, "ArrayObject")? {
         let mut collected = Vec::new();
         for (index, value) in items(obj)?.into_iter().enumerate() {
             collected.push((py_int(py, index as i64), value));
         }
-        pairs = collected;
+        collected
     } else {
         return Ok(());
-    }
+    };
     for (key, value) in pairs {
         if is_inst(&value, "IndirectObject")? {
             let idnum = to_usize(&get(&value, "idnum")?)?;
@@ -2486,10 +2490,10 @@ fn writermod_pdfwriter_private_collect_incremental_clone_object_ids<'py>(
     }
     let mut sorted: Vec<i64> = object_ids.into_iter().collect();
     sorted.sort_unstable();
-    Ok(array_obj(
+    array_obj(
         py,
         sorted.iter().map(|value| py_int(py, *value)).collect(),
-    )?)
+    )
 }
 
 // @pypdf: pypdf._writer.PdfWriter.clone_reader_document_root
@@ -2829,11 +2833,11 @@ fn writermod_pdfwriter_add_outline_item<'py>(
     let italic = arg(args, 7)?;
     let fit = arg(args, 8)?;
     let is_open = arg(args, 9)?;
-    let action_ref;
-    if is_none(&page_number) {
-        action_ref = none(py);
+    
+    let action_ref = if is_none(&page_number) {
+        none(py)
     } else {
-        let mut page_ref = none(py);
+        let mut page_ref;
         if is_inst(&page_number, "IndirectObject")? {
             page_ref = page_number.clone();
         } else if is_page_object(py, &page_number)? {
@@ -2884,8 +2888,8 @@ fn writermod_pdfwriter_add_outline_item<'py>(
                 ),
             ],
         )?;
-        action_ref = call1(&slf, "_add_object", action)?;
-    }
+        call1(&slf, "_add_object", action)?
+    };
     let outline_item = writer_create_outline_item(py, &action_ref, &title, &color, &italic, &bold)?;
     let outline_ref = call1(&slf, "_add_object", outline_item)?;
     let mut parent = parent;
@@ -2951,7 +2955,7 @@ fn writermod_pdfwriter_add_named_destination_array<'py>(
 #[pyfunction]
 #[pyo3(signature = (*args))]
 fn writermod_pdfwriter_add_named_destination_object<'py>(
-    py: Python<'py>,
+    _py: Python<'py>,
     args: &Bound<'py, PyTuple>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let slf = arg(args, 0)?;
@@ -3021,15 +3025,16 @@ fn writermod_pdfwriter_add_named_destination<'py>(
     }
     let dest = dict_obj(py, vec![])?;
     let destination = gclass(py, "Destination")?.call1((title.clone(), page_ref, fit))?;
-    let mut entries = Vec::new();
-    entries.push((
-        name_obj(py, &to_string(&const_str(py, "GoToActionArguments", "D")?)?)?,
-        get(&destination, "dest_array")?,
-    ));
-    entries.push((
-        name_obj(py, &to_string(&const_str(py, "GoToActionArguments", "S")?)?)?,
-        name_obj(py, "/GoTo")?,
-    ));
+    let entries = vec![
+        (
+            name_obj(py, &to_string(&const_str(py, "GoToActionArguments", "D")?)?)?,
+            get(&destination, "dest_array")?,
+        ),
+        (
+            name_obj(py, &to_string(&const_str(py, "GoToActionArguments", "S")?)?)?,
+            name_obj(py, "/GoTo")?,
+        ),
+    ];
     let update = pydict_obj(py, entries)?;
     call1(&dest, "update", update)?;
     let reference = call1(&slf, "_add_object", dest)?;
@@ -3172,7 +3177,7 @@ fn writer_clean_content<'py>(
         }
         if !matches && !jump_operators.is_empty() {
             let operator_bytes = to_bytes(&operator)?;
-            if jump_operators.iter().any(|item| *item == operator_bytes) {
+            if jump_operators.contains(&operator_bytes) {
                 matches = true;
             }
         }
@@ -3209,6 +3214,8 @@ fn writer_clean_content<'py>(
 }
 
 /// `PdfWriter._remove_objects_from_page__clean_forms` (recursive).
+// Port of an upstream signature that legitimately returns two PyAny vectors.
+#[allow(clippy::type_complexity)]
 fn writer_clean_forms<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
@@ -3599,7 +3606,7 @@ fn writer_get_font_info<'py>(
             let mut normalized = to_string(&font_name)?;
             normalized = normalized.trim_start_matches('/').to_string();
             let normalized = normalized.rsplit('+').next().unwrap_or("").to_string();
-            if !font_info.contains(&py_str(py, &normalized))? {
+            if !font_info.contains(py_str(py, &normalized))? {
                 let entry = dict_obj(
                     py,
                     vec![
@@ -3687,7 +3694,7 @@ fn writermod_pdfwriter_reattach_fields<'py>(
                 result.push(item);
             }
         }
-        return Ok(array_obj(py, result)?);
+        return array_obj(py, result);
     }
     let root = get(&slf, "_root_object")?;
     let acro_key = const_str(py, "CatalogAttributes", "ACRO_FORM")?;
@@ -3710,7 +3717,7 @@ fn writermod_pdfwriter_reattach_fields<'py>(
     };
     let annots_key = py_str(py, "/Annots");
     if !page.contains(&annots_key)? {
-        return Ok(array_obj(py, result)?);
+        return array_obj(py, result);
     }
     let annotations = get_item(&page, &annots_key)?;
     let mut index = 0usize;
@@ -3722,10 +3729,10 @@ fn writermod_pdfwriter_reattach_fields<'py>(
         if eq(
             &gget(&annotation, &py_str(py, "/Subtype"), &py_str(py, ""))?,
             &py_str(py, "/Widget"),
-        )? && annotation.contains(&py_str(py, "/FT"))?
+        )? && annotation.contains(py_str(py, "/FT"))?
         {
             let dict = get(&annotation, "__dict__")?;
-            let skip = if dict.contains(&py_str(py, "indirect_reference"))? {
+            let skip = if dict.contains(py_str(py, "indirect_reference"))? {
                 let reference = get(&annotation, "indirect_reference")?;
                 fields.contains(&reference)?
             } else {
@@ -3742,7 +3749,7 @@ fn writermod_pdfwriter_reattach_fields<'py>(
         }
         index += 1;
     }
-    Ok(array_obj(py, result)?)
+    array_obj(py, result)
 }
 
 // ===========================================================================
@@ -3766,13 +3773,8 @@ fn writermod_pdfwriter_add_uri<'py>(
     let mut border_arr: Vec<Bound<'py, PyAny>> = Vec::new();
     if !is_none(&border) {
         let border_items = items(&border)?;
-        let mut count = 0;
-        for item in &border_items {
-            if count >= 3 {
-                break;
-            }
+        for item in border_items.iter().take(3) {
             border_arr.push(number_obj(py, to_i64(item)?)?);
-            count += 1;
         }
         if border_items.len() == 4 {
             let dash_items = items(&border_items[3])?;
@@ -4069,7 +4071,7 @@ fn writermod_pdfwriter_add_annotation<'py>(
         &gget(&to_add, &py_str(py, "/Subtype"), &none(py))?,
         &py_str(py, "/Link"),
     )? && is_inst(&destination, "DictionaryObject")?
-        && destination.contains(&py_str(py, "target_page_index"))?
+        && destination.contains(py_str(py, "target_page_index"))?
     {
         let target_page_index = to_i64(&get_item(&destination, &py_str(py, "target_page_index"))?)?;
         let fit_type = get_item(&destination, &py_str(py, "fit"))?;
@@ -4106,7 +4108,7 @@ fn writermod_pdfwriter_add_annotation<'py>(
     if eq(
         &gget(&to_add, &py_str(py, "/Subtype"), &none(py))?,
         &py_str(py, "/Popup"),
-    )? && to_add.contains(&py_str(py, "/Parent"))?
+    )? && to_add.contains(py_str(py, "/Parent"))?
     {
         let parent = call0(&get_item_str(&to_add, "/Parent")?, "get_object")?;
         let key = name_obj(py, "/Popup")?;
@@ -4166,7 +4168,7 @@ fn writer_find_outline_item<'py>(
                 outline_item,
             )?
         {
-            return Ok(array_obj(py, vec![py_int(py, index)])?);
+            return array_obj(py, vec![py_int(py, index)]);
         }
         let outline_id = py_id(py, &outline)?;
         if visited.contains(&outline_id)? {
@@ -4187,13 +4189,13 @@ fn writer_find_outline_item<'py>(
             )?;
             if truthy(&result)? {
                 let mut items_result: Vec<Bound<'py, PyAny>> = Vec::new();
-                if outline.contains(&py_str(py, "/Title"))? {
+                if outline.contains(py_str(py, "/Title"))? {
                     items_result.push(py_int(py, index));
                 }
                 for item in items(&result)? {
                     items_result.push(item);
                 }
-                return Ok(array_obj(py, items_result)?);
+                return array_obj(py, items_result);
             }
         }
         let next_key = py_str(py, "/Next");
@@ -4905,20 +4907,20 @@ fn writer_get_cloned_page<'py>(
             Err(error) => return Err(error),
         };
     }
-    let reference;
-    if is_inst(&page, "DictionaryObject")?
+    
+    let reference = if is_inst(&page, "DictionaryObject")?
         && eq(
             &gget(&page, &py_str(py, "/Type"), &py_str(py, ""))?,
             &py_str(py, "/Page"),
         )?
     {
-        reference = get(&page, "indirect_reference")?;
+        get(&page, "indirect_reference")?
     } else if is_inst(&page, "IndirectObject")? {
-        reference = page.clone();
+        page.clone()
     } else {
         // Unresolvable reference: fall through to the KeyError handling below.
-        reference = page.clone();
-    }
+        page.clone()
+    };
     let idnum = match get(&reference, "idnum") {
         Ok(value) => value,
         Err(_) => return Ok(none(py)),
@@ -4978,7 +4980,7 @@ fn writer_add_articles_thread<'py>(
         let page = writer_get_cloned_page(py, &page_value, pages, reader)?;
         if !is_none(&page) {
             if new_article.is_none() {
-                let created = call1(&slf, "_add_object", new_g(py, "DictionaryObject", vec![])?)?;
+                let created = call1(slf, "_add_object", new_g(py, "DictionaryObject", vec![])?)?;
                 let created = call0(&created, "get_object")?;
                 new_first = Some(created.clone());
                 new_article = Some(created.clone());
@@ -4990,7 +4992,7 @@ fn writer_add_articles_thread<'py>(
             } else {
                 let previous = new_article.clone().unwrap_or_else(|| none(py));
                 let created = call1(
-                    &slf,
+                    slf,
                     "_add_object",
                     dict_obj(
                         py,
@@ -5120,6 +5122,8 @@ fn writermod_pdfwriter_add_filtered_articles<'py>(
 }
 
 // @pypdf: pypdf._writer.PdfWriter._insert_filtered_annotations
+// Upstream guards on `parent_fields is not None` and uses it inside the same branch.
+#[allow(clippy::unnecessary_unwrap)]
 fn writer_insert_filtered_annotations<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
@@ -5162,7 +5166,7 @@ fn writer_insert_filtered_annotations<'py>(
         let not_link = !eq(&subtype, &py_str(py, "/Link"))?
             || is_none(&action_object)
             || !eq(&get_item_str(&action_object, "/S")?, &py_str(py, "/GoTo"))?
-            || ano.contains(&py_str(py, "/Dest"))?;
+            || ano.contains(py_str(py, "/Dest"))?;
         if not_link {
             // upstream uses ``ano.get("/Parent")`` (raw dict access)
             let parent = gget(&ano, &py_str(py, "/Parent"), &none(py))?;
@@ -5172,20 +5176,20 @@ fn writer_insert_filtered_annotations<'py>(
             {
                 let cloned = writer_clone_widget_annotation(
                     py,
-                    &slf,
+                    slf,
                     &ano,
                     parent_fields.as_ref().unwrap(),
                 )?;
                 call1(&outlist, "append", cloned)?;
-            } else if !ano.contains(&py_str(py, "/Dest"))? {
+            } else if !ano.contains(py_str(py, "/Dest"))? {
                 let cloned = call1(&ano, "clone", slf.clone())?;
-                let reference = call1(&slf, "_add_object", cloned)?;
+                let reference = call1(slf, "_add_object", cloned)?;
                 call1(&outlist, "append", reference)?;
             } else {
                 let dest = get_item_str(&ano, "/Dest")?;
                 if is_inst_builtin(&dest, "str")? {
                     let named = call0(slf, "get_named_dest_root")?;
-                    if named.contains(&py_str(py, &to_string(&dest)?))? {
+                    if named.contains(py_str(py, &to_string(&dest)?))? {
                         let cloned = call1(&ano, "clone", slf.clone())?;
                         call1(&outlist, "append", get(&cloned, "indirect_reference")?)?;
                     }
@@ -5207,7 +5211,7 @@ fn writer_insert_filtered_annotations<'py>(
                             array_items.push(rest);
                         }
                         set_item(&anc, &name_obj(py, "/Dest")?, &array_obj(py, array_items)?)?;
-                        let reference = call1(&slf, "_add_object", anc)?;
+                        let reference = call1(slf, "_add_object", anc)?;
                         call1(&outlist, "append", reference)?;
                     }
                 }
@@ -5224,7 +5228,7 @@ fn writer_insert_filtered_annotations<'py>(
             }
             if is_inst_builtin(&dest, "str")? {
                 let named = call0(slf, "get_named_dest_root")?;
-                if named.contains(&py_str(py, &to_string(&dest)?))? {
+                if named.contains(py_str(py, &to_string(&dest)?))? {
                     let cloned = call1(&ano, "clone", slf.clone())?;
                     call1(&outlist, "append", get(&cloned, "indirect_reference")?)?;
                 }
@@ -5247,7 +5251,7 @@ fn writer_insert_filtered_annotations<'py>(
                     }
                     let action = get_item_str(&anc, "/A")?;
                     set_item(&action, &name_obj(py, "/D")?, &array_obj(py, array_items)?)?;
-                    let reference = call1(&slf, "_add_object", anc)?;
+                    let reference = call1(slf, "_add_object", anc)?;
                     call1(&outlist, "append", reference)?;
                 }
             }
@@ -5357,7 +5361,7 @@ fn writer_set_cloned_kids<'py>(
     parent_fields: &Bound<'py, PyDict>,
     reader: &Bound<'py, PyAny>,
 ) -> PyResult<()> {
-    let translated = get(&slf, "_id_translated")?;
+    let translated = get(slf, "_id_translated")?;
     let translated = gget(
         &translated,
         &py_id(py, reader)?,
@@ -5408,6 +5412,8 @@ fn writermod_pdfwriter_private_set_cloned_kids<'py>(
 }
 
 // @pypdf: pypdf._writer.PdfWriter._get_filtered_outline
+// Mirrors the upstream recursive helper's parameter list verbatim.
+#[allow(clippy::only_used_in_recursion)]
 fn writer_get_filtered_outline<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
@@ -5443,12 +5449,12 @@ fn writer_get_filtered_outline<'py>(
     if eq(
         &gget(&node, &py_str(py, "/Type"), &py_str(py, ""))?,
         &py_str(py, "/Outlines"),
-    )? || !node.contains(&py_str(py, "/Title"))?
+    )? || !node.contains(py_str(py, "/Title"))?
     {
         let node_id = py_id(py, &node)?;
         if visited.contains(&node_id)? {
             logger_warning(py, "Detected cycle in outlines.", None)?;
-            return Ok(array_obj(py, vec![])?);
+            return array_obj(py, vec![]);
         }
         call1(&visited, "add", node_id)?;
         let first = gget(&node, &py_str(py, "/First"), &none(py))?;
@@ -5485,7 +5491,7 @@ fn writer_get_filtered_outline<'py>(
                 cloned_page = null_obj(py)?;
             }
             set_item(&destination, &name_obj(py, "/Page")?, &cloned_page)?;
-            let children = if node.contains(&py_str(py, "/First"))? {
+            let children = if node.contains(py_str(py, "/First"))? {
                 writer_get_filtered_outline(
                     py,
                     slf,
@@ -5501,7 +5507,7 @@ fn writer_get_filtered_outline<'py>(
             if !is_inst(&cloned_page, "NullObject")? || py_len(&children)? > 0 {
                 call1(&new_outline, "append", destination.clone())?;
             }
-            if !node.contains(&py_str(py, "/Next"))? {
+            if !node.contains(py_str(py, "/Next"))? {
                 break;
             }
             node = get_item_str(&node, "/Next")?;
@@ -5542,7 +5548,7 @@ fn writer_clone_outline<'py>(
     let page = get_item_str(dest, "/Page")?;
     if !is_inst(&page, "NullObject")? {
         let node = get_def(dest, "node", &none(py))?;
-        if !is_none(&node) && node.contains(&py_str(py, "/A"))? {
+        if !is_none(&node) && node.contains(py_str(py, "/A"))? {
             let action = call1(&get_item_str(&node, "/A")?, "clone", slf.clone())?;
             set_item(&outline, &name_obj(py, "/A")?, &action)?;
         } else {
@@ -5604,7 +5610,7 @@ fn writer_insert_filtered_outline<'py>(
             &gget(&dest, &py_str(py, "/Type"), &py_str(py, ""))?,
             &py_str(py, "/Outlines"),
         )?;
-        let np = if is_outlines || !dest.contains(&py_str(py, "/Title"))? {
+        let np = if is_outlines || !dest.contains(py_str(py, "/Title"))? {
             parent.clone()
         } else {
             let cloned = writer_clone_outline(py, slf, &dest)?;
@@ -5705,19 +5711,19 @@ fn writermod_pdfwriter_update_page_form_field_values<'py>(
         )? {
             continue;
         }
-        let parent_annotation;
-        if annotation.contains(&py_str(py, "/FT"))? && annotation.contains(&py_str(py, "/T"))? {
-            parent_annotation = annotation.clone();
+        
+        let parent_annotation = if annotation.contains(py_str(py, "/FT"))? && annotation.contains(py_str(py, "/T"))? {
+            annotation.clone()
         } else {
-            parent_annotation = call0(
+            call0(
                 &gget(
                     &annotation,
                     &const_str(py, "PageAttributes", "PARENT")?,
                     &new_g(py, "DictionaryObject", vec![])?,
                 )?,
                 "get_object",
-            )?;
-        }
+            )?
+        };
         for pair in items(&call0(&fields, "items")?)? {
             let field = pair.get_item(0)?;
             let value = pair.get_item(1)?;
@@ -5742,7 +5748,7 @@ fn writermod_pdfwriter_update_page_form_field_values<'py>(
             if eq(
                 &gget(&parent_annotation, &py_str(py, "/FT"), &none(py))?,
                 &py_str(py, "/Ch"),
-            )? && parent_annotation.contains(&py_str(py, "/I"))?
+            )? && parent_annotation.contains(py_str(py, "/I"))?
             {
                 parent_annotation.del_item(py_str(py, "/I"))?;
             }
