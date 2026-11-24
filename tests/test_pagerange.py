@@ -1,0 +1,242 @@
+"""Test the pypdf.pagerange module."""
+from typing import Any
+
+import pytest
+
+from pypdf.errors import ParseError
+from pypdf.pagerange import PageRange, parse_filename_page_ranges
+
+
+def test_equality() -> None:
+    pr1 = PageRange(slice(0, 5))
+    pr2 = PageRange(slice(0, 5))
+    assert pr1 == pr2
+
+
+def test_hash() -> None:
+    pr1 = PageRange(slice(0, 5))
+    pr2 = PageRange(slice(0, 5))
+    pr3 = PageRange(slice(10, 11))
+    pr4 = PageRange(slice(10, 11, 1))
+    assert hash(pr1) == hash(pr2)
+    assert hash(pr1) != hash(pr3)
+    # Consider this different for now, although slicing with step size of 1 and `None` should be identical.
+    assert hash(pr3) != hash(pr4)
+
+
+@pytest.mark.parametrize(
+    ("page_range", "expected"),
+    [(slice(0, 5), "0:5"), (slice(0, 5, 2), "0:5:2"), ("-1", "-1:"), ("0", "0")],
+)
+def test_str(page_range: slice | str, expected: str) -> None:
+    assert str(PageRange(page_range)) == expected
+
+
+@pytest.mark.parametrize(
+    ("page_range", "expected"),
+    [(slice(0, 5), "PageRange('0:5')"), (slice(0, 5, 2), "PageRange('0:5:2')")],
+)
+def test_repr(page_range: slice, expected: str) -> None:
+    assert repr(PageRange(page_range)) == expected
+
+
+def test_equality_other_objectc() -> None:
+    pr1 = PageRange(slice(0, 5))
+    pr2 = "PageRange(slice(0, 5))"
+    assert pr1 != pr2
+
+
+def test_idempotency() -> None:
+    pr = PageRange(slice(0, 5))
+    pr2 = PageRange(pr)
+    assert pr == pr2
+
+
+def test_str_of_the_empty_range_before_the_last_page() -> None:
+    """slice(-1, 0) selects nothing, but "-1" means the last page."""
+    page_range = PageRange(slice(-1, 0))
+
+    assert str(page_range) == "-1:0"
+    assert PageRange(str(page_range)) == page_range
+
+
+@pytest.mark.parametrize(
+    "range_str",
+    [
+        "0", "3", "-1", "-2", ":", "0:3", "-2:", ":-1", "-1:0", "-3:-1",
+        "::2", "::-1", "1:10:2", "3:0:-1", "2::-1", "-1:-3:-1",
+    ],
+)
+def test_str_round_trips(range_str: str) -> None:
+    """A page range and its string select the same pages."""
+    page_range = PageRange(range_str)
+
+    assert PageRange(str(page_range)) == page_range
+
+
+@pytest.mark.parametrize(
+    ("range_str", "expected"),
+    [
+        ("42", slice(42, 43)),
+        ("1:2", slice(1, 2)),
+    ],
+)
+def test_str_init(range_str: str, expected: slice) -> None:
+    pr = PageRange(range_str)
+    assert pr._slice == expected
+    assert PageRange.valid(range_str)
+
+
+def test_str_init_error() -> None:
+    init_str = "1-2"
+    assert PageRange.valid(init_str) is False
+    with pytest.raises(ParseError) as exc:
+        PageRange(init_str)
+    assert exc.value.args[0] == "1-2"
+
+
+@pytest.mark.parametrize(
+    "init_str",
+    [
+        pytest.param("::0", id="open-range"),
+        pytest.param("1:5:0", id="bounded-range"),
+        pytest.param("0:0:0", id="empty-range"),
+    ],
+)
+def test_str_init_zero_step(init_str: str) -> None:
+    """A zero stride selects nothing and only raised once the range was applied."""
+    assert PageRange.valid(init_str) is False
+    with pytest.raises(ParseError) as exc:
+        PageRange(init_str)
+    assert exc.value.args[0] == init_str
+
+
+@pytest.mark.parametrize(
+    "init_slice",
+    [
+        pytest.param(slice(None, None, 0), id="open-slice"),
+        pytest.param(slice(1, 5, 0), id="bounded-slice"),
+        pytest.param(slice(0, 0, 0), id="empty-slice"),
+    ],
+)
+def test_slice_init_zero_step(init_slice: slice) -> None:
+    """A zero-step slice is rejected at construction, like a zero-step string."""
+    with pytest.raises(ParseError) as exc:
+        PageRange(init_slice)
+    assert exc.value.args[0] == init_slice
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        pytest.param(slice(1, 5), True, id="slice-default-step"),
+        pytest.param(slice(1, 5, 2), True, id="slice-positive-step"),
+        pytest.param(slice(None, None, -1), True, id="slice-reverse"),
+        pytest.param(slice(None, None, 0), False, id="slice-open-zero-step"),
+        pytest.param(slice(1, 5, 0), False, id="slice-bounded-zero-step"),
+        pytest.param(slice(0, 0, 0), False, id="slice-empty-zero-step"),
+        pytest.param(PageRange("1:5"), True, id="page-range"),
+        pytest.param("1:5", True, id="range-string"),
+        pytest.param(5, False, id="integer"),
+        pytest.param(None, False, id="none"),
+        pytest.param(["1:5"], False, id="list"),
+    ],
+)
+def test_valid(value: Any, expected: bool) -> None:
+    assert PageRange.valid(value) is expected
+
+
+@pytest.mark.parametrize(
+    ("params", "expected"),
+    [
+        (["foo.pdf", "1:5"], [("foo.pdf", PageRange("1:5"))]),
+        (
+            ["foo.pdf", "1:5", "bar.pdf"],
+            [("foo.pdf", PageRange("1:5")), ("bar.pdf", PageRange(":"))],
+        ),
+    ],
+)
+def test_parse_filename_page_ranges(
+    params: list[str], expected: list[tuple[str, PageRange]]
+) -> None:
+    assert parse_filename_page_ranges(list(params)) == expected
+
+
+def test_parse_filename_page_ranges_err() -> None:
+    with pytest.raises(ValueError) as exc:
+        parse_filename_page_ranges(["1:5", "foo.pdf"])
+    assert (
+        exc.value.args[0] == "The first argument must be a filename, not a page range."
+    )
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "expected"),
+    [
+        (PageRange(slice(0, 5)), PageRange(slice(2, 10)), slice(0, 10)),
+        (PageRange(slice(0, 5)), PageRange(slice(2, 3)), slice(0, 5)),
+        (PageRange(slice(0, 5)), PageRange(slice(5, 10)), slice(0, 10)),
+    ],
+)
+def test_addition(a: PageRange, b: PageRange, expected: slice) -> None:
+    pr1 = PageRange(a)
+    pr2 = PageRange(b)
+    assert pr1 + pr2 == PageRange(expected)
+    assert pr2 + pr1 == PageRange(expected)  # addition is commutative
+
+
+@pytest.mark.parametrize(
+    ("a", "b"),
+    [
+        (PageRange(slice(0, 5)), PageRange(slice(7, 10))),
+        (PageRange(slice(7, 10)), PageRange(slice(0, 5))),
+    ],
+)
+def test_addition_gap(a: PageRange, b: PageRange) -> None:
+    with pytest.raises(ValueError) as exc:
+        a + b
+    assert exc.value.args[0] == "Can't add PageRanges with gap"
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "expected"),
+    [
+        # None start ("beginning") absorbs the other range's start.
+        (PageRange(slice(None, 5)), PageRange(slice(2, 10)), slice(None, 10)),
+        (PageRange(slice(0, 5)), PageRange(slice(None, 10)), slice(None, 10)),
+        # None stop ("end") absorbs the other range's stop.
+        (PageRange(slice(0, None)), PageRange(slice(2, 10)), slice(0, None)),
+        # Both None on one side: fully open range swallows a bounded one.
+        (PageRange(slice(None, None)), PageRange(slice(2, 5)), slice(None, None)),
+        (PageRange(":"), PageRange(":"), slice(None, None)),
+        # None start on one operand, None stop on the other: union covers everything.
+        (PageRange(slice(0, None)), PageRange(slice(None, 5)), slice(None, None)),
+    ],
+)
+def test_addition_none_bounds(a: PageRange, b: PageRange, expected: slice) -> None:
+    assert a + b == PageRange(expected)
+    assert b + a == PageRange(expected)  # addition is commutative
+
+
+def test_addition_gap_with_none_start() -> None:
+    # A None start ("beginning") must not be treated as covering the whole
+    # range: the stop is still finite, so a real gap past it must still raise.
+    a = PageRange(slice(None, 5))
+    b = PageRange(slice(20, 30))
+    with pytest.raises(ValueError) as exc:
+        a + b
+    assert exc.value.args[0] == "Can't add PageRanges with gap"
+
+
+def test_addition_non_page_range() -> None:
+    with pytest.raises(TypeError) as exc:
+        PageRange(slice(0, 5)) + "2:7"  # type: ignore[operator]
+    assert exc.value.args[0] == "Can't add PageRange and <class 'str'>"
+
+
+def test_addition_stride() -> None:
+    a = PageRange(slice(0, 5, 2))
+    b = PageRange(slice(7, 9))
+    with pytest.raises(ValueError) as exc:
+        a + b
+    assert exc.value.args[0] == "Can't add PageRange with stride"

@@ -1,0 +1,9 @@
+# macOS: extension modules must not link libpython; resolve Python symbols at
+# load time instead.  maturin passes these flags automatically, but a plain
+# `cargo build` needs them here (see pyo3 guide "building-and-distribution" ->
+# macOS).
+[target.aarch64-apple-darwin]
+rustflags = [
+  "-C", "link-arg=-undefined",
+  "-C", "link-arg=dynamic_lookup",
+]

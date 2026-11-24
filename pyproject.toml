@@ -1,0 +1,38 @@
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "pypdf"
+version = "7.1.1"
+description = "Rust port of pypdf 7.1.1 (PyO3)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "BSD-3-Clause" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+]
+
+[tool.maturin]
+python-source = "python"
+module-name = "pypdf._pypdf"
+features = ["pyo3/extension-module"]
+profile = "release"
+
+# ---------------------------------------------------------------------------
+# Verbatim copy of the upstream [tool.pytest.ini_options] (pypdf 7.1.1).
+# The official test suite is the acceptance spec (gate A1) and must run with
+# exactly the same pytest configuration as upstream CI.
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+addopts = "--disable-socket"
+filterwarnings = ["error"]
+markers = [
+    "slow: Test which require more than a second",
+    "samples: Tests which use files from https://github.com/py-pdf/sample-files",
+    "enable_socket: Tests which need to download files",
+]
+testpaths = ["tests"]
+norecursedirs = ["tests/pdf_cache"]
+xfail_strict = true

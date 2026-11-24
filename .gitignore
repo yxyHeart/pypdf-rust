@@ -1,0 +1,8 @@
+/target/
+/.venvs/
+*.pyc
+__pycache__/
+/.maturin/
+/tmp/
+/.audit/
+/.pytest_cache/
