@@ -1,6 +1,26 @@
 {
-  "pypdf.errors": {"mode": "python", "phase": "P1", "reason": "exception classes are Python API types"},
-  "pypdf._version": {"mode": "python", "phase": "P1", "reason": "single version constant"},
-  "pypdf.types": {"mode": "python", "phase": "P1", "reason": "typing aliases only"},
-  "pypdf._protocols": {"mode": "python", "phase": "P1", "reason": "typing Protocols only"}
+  "pypdf.errors": {
+    "mode": "python",
+    "phase": "P1",
+    "reason": "exception classes are Python API types"
+  },
+  "pypdf._version": {
+    "mode": "python",
+    "phase": "P1",
+    "reason": "single version constant"
+  },
+  "pypdf.types": {
+    "mode": "python",
+    "phase": "P1",
+    "reason": "typing aliases only"
+  },
+  "pypdf._protocols": {
+    "mode": "python",
+    "phase": "P1",
+    "reason": "typing Protocols only"
+  },
+  "pypdf.pagerange": {
+    "mode": "rust",
+    "phase": "P2"
+  }
 }

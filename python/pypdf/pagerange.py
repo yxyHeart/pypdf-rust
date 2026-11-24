@@ -1,41 +1,18 @@
 """Representation and utils for ranges of PDF file pages.
 
-AUTO-GENERATED stub for the Rust port (upstream pypdf 7.1.1, module ``pypdf.pagerange``).
-Replaced by a Rust-backed implementation in phase later.
+Copyright (c) 2014, Steve Witham <switham_github@mac-guyver.com>.
+All rights reserved. This software is available under a BSD license;
+see https://github.com/py-pdf/pypdf/blob/main/LICENSE
+
+Rust-backed module: the implementation lives in ``crates/pypdf-py/src/pagerange.rs``.
 """
 
 from __future__ import annotations
 
-import re
-from typing import Any, Union
-from .errors import ParseError
-_INT_RE = '(0|-?[1-9]\\d*)'
-PAGE_RANGE_RE = None
-class PageRange:
-    """Stub for pypdf.pagerange.PageRange."""
-    def __init__(self, *args, **kwargs):
-        try:
-            super().__init__(*args, **kwargs)
-        except TypeError:
-            pass
-    @staticmethod
-    def valid(*args, **kwargs):
-        return None  # inert stub
-    def to_slice(self, *args, **kwargs):
-        return None  # inert stub
-    def __str__(self, *args, **kwargs):
-        return ""  # inert stub
-    def __repr__(self, *args, **kwargs):
-        return ""  # inert stub
-    def indices(self, *args, **kwargs):
-        return None  # inert stub
-    def __eq__(self, *args, **kwargs):
-        return None  # inert stub
-    def __hash__(self, *args, **kwargs):
-        return None  # inert stub
-    def __add__(self, *args, **kwargs):
-        return None  # inert stub
-PAGE_RANGE_ALL = None
-def parse_filename_page_ranges(*args, **kwargs):
-    return None  # inert stub: pypdf.pagerange.parse_filename_page_ranges
-PageRangeSpec = None
+from pypdf._pypdf import PAGE_RANGE_RE, PageRange, parse_filename_page_ranges
+
+_INT_RE = r"(0|-?[1-9]\d*)"  # A decimal int, don't allow "-0".
+
+PAGE_RANGE_ALL = PageRange(":")  # The range of all pages.
+
+PageRangeSpec = str | PageRange | tuple[int, int] | tuple[int, int, int] | list[int]

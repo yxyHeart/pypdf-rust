@@ -103,22 +103,39 @@ fn write_to_stream(...) { ... }
 3. 跑差分：`tools/oracle/audit.py`（`pypdf` 模块相关场景）；
 4. `tools/manifest/check.py` 覆盖数上升，并在 commit message 中注明阶段。
 
-## 7. 文件布局
+## 7. 文件布局（并行友好，重要）
 
 ```
 crates/pypdf-py/src/
-  generic/{base,data_structures,utils,files,fit,color,font,image_inline,image_xobject,link,outline,rectangle,viewerpref,appearance_stream}.rs
-  {reader,writer,doc_common,page,page_labels,cmap,utils,configuration,encryption,constants,errors,filters,xmp,pagerange,papersizes}.rs
-  text_extraction/{mod,text_extractor,fixed_width_page,text_state_manager,text_state_params}.rs
-  annotations/{mod,base,markup,non_markup}.rs
-  actions.rs
-  codecs.rs
-  crypt_providers/{mod,fallback}.rs
-  pypdf_module.rs        # 模块树注册（把 Rust 类挂到对应 pypdf.* 子模块）
-python/pypdf/            # 生成的 stub 逐步替换为 Rust 后端的 shim
+  lib.rs                 # 公共入口（只由 lead 修改）
+  errors.rs pyutil.rs    # 公共助手（只由 lead 修改）
+  modules/               # ← 每个移植模块一个文件，可并行新增
+    pagerange.rs         #   参考模板（PageRange / parse_filename_page_ranges）
+    utils_mod.rs         #   pypdf/_utils.py
+    base_mod.rs          #   pypdf/generic/_base.py
+    data_structures_mod.rs
+    ...
+python/pypdf/            # 对应模块的 shim：从 pypdf._pypdf 导入 Rust 实现
 ```
 
-`tools/codegen/port_status.json` 中把模块从 `"stub"` 改为 `"rust"`，然后重新生成骨架（生成器不会覆盖 rust 模块）。
+- **新增模块 = 新增 `src/modules/<name>.rs` + 对应 Python shim**；`build.rs` 会自动扫描目录并调用每个模块的 `register(module)`，**不需要修改 `lib.rs`**，因此多个任务可以并行。
+- 每个模块文件必须导出：
+  ```rust
+  pub fn register(module: &pyo3::Bound<'_, pyo3::types::PyModule>) -> pyo3::PyResult<()> { ... }
+  ```
+- 模块内部若需要多个文件，可在 `src/modules/<name>/` 下建子模块，由 `<name>.rs` 用 `mod` 声明（相对路径解析）。
+- 共享助手只用 `crate::errors` 与 `crate::pyutil`；需要新的公共助手时向 lead 申请，不要改 `lib.rs`。
+- 完成后把 `python/pypdf/<path>.py` 的 stub 替换为 shim（从 `pypdf._pypdf` 导入），由 lead 负责更新 `port_status.json` 与覆盖率报告。
+
+## 7.1 实战踩坑清单（来自 pagerange 移植）
+
+1. 官方测试会访问**私有属性**（如 `pr._slice`）：pyclass 必须用 `#[getter(_slice)]`/`#[setter(_slice)]` 暴露，命名与原属性一致。
+2. Python C-API 细节要照抄：`re.Match.group` 是**变参**（`m.group(4, 6, 8)`），传元组会被当成组名而抛 `IndexError: no such group`。
+3. `slice(None, None, None)` 合法且等价 `slice()`；不要"省略"尾随 None，参数个数会影响 `str/repr/indices`。
+4. 上游把逻辑写在 `__init__` 里时，Rust `#[new]` 要承载同样校验与副作用；容器类的**内容填充由继承的 `dict/list.__init__` 完成**（不要在 `#[new]` 里重复填充）。
+5. 类需要能被子类化 / 挂任意属性：`#[pyclass(subclass, dict)]`。
+6. 涉及 Python 对象的比较/加法/字符串化时优先走 Python 运算符（`Bound::gt/eq/...`、`call_method1("__add__", ...)`），保证与上游完全一致。
+7. 测试断言 `hash()`/`repr()`/异常消息这类"观测值"时，必须逐字复刻上游表达式（例如 `hash((self.__class__, (start, stop, step)))`）。
 
 ## 8. 提交流程
 

@@ -5,6 +5,14 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="$HOME/.cargo/bin:$PATH"
 
+# Serialize builds: several porting tasks may run this concurrently.
+LOCK="$ROOT/.audit/build.lock"
+mkdir -p "$ROOT/.audit"
+while ! mkdir "$LOCK" 2>/dev/null; do
+    sleep 1
+done
+trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT
+
 VIRTUAL_ENV="$ROOT/.venvs/dev" \
 PYO3_PYTHON="$ROOT/.venvs/dev/bin/python" \
     .venvs/dev/bin/maturin develop --release -m crates/pypdf-py/Cargo.toml "$@"
