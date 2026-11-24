@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**704/1934**（36.40%）
+总计：**886/1934**（45.81%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -46,12 +46,12 @@
 | `pypdf.annotations._non_markup_annotations` | 0 | 4 | 0% | stub |
 | `pypdf.constants` | 379 | 379 | 100% | python |
 | `pypdf.errors` | 15 | 15 | 100% | python |
-| `pypdf.filters` | 0 | 56 | 0% | stub |
+| `pypdf.filters` | 56 | 56 | 100% | stub |
 | `pypdf.generic` | 4 | 4 | 100% | python |
 | `pypdf.generic._appearance_stream` | 0 | 31 | 0% | stub |
 | `pypdf.generic._base` | 105 | 105 | 100% | rust |
 | `pypdf.generic._color` | 0 | 22 | 0% | stub |
-| `pypdf.generic._data_structures` | 0 | 118 | 0% | stub |
+| `pypdf.generic._data_structures` | 115 | 118 | 97% | stub |
 | `pypdf.generic._files` | 0 | 33 | 0% | stub |
 | `pypdf.generic._fit` | 0 | 12 | 0% | stub |
 | `pypdf.generic._font` | 0 | 61 | 0% | stub |
@@ -60,7 +60,7 @@
 | `pypdf.generic._link` | 0 | 12 | 0% | stub |
 | `pypdf.generic._outline` | 0 | 2 | 0% | stub |
 | `pypdf.generic._rectangle` | 0 | 23 | 0% | stub |
-| `pypdf.generic._utils` | 0 | 11 | 0% | stub |
+| `pypdf.generic._utils` | 11 | 11 | 100% | rust |
 | `pypdf.generic._viewerpref` | 0 | 14 | 0% | stub |
 | `pypdf.pagerange` | 6 | 15 | 40% | rust |
 | `pypdf.papersizes` | 15 | 15 | 100% | python |

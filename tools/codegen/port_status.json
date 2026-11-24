@@ -125,5 +125,10 @@
       "base_mod::reference_clone",
       "base_mod::is_pdf_object_like"
     ]
+  },
+  "pypdf.generic._utils": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "genutils_mod.rs"
   }
 }
