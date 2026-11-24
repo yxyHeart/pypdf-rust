@@ -37,7 +37,7 @@ mod callables;
 #[path = "text_extraction_mod/common.rs"]
 pub mod common;
 #[path = "text_extraction_mod/extractor.rs"]
-mod extractor;
+pub(crate) mod extractor;
 #[path = "text_extraction_mod/init_mod.rs"]
 mod init_mod;
 #[path = "text_extraction_mod/layout_page.rs"]

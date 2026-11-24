@@ -277,45 +277,18 @@ pub fn page_extract_text_inner<'py>(
             ))?;
         }
         if operator.eq(common::py_bytes(py, b"'"))? {
-            extractor.call_method1(
-                "process_operation",
-                (common::py_bytes(py, b"T*"), py_list(py, vec![])?),
-            )?;
-            extractor.call_method1(
-                "process_operation",
-                (common::py_bytes(py, b"Tj"), operands.clone()),
-            )?;
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"T*")), &(py_list(py, vec![])?)) ?;
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tj")), &(operands.clone())) ?;
         } else if operator.eq(common::py_bytes(py, b"\""))? && py_len(&operands)? >= 3 {
-            extractor.call_method1(
-                "process_operation",
-                (
-                    common::py_bytes(py, b"Tw"),
-                    py_list(py, vec![operands.get_item(0)?])?,
-                ),
-            )?;
-            extractor.call_method1(
-                "process_operation",
-                (
-                    common::py_bytes(py, b"Tc"),
-                    py_list(py, vec![operands.get_item(1)?])?,
-                ),
-            )?;
-            extractor.call_method1(
-                "process_operation",
-                (common::py_bytes(py, b"T*"), py_list(py, vec![])?),
-            )?;
-            extractor.call_method1(
-                "process_operation",
-                (
-                    common::py_bytes(py, b"Tj"),
-                    operands.get_item(super::common::slice_object(
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tw")), &(py_list(py, vec![operands.get_item(0)?])?)) ?;
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tc")), &(py_list(py, vec![operands.get_item(1)?])?)) ?;
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"T*")), &(py_list(py, vec![])?)) ?;
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tj")), &(operands.get_item(super::common::slice_object(
                         py,
                         Some(py_int(py, 2)),
                         None,
                         None,
-                    )?)?,
-                ),
-            )?;
+                    )?)?)) ?;
         } else if operator.eq(common::py_bytes(py, b"TJ"))? {
             // The space width may be smaller than the font width, so the width should be 95%.
             let space_width_value = extractor.getattr("_space_width")?;
@@ -333,36 +306,21 @@ pub fn page_extract_text_inner<'py>(
                     let is_text = (op.is_instance(&str_type)? || op.is_instance(&bytes_type)?)
                         && !op.is_instance(&name_class)?;
                     if is_text {
-                        extractor.call_method1(
-                            "process_operation",
-                            (common::py_bytes(py, b"Tj"), py_list(py, vec![op.clone()])?),
-                        )?;
+                        crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tj")), &(py_list(py, vec![op.clone()])?)) ?;
                     }
                     let is_number = op.is_instance(&int_type)? || op.is_instance(&float_type)?;
                     if is_number {
                         let value = float_type.call1((op,))?;
-                        extractor.call_method1(
-                            "process_tj_offset",
-                            (value, confirm_space_width.clone()),
-                        )?;
+                        crate::text_extraction_mod::extractor::text_extractor_process_tj_offset(py, &extractor, &(value), &(confirm_space_width.clone())) ?;
                     }
                 }
             }
         } else if operator.eq(common::py_bytes(py, b"TD"))? && py_len(&operands)? >= 2 {
             // a non-numeric ty leaves the leading unchanged, like a non-numeric TL
             if is_instance_int_or_float(py, &operands.get_item(1)?)? {
-                extractor.call_method1(
-                    "process_operation",
-                    (
-                        common::py_bytes(py, b"TL"),
-                        py_list(py, vec![op_neg(py, &operands.get_item(1)?)?])?,
-                    ),
-                )?;
+                crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"TL")), &(py_list(py, vec![op_neg(py, &operands.get_item(1)?)?])?)) ?;
             }
-            extractor.call_method1(
-                "process_operation",
-                (common::py_bytes(py, b"Td"), operands.clone()),
-            )?;
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Td")), &(operands.clone())) ?;
         } else if operator.eq(common::py_bytes(py, b"Do"))? && operands.is_truthy()? {
             add_assign(py, &extractor, "output", &extractor.getattr("text")?)?;
             if !visitor_text.is_none() {
@@ -446,7 +404,7 @@ pub fn page_extract_text_inner<'py>(
                 extractor.getattr("tm_matrix")?.call_method0("copy")?,
             )?;
         } else {
-            extractor.call_method1("process_operation", (operator.clone(), operands.clone()))?;
+            crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(operator.clone()), &(operands.clone())) ?;
         }
         if !visitor_operand_after.is_none() {
             visitor_operand_after.call1((

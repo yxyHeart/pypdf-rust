@@ -140,7 +140,10 @@ pub fn text_extractor_init(py: Python<'_>, slf: &Bound<'_, PyAny>) -> PyResult<(
     ] {
         handlers.set_item(common::py_bytes_val(py, operator), slf.getattr(method)?)?;
     }
-    set_attr(slf, "operation_handlers", handlers)?;
+    set_attr(slf, "operation_handlers", handlers.clone())?;
+    // Used to detect monkeypatched dispatch tables: the fast path in
+    // `process_operation` only applies while this is still the default table.
+    set_attr(slf, "_rs_default_handlers", handlers)?;
     Ok(())
 }
 
@@ -196,6 +199,42 @@ pub fn text_extractor_process_operation<'py>(
     operands: &Bound<'py, PyAny>,
 ) -> PyResult<()> {
     let handlers = get_attr(slf, "operation_handlers")?;
+    // Fast path: dispatch on the operator bytes and call the Rust handler
+    // directly instead of going through the Python bound-method table (the text
+    // extraction loop calls this once per content-stream operation).
+    let default_handlers = get_attr(slf, "_rs_default_handlers").ok();
+    let fast = match &default_handlers {
+        Some(default) => handlers.is(default) && handlers.len()? == 14 && handlers.contains(operator)?,
+        None => false,
+    };
+    if fast {
+        let operator_bytes = operator.extract::<Vec<u8>>()?;
+        let widths: Option<Bound<'py, PyAny>> = match operator_bytes.as_slice() {
+            b"BT" => { text_extractor_handle_bt(py, slf, operands)?; None }
+            b"ET" => { text_extractor_handle_et(py, slf, operands)?; None }
+            b"q" => { text_extractor_handle_save_graphics_state(py, slf, operands)?; None }
+            b"Q" => { text_extractor_handle_restore_graphics_state(py, slf, operands)?; None }
+            b"cm" => { text_extractor_handle_cm(py, slf, operands)?; None }
+            b"Tz" => { text_extractor_handle_tz(py, slf, operands)?; None }
+            b"Tc" => { text_extractor_handle_tc(py, slf, operands)?; None }
+            b"Tw" => { text_extractor_handle_tw(py, slf, operands)?; None }
+            b"TL" => { text_extractor_handle_tl(py, slf, operands)?; None }
+            b"Tf" => { text_extractor_handle_tf(py, slf, operands)?; None }
+            b"Td" => Some(text_extractor_handle_td(py, slf, operands)?),
+            b"Tm" => Some(text_extractor_handle_tm(py, slf, operands)?),
+            b"T*" => Some(text_extractor_handle_t_star(py, slf, operands)?),
+            b"Tj" => Some(text_extractor_handle_tj_operation(py, slf, operands)?),
+            _ => None,
+        };
+        if matches!(operator_bytes.as_slice(), b"Td" | b"Tm" | b"T*" | b"Tj") {
+            let value = match widths {
+                Some(widths) if widths.is_truthy()? => widths,
+                _ => common::py_float(py, 0.0),
+            };
+            text_extractor_post_process_text_operation(py, slf, &value)?;
+        }
+        return Ok(());
+    }
     if handlers.contains(operator)? {
         let handler = handlers.get_item(operator)?;
         let str_widths = handler.call1((operands,))?;
