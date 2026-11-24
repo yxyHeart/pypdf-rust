@@ -111,20 +111,30 @@
 
 方法：`validation/perf/`，W1–W8 共 8 类工作负载，参考与端口在**独立进程**中顺序执行（`PYTHONHASHSEED=0`，1 次预热 + 10 次重复），记录逐次墙钟/CPU/峰值 RSS/输出字节与 sha256。测量时机器存在不可控的系统后台负载（WindowServer / DSH renderer / StorageManagement），负载均值 22–30（10 核），两侧在同一条件下依次运行，输出尺寸与 sha256 **全部相等**、80/80 次重复全部成功。
 
-| W | 工作负载 | 参考中位数 | 端口中位数 | speedup | 延迟变化 |
+### 6.1 P1/P2 优化后（2026-11-24 复测，`run_perf.sh --repeat 5`）
+
+字节级 Rust 内容流扫描器（`crates/pypdf-rs-core/src/content_stream.rs` + `contentstream_parse_fast`）以及文本提取的 Rust 原生派发落地后：
+
+| W | 工作负载 | 参考中位数 | 端口中位数 | speedup | 优化前 |
 |---|---|---|---|---|---|
-| W1 | Reader 初始化 + 元数据（20 小文件） | 12.6 ms | 34.9 ms | 0.36× | +176.9% |
-| W2 | 全页页框遍历（5 大文件） | 221.7 ms | 561.1 ms | 0.40× | +153.1% |
-| W3 | 文本提取（12 个文本 PDF，≤5 页/个） | 178.5 ms | 706.6 ms | 0.25× | +295.8% |
-| W4 | 图像枚举/提取（10 PDF，含 Pillow） | 608.2 ms | 1.865 s | 0.33× | +206.6% |
-| W5 | 合并（5 PDF） | 11.8 ms | 40.8 ms | 0.29× | +247.1% |
-| W6 | 旋转/裁剪/合并后写出 | 15.2 ms | 54.1 ms | 0.28× | +255.3% |
-| W7 | clone 写出（10 文件） | 20.9 ms | 70.8 ms | 0.29× | +239.5% |
-| W8 | 端到端（读+文本+合并+写，7 文件） | 445.8 ms | 1.361 s | 0.33× | +205.3% |
+| W1 | Reader 初始化 + 元数据（20 小文件） | 11.8 ms | 35.7 ms | 0.33× | 0.36× |
+| W2 | 全页页框遍历（5 大文件） | 173.2 ms | 581.5 ms | 0.30× | 0.40× |
+| W3 | 文本提取（12 个文本 PDF，≤5 页/个） | 176.7 ms | 448.2 ms | 0.39× | 0.25× |
+| W4 | 图像枚举/提取（10 PDF，含 Pillow） | 599.5 ms | 427.2 ms | **1.40×** | 0.33× |
+| W5 | 合并（5 PDF） | 12.1 ms | 41.9 ms | 0.29× | 0.29× |
+| W6 | 旋转/裁剪/合并后写出 | 15.4 ms | 59.0 ms | 0.26× | 0.28× |
+| W7 | clone 写出（10 文件） | 20.2 ms | 74.9 ms | 0.27× | 0.29× |
+| W8 | 端到端（读+文本+合并+写，7 文件） | 437.3 ms | 1.272 s | 0.34× | 0.33× |
 
-**结论：§10 未达标（端到端性能回退 2.5–4×，无任一工作负载优于参考）。** 峰值 RSS 变化在 +12% 以内（W4 为 −0.6%），输出尺寸全部一致。
+**进展：W4 已超过参考（1.40×，此前 0.33×）；W3 从 0.25× 提升到 0.39×，`issue-301.pdf` 提取从 1.75 s 降到 0.31 s（参考 0.48 s，端口快 1.55×）。** 全部门禁复测通过：A1 `2691 passed / 25 skipped / 8 xfailed` 且与基线 MATCH，差分 `IDENTICAL`，roundtrip `PASS`，安全 57/57、fuzz 200/200 无 panic/crash。
 
-根因（已用 `cProfile` 定位）：端口的内容流/对象解析在每个 token 上做 Python↔Rust 边界往返——解析一页 `resources/issue-301.pdf` 的内容流产生约 50 万次 PyO3 调用（其中 `read_object`/`_check_limits` 各 18.7 万/31.7 万次），**84% 的时间消耗在 Rust 解析函数自身的逐 token 跨语言调用**；上游 pypdf 是纯 Python 内联实现，无此开销。本轮已落地的两项安全优化（内容流解析直调 Rust `read_object`、内联 `_check_limits`）把 Python 层调用数从约 50 万降到约 2 万，但对象构造仍然每 token 跨边界一次，因此整体仍在 2.5–4× 区间。**彻底解决需要把内容流 tokenizer 改写为字节级纯 Rust 扫描**（只在生成 `FloatObject`/`NameObject` 等 Python 对象时跨界），这是一项较大改动，本轮未实施，列为后续工作。
+剩余差距的实测归因（`validation/optimization/diag_reader.md`、`diag_writer.md`、`BASELINE_DIAGNOSIS.md`）：
+- **W3/W8 剩余**：内容流解析已不再是瓶颈，成本转移到文本消费侧（每个操作符仍经 `get_text_operands`/`get_display_str`/`_flush_text` 等 shim 往返），以及 `_handle_tj` 的字形解码/拼接（约 128 ms）。
+- **W1/W2**：`get_object`/`_get_object_from_stream` 的对象语法解析仍走 Python `BytesIO` 逐 token（`read_non_whitespace`、`skip_over_whitespace`、`read_until_whitespace`、`read_until_regex` 占跨语言调用 40%+），`read_object_header` 在非 strict 校验循环里被调用 21,270 次；两阶段计划是把对象解析改为 Rust 游标 + ObjStm 纯 Rust 解压。
+- **W5–W7**：81–86% 是对象图拷贝（clone/add_page），序列化只占 14–19%；需要 Rust 侧 clone 路径与 `write_to_stream` 批量写入。
+- 逐 token 跨语言调用单价仍约 423 ns（参考实现等价操作 54–79 ns），因此凡是按 token/操作符跨界的热点都需要按“字节缓冲 + 一次调用”模式改写。
+
+原 §10 基线（优化前）保留如下，供对照：W1 0.36×、W2 0.40×、W3 0.25×、W4 0.33×、W5 0.29×、W6 0.28×、W7 0.29×、W8 0.33×，峰值 RSS +12% 以内、输出尺寸全部一致。
 
 产物：`validation/perf/workloads.json`、`run.py`、`compare.py`、`run_perf.sh`、`validation/results/perf-{reference,rust}.json`、`perf-report.md`、`logs/perf-*`。
 
