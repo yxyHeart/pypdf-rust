@@ -63,7 +63,12 @@ python tools/manifest/check.py --require 100
 
 ## 状态
 
-见 [`docs/SYMBOL_COVERAGE.md`](docs/SYMBOL_COVERAGE.md)。P0（环境/基线/确定性/可行性探针）已完成，正在按阶段移植。
+见 [`docs/SYMBOL_COVERAGE.md`](docs/SYMBOL_COVERAGE.md)（自动生成）。
+
+- **P0 地基**：完成。基线 `2691 passed / 25 skipped / 8 xfailed / 0 failed`；103 个场景在 `PYTHONHASHSEED` 变化下输出完全一致；PyO3 对象模型探针通过；**图像字节一致探针通过**（JPEG/PNG 与 Pillow 逐字节相同）。
+- **P1 骨架**：完成。Rust 工作区 + PyO3 扩展 + 59 个 Python 模块骨架 + 自动注册构建 + 符号覆盖/门禁工具；Python 兼容浮点格式化经 20 万随机值验证零差异。
+- **P2/P3 移植中**：已落地 `pypdf.pagerange`（64/64）、`pypdf._utils`（179/179）、`pypdf._codecs._codecs`（18/18 可达）、`pypdf.generic._base`（可达部分全绿）；进行中：`generic/_data_structures`、`generic/_utils`、`filters`；随后 `_reader`/`_page`/`_writer`/`text_extraction`/`_encryption`/`annotations`/`xmp`。
+- 架构结论（P2 实测修订）：**所有类保持 Python 定义，Rust 承载全部算法逻辑**——因为官方测试统计 `sys.settrace` 精确帧数并断言 `isinstance`/MRO/`pickle` 行为。详见 [docs/PORTING_GUIDE.md](docs/PORTING_GUIDE.md) §1。
 
 ## 许可证
 
