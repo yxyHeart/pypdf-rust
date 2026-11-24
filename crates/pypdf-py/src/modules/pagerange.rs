@@ -268,7 +268,7 @@ impl PageRange {
             a_stop
         };
         let slice = pyutil::py_slice(py, Some(&a_start), Some(&stop), None)?;
-        Ok(Py::new(py, Self::new(py, &slice)?)?)
+        Py::new(py, Self::new(py, &slice)?)
     }
 
     fn __deepcopy__(&self, py: Python<'_>, _memo: &Bound<'_, PyAny>) -> PyResult<Py<PageRange>> {
@@ -279,7 +279,7 @@ impl PageRange {
             Some(&slice.getattr("stop")?),
             Some(&slice.getattr("step")?),
         )?;
-        Ok(Py::new(py, Self::new(py, &copied)?)?)
+        Py::new(py, Self::new(py, &copied)?)
     }
 }
 

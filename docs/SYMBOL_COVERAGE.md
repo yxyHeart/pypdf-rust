@@ -35,7 +35,7 @@
 | `pypdf._text_extraction._layout_mode._text_state_manager` | 0 | 20 | 0% | stub |
 | `pypdf._text_extraction._layout_mode._text_state_params` | 0 | 26 | 0% | stub |
 | `pypdf._text_extraction._text_extractor` | 0 | 24 | 0% | stub |
-| `pypdf._utils` | 63 | 63 | 100% | stub |
+| `pypdf._utils` | 63 | 63 | 100% | rust |
 | `pypdf._version` | 1 | 1 | 100% | python |
 | `pypdf._writer` | 0 | 131 | 0% | stub |
 | `pypdf.actions` | 1 | 1 | 100% | python |

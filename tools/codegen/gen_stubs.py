@@ -264,6 +264,7 @@ def module_path(module: dict) -> Path:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--force", action="store_true", help="overwrite hand-written shims")
     args = parser.parse_args()
 
     symbols = json.loads(SYMBOLS.read_text(encoding="utf-8"))
@@ -274,6 +275,7 @@ def main() -> int:
     copied = 0
     skipped = 0
     stale: list[str] = []
+    hand_written_modules: list[str] = []
     for module in symbols["modules"]:
         name = module["module"]
         entry = status.get(name, {})
@@ -294,8 +296,18 @@ def main() -> int:
             content = StubEmitter(name, phase).render_module(tree)
             written += 1
 
+        # Never clobber a hand-written shim: only files that still carry the
+        # generated marker (or do not exist yet) may be (re)generated.
+        existing = target.read_text(encoding="utf-8") if target.exists() else None
+        hand_written = (
+            existing is not None and "AUTO-GENERATED stub" not in existing
+        )
+        if hand_written and not args.force:
+            hand_written_modules.append(str(target.relative_to(ROOT)))
+            continue
+
         if args.check:
-            if not target.exists() or target.read_text(encoding="utf-8") != content:
+            if existing is None or existing != content:
                 stale.append(str(target.relative_to(ROOT)))
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -306,6 +318,10 @@ def main() -> int:
         py_typed.write_text("", encoding="utf-8")
 
     print(f"stubs: {written}, python-verbatim: {copied}, rust-backed: {skipped}")
+    if hand_written_modules:
+        print(
+            "kept hand-written shims: " + ", ".join(hand_written_modules)
+        )
     if args.check:
         if stale:
             print("STALE:", *stale, sep="\n  ")

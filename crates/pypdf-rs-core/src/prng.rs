@@ -17,7 +17,7 @@
 //! token_bytes(n) = ceil(n/8) big-endian words, truncated to n bytes
 //! ```
 
-pub const DEFAULT_SEED: u64 = 0xC0FFEE_5EED_1234;
+pub const DEFAULT_SEED: u64 = 0x00C0_FFEE_5EED_1234;
 const GOLDEN_GAMMA: u64 = 0x9E37_79B9_7F4A_7C15;
 const MIX1: u64 = 0xBF58_476D_1CE4_E5B9;
 const MIX2: u64 = 0x94D0_49BB_1331_11EB;

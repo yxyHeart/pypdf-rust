@@ -66,8 +66,8 @@ fn prng_matches_python_stream() {
         let seed: u64 = fields[0].parse().expect("seed");
 
         let mut stream = SplitMix64::new(seed);
-        for column in 1..=4 {
-            let expected: u64 = fields[column].parse().expect("u64");
+        for (column, text) in fields.iter().enumerate().skip(1).take(4) {
+            let expected: u64 = text.parse().expect("u64");
             assert_eq!(stream.next_u64(), expected, "seed {seed} word {column}");
         }
 

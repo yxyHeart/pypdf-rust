@@ -107,5 +107,14 @@
     "mode": "python",
     "phase": "P2",
     "reason": "frozen-dataclass config container + contextvar/contextmanager plumbing (Pillow/PIL detection); data/config layer kept verbatim"
+  },
+  "pypdf._utils": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "utils_mod.rs",
+    "shim_only": [
+      "classproperty",
+      "deprecate_positional_arguments"
+    ]
   }
 }
