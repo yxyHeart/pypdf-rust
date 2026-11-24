@@ -15,31 +15,41 @@
 
 pypdf 的对象是 Python 对象。我们的 Rust 扩展**直接操作 Python 对象**（PyO3），不自建 Rust 对象图。
 
-| 上游类 | 实现方式 |
+**结论（P2 实测后修订，重要）：类必须是 Python 类，Rust 只承载逻辑。**
+
+原因：官方测试会统计 `sys.settrace` 的**精确调用帧数**（如 `test_cloning_direct_objects__function_calls_and_exceptions`
+断言每 2,000 次操作新增 3,200/4,200 帧），并且大量断言 `isinstance`、MRO、`pickle/deepcopy`、猴子补丁行为。
+PyO3 无法让 pyclass 继承任意 Python 类（`PdfObject` 是 Python 类），因此容器类若做成 pyclass 会破坏
+`isinstance(x, PdfObject)` 与帧计数。故采用与本仓库 `_base` 相同的模式：
+
+| 上游构件 | 实现方式 |
 |---|---|
-| `DictionaryObject` 及其子类（`StreamObject`、`TreeObject`、`PageObject`、`Field`、`Destination`、注释类…） | `#[pyclass(extends=PyDict, subclass, dict)]` + `#[new]` 接受 `*args/**kwargs`（内容由继承的 `dict.__init__` 填充，与 pypdf 完全一致） |
-| `ArrayObject` 及其子类（`RectangleObject`、`Transformation` 不是） | `#[pyclass(extends=PyList, subclass, dict)]` |
-| `FloatObject` / `NumberObject` / `NameObject` / `TextStringObject` / `ByteStringObject` | Python 骨架类（`python/pypdf/generic/_base.py`，手写、固定），方法体调用 Rust 实现——见 §2 |
-| `NullObject` / `BooleanObject` / `IndirectObject` / `IndirectReference` / `PdfReader` / `PdfWriter` / `XmpInformation` / `PaperSize` / `PageRange` / `ContentStream` 等 | 普通 `#[pyclass(subclass, dict)]` |
+| 所有类（`PdfObject`、`NullObject`、`BooleanObject`、`IndirectObject`、`FloatObject`、`NumberObject`、`ByteStringObject`、`TextStringObject`、`NameObject`、`DictionaryObject`、`ArrayObject`、`StreamObject`、`PageObject`、`PdfReader`、`PdfWriter`…） | **Python shim 中按上游原样定义类**（继承关系、类属性、`__slots__`、装饰器都保留）；每个方法体是一行委托（见 §2 示例） |
+| 方法/函数逻辑 | Rust `#[pyfunction]`（命名 `<module>_<func>`，如 `basemod_write_to_stream`），在 `python/pypdf/<module>.py` 中显式导入并绑定 |
 | 异常类 | `pypdf/errors.py`（手写 Python，逐字保留上游继承关系） |
-| `Protocol` / `TypedDict` / 枚举 | Python 骨架（类型与枚举成员对外是 Python API） |
+| `Protocol` / `TypedDict` / 枚举 / dataclass 数据容器 | Python 骨架（类型与枚举成员对外是 Python API） |
+
+**收益**：MRO、`isinstance`、帧计数、子类化、`pickle`/`deepcopy`、猴子补丁行为与上游逐项一致；Rust 仍然是所有算法/解析/写出的唯一实现。
+**代价**：每次方法调用多一层 Python→Rust 调用（C-API，开销可接受），shim 文件较长（但机械、可由上游源码对照生成）。
 
 ### 1.1 从 Rust 创建对象
 
-优先**通过 Python 类构造**，保证 `__init__`、校验、继承链与 pypdf 一模一样：
+**始终通过 Python 类构造**（`cls.call1(...)`，类从 `pypdf.<module>` 取），这样 `__init__`、校验、继承链、帧结构与 pypdf 完全一致：
 
 ```rust
 let cls = py.import("pypdf.generic")?.getattr("DictionaryObject")?;
-let dict = cls.call1((existing_dict,))?;          // DictionaryObject(existing_dict)
+let obj = cls.call1((existing_dict,))?;           // DictionaryObject(existing_dict)
 ```
 
-高频路径可先构造空对象再填充（与 pypdf 解析器行为一致）：
+shim 中的类方法委托示例（`_base` 已落地，可直接照抄风格）：
 
-```rust
-let obj = Py::new(py, DictObject::new())?;        // 空 dict 子类
-let as_dict: &Bound<PyDict> = obj.bind(py).downcast()?;  // 等价于 BaseType
-as_dict.set_item(NameObject::new(py, "/Type")?, ...)?;
+```python
+class NameObject(str):
+    def write_to_stream(self, stream):
+        return _basemod.nameobject_write_to_stream(self, stream)
 ```
+
+Rust 侧签名用显式参数（`&Bound<'_, PyAny>`），返回值/异常与上游一致。
 
 ### 1.2 跨类调用
 
@@ -48,6 +58,12 @@ as_dict.set_item(NameObject::new(py, "/Type")?, ...)?;
 ### 1.3 动态属性
 
 pypdf 到处挂属性（`indirect_reference`、`pdf`、`original_page`、`_data`…）。pyclass 上用 `#[pyclass(dict)]` 允许任意属性，并对高频属性提供 `#[pyo3(get, set)]` 字段以减少开销。
+
+## 1.4 跨模块复用的核心助手
+
+- `crate::base_mod::reference_clone(py, obj, clone, pdf_dest, force_duplicate)` — 上游 `PdfObject._reference_clone` 的精确实现（克隆登记、`_id_translated`、`PreventGC`、incremental 语义）。
+- `crate::base_mod::is_pdf_object_like(py, obj)` — 上游 `isinstance(obj, PdfObject)` 的等价判定（容器类不是 Python 类继承链上的 `PdfObject`，改用此断言）。
+- `crate::pyutil`（Python 运算符、logging/warnings、`pypdf_class` 等）、`crate::errors`（pypdf 异常构造）。
 
 ## 2. 值类型骨架（固定写法）
 

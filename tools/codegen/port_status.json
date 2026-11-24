@@ -116,5 +116,14 @@
       "classproperty",
       "deprecate_positional_arguments"
     ]
+  },
+  "pypdf.generic._base": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "base_mod.rs",
+    "helpers": [
+      "base_mod::reference_clone",
+      "base_mod::is_pdf_object_like"
+    ]
   }
 }

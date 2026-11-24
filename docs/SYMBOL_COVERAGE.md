@@ -49,7 +49,7 @@
 | `pypdf.filters` | 0 | 56 | 0% | stub |
 | `pypdf.generic` | 4 | 4 | 100% | python |
 | `pypdf.generic._appearance_stream` | 0 | 31 | 0% | stub |
-| `pypdf.generic._base` | 105 | 105 | 100% | stub |
+| `pypdf.generic._base` | 105 | 105 | 100% | rust |
 | `pypdf.generic._color` | 0 | 22 | 0% | stub |
 | `pypdf.generic._data_structures` | 0 | 118 | 0% | stub |
 | `pypdf.generic._files` | 0 | 33 | 0% | stub |
