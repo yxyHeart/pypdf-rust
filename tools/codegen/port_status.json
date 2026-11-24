@@ -22,5 +22,80 @@
   "pypdf.pagerange": {
     "mode": "rust",
     "phase": "P2"
+  },
+  "pypdf": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "package glue; re-exports + PIL/crypto detection"
+  },
+  "pypdf.generic": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "package glue; re-exports"
+  },
+  "pypdf.annotations": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "package glue; re-exports"
+  },
+  "pypdf.actions": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "package glue; re-exports"
+  },
+  "pypdf._crypt_providers": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "provider selection glue (try/except imports)"
+  },
+  "pypdf._text_extraction._layout_mode": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "package glue; re-exports"
+  },
+  "pypdf.constants": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data: enums and constant tables"
+  },
+  "pypdf.papersizes": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data: PaperSize dataclass + table"
+  },
+  "pypdf._codecs": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data/glue: encodings + helper comprehensions"
+  },
+  "pypdf._codecs.std": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data table"
+  },
+  "pypdf._codecs.pdfdoc": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data table"
+  },
+  "pypdf._codecs.symbol": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data table"
+  },
+  "pypdf._codecs.zapfding": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data table"
+  },
+  "pypdf._codecs.adobe_glyphs": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "pure data table (17k entries)"
+  },
+  "pypdf._codecs.core_font_metrics": {
+    "mode": "stub",
+    "phase": "P4",
+    "reason": "needs generic._font.FontDescriptor (ported in P4)"
   }
 }

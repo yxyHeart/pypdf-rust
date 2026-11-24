@@ -1,10 +1,11 @@
-"""pypdf is a free and open-source pure-python PDF library capable of splitting,
-
-AUTO-GENERATED stub for the Rust port (upstream pypdf 7.1.1, module ``pypdf``).
-Replaced by a Rust-backed implementation in phase later.
 """
+pypdf is a free and open-source pure-python PDF library capable of splitting,
+merging, cropping, and transforming the pages of PDF files. It can also add
+custom data, viewing options, and passwords to PDF files. pypdf can retrieve
+text and metadata from PDFs as well.
 
-from __future__ import annotations
+You can read the full docs at https://pypdf.readthedocs.io/.
+"""
 
 from ._configuration import Configuration, apply_configuration, get_configuration, overwrite_configuration
 from ._crypt_providers import crypt_provider
@@ -18,10 +19,35 @@ from ._writer import ObjectDeletionFlag, PdfWriter
 from .constants import ImageType
 from .pagerange import PageRange, parse_filename_page_ranges
 from .papersizes import PaperSize
+
 try:
     import PIL
-    pil_version = None
+
+    pil_version = PIL.__version__
 except ImportError:
-    pil_version = 'none'
-_debug_versions = None
-__all__ = []
+    pil_version = "none"
+
+_debug_versions = (
+    f"pypdf=={__version__}, {crypt_provider=}, PIL={pil_version}"
+)
+
+__all__ = [
+    "Configuration",
+    "DocumentInformation",
+    "ImageType",
+    "ObjectDeletionFlag",
+    "PageObject",
+    "PageRange",
+    "PaperSize",
+    "PasswordType",
+    "PdfReader",
+    "PdfWriter",
+    "Transformation",
+    "__version__",
+    "_debug_versions",
+    "apply_configuration",
+    "get_configuration",
+    "mult",
+    "overwrite_configuration",
+    "parse_filename_page_ranges",
+]

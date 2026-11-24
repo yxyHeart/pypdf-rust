@@ -1,10 +1,17 @@
-"""PDF includes a wide variety of standard action types, whose characteristics and
+"""
+PDF includes a wide variety of standard action types, whose characteristics and
+behaviour are defined by an action dictionary. These are defined in this
+submodule.
 
-AUTO-GENERATED stub for the Rust port (upstream pypdf 7.1.1, module ``pypdf.actions``).
-Replaced by a Rust-backed implementation in phase later.
+Trigger events are the other component of actions, and are specific to their
+associated object.
 """
 
-from __future__ import annotations
 
 from ._actions import Action, JavaScript, PageTrigger
-__all__ = []
+
+__all__ = [
+    "Action",
+    "JavaScript",
+    "PageTrigger",
+]

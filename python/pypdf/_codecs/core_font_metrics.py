@@ -1,7 +1,7 @@
 """pypdf port stub
 
 AUTO-GENERATED stub for the Rust port (upstream pypdf 7.1.1, module ``pypdf._codecs.core_font_metrics``).
-Replaced by a Rust-backed implementation in phase later.
+Replaced by a Rust-backed implementation in phase P4.
 """
 
 from __future__ import annotations

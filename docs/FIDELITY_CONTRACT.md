@@ -85,7 +85,19 @@ deflateInit2(level, Z_DEFLATED, 15, 9, compress_type)                 # windowBi
 PNG 行过滤器（None/Sub/Up/Average/Paeth + 自适应选择）在 C 编码器内部完成
 ```
 
-### 5.3 fontTools
+### 5.3 压缩/zlib（FlateDecode）
+
+pypdf 的 Flate 编解码直接用 CPython 的 `zlib` 模块（本机 zlib **1.2.12**）。因此 Rust 侧 Flate 路径
+**通过 PyO3 调用同一个 Python `zlib` 模块**（而不是自建 zlib）：pypdf 本身就是这样依赖的，输出天
+然逐字节一致，且错误类型/边界行为（`zlib.error`、`decompressobj(max_length)`）完全对齐。
+
+> 曾尝试 vendored zlib 1.2.12 静态链接；macOS 26 SDK 下 zlib 1.2.12 的 `fdopen` 宏与 SDK 头文件冲突，
+> 且即便编译成功还要承担 deflate 输出随构建配置漂移的风险。按“依赖一致优先”改为使用解释器内 zlib。
+
+图像编码（Pillow 等价层）仍使用仓库内 vendored 的 zlib-ng 2.3.3 与 libjpeg-turbo 3.2.1（见 §5.1），
+因为它们必须复现 Pillow **自带**的库版本，而不是 CPython 的 zlib。
+
+### 5.4 fontTools
 
 pypdf 仅**读取**字体（`TTFont` 表访问、`cffLib.CFFFontSet` 解析）用于 `from_truetype_font_file` 与 CFF 编码推导，**不写出、不做子集化**。因此 fontTools 一致性为**表值级**：Rust 解析出的表字段与 fontTools 逐字段相等（在 P4 用样例字体验证）。
 
