@@ -174,11 +174,6 @@ fn err_is(py: Python<'_>, err: &PyErr, module: &str, name: &str) -> bool {
     }
 }
 
-/// `isinstance(err, <builtin>)`.
-fn err_is_builtin(py: Python<'_>, err: &PyErr, name: &str) -> bool {
-    err_is(py, err, "builtins", name)
-}
-
 fn err_is_limit_reached(py: Python<'_>, err: &PyErr) -> bool {
     err_is(py, err, "pypdf.errors", "LimitReachedError")
 }
@@ -187,9 +182,12 @@ fn err_is_pdf_read_error(py: Python<'_>, err: &PyErr) -> bool {
     err_is(py, err, "pypdf.errors", "PdfReadError")
 }
 
-/// `raise <Exception>(...) from exc`.
+/// `raise <Exception>(...) from exc`: sets `__cause__` (and therefore
+/// `__suppress_context__`) plus `__context__`, exactly like CPython's
+/// `raise ... from ...` inside an `except` block.
 fn raise_from(new_error: PyErr, py: Python<'_>, cause: PyErr) -> PyErr {
-    new_error.set_cause(py, Some(cause));
+    new_error.set_cause(py, Some(cause.clone_ref(py)));
+    new_error.set_context(py, Some(cause));
     new_error
 }
 
@@ -270,16 +268,6 @@ fn py_hex(py: Python<'_>, value: &Bound<'_, PyAny>) -> PyResult<String> {
 /// `stream.seek(-len(rest), 1)` style helper for a Python bytes object.
 fn seek_back(stream: &Bound<'_, PyAny>, back: usize) -> PyResult<()> {
     seek(stream, -(back as i64), 1)
-}
-
-/// Read a classmethod/staticmethod attribute and call it with keyword arguments.
-fn call_kwargs<'py>(
-    callable: &Bound<'py, PyAny>,
-    args: Vec<Bound<'py, PyAny>>,
-    kwargs: &Bound<'py, PyDict>,
-) -> PyResult<Bound<'py, PyAny>> {
-    let tuple = PyTuple::new(args[0].py(), args)?;
-    callable.call(tuple, Some(kwargs))
 }
 
 /// `str(obj)` (for exception messages).
@@ -2049,13 +2037,10 @@ fn datastructures_treeobject_remove_child<'py>(
     let mut found = false;
     let mut previous: Option<Bound<'py, PyAny>> = None;
     let mut previous_reference: Option<Bound<'py, PyAny>> = None;
-    let mut current_reference: Option<Bound<'py, PyAny>> = Some(slf.get_item("/First")?);
-    let mut current: Option<Bound<'py, PyAny>> = Some(
-        current_reference
-            .as_ref()
-            .expect("current reference")
-            .call_method0("get_object")?,
-    );
+    let first_reference = slf.get_item("/First")?;
+    let mut current_reference: Option<Bound<'py, PyAny>> = Some(first_reference.clone());
+    let mut current: Option<Bound<'py, PyAny>> =
+        Some(first_reference.call_method0("get_object")?);
     let last_reference = slf.get_item("/Last")?;
     let last = last_reference.call_method0("get_object")?;
     let mut visited: HashSet<usize> = HashSet::new();
@@ -3455,7 +3440,10 @@ fn datastructures_destination_new<'py>(
     {
         // Prefer to be more robust, not only to null parameters.
         let value = match collect_unpack(py, &args)? {
-            Some(items) if items.len() == 1 => items.into_iter().next().expect("one item"),
+            Some(mut items) if items.len() == 1 => match items.pop() {
+                Some(item) => item,
+                None => null_class.call0()?,
+            },
             Some(_) | None => null_class.call0()?,
         };
         slf.set_item(name_class.call1((typ_arguments.getattr("TOP")?,))?, value)?;
@@ -3464,7 +3452,10 @@ fn datastructures_destination_new<'py>(
     {
         // Prefer to be more robust, not only to null parameters.
         let value = match collect_unpack(py, &args)? {
-            Some(items) if items.len() == 1 => items.into_iter().next().expect("one item"),
+            Some(mut items) if items.len() == 1 => match items.pop() {
+                Some(item) => item,
+                None => null_class.call0()?,
+            },
             Some(_) | None => null_class.call0()?,
         };
         slf.set_item(name_class.call1((typ_arguments.getattr("LEFT")?,))?, value)?;
@@ -3538,7 +3529,8 @@ fn datastructures_destination_write_to_stream<'py>(
     let key = name_class.call1(("/D",))?;
     key.call_method1("write_to_stream", (stream,))?;
     stream.call_method1("write", (py_bytes(py, b" "),))?;
-    let value = slf.call_method0("dest_array")?;
+    // `dest_array` is a property, so read it instead of calling it.
+    let value = slf.getattr("dest_array")?;
     value.call_method1("write_to_stream", (stream,))?;
 
     let key = name_class.call1(("/S",))?;
@@ -3975,6 +3967,9 @@ pub fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
 // @pypdf: pypdf.generic._data_structures.TreeObject
 // @pypdf: pypdf.generic._data_structures.TreeObject.__init__
 // @pypdf: pypdf.generic._data_structures._FontFileCharacterMap
+// @pypdf: pypdf.generic._data_structures._FontFileCharacterMap.digest
+// @pypdf: pypdf.generic._data_structures._FontFileCharacterMap.map_dict
+// @pypdf: pypdf.generic._data_structures._FontFileCharacterMap.int_entry
 // @pypdf: pypdf.generic._data_structures.StreamObject
 // @pypdf: pypdf.generic._data_structures.StreamObject.__init__
 // @pypdf: pypdf.generic._data_structures.StreamObject._font_file_character_map

@@ -124,10 +124,7 @@ fn py_slice_i64<'py>(
         .call1((to_obj(start)?, to_obj(stop)?, py.None()))
 }
 
-fn py_add<'py>(
-    left: &Bound<'py, PyAny>,
-    right: &Bound<'py, PyAny>,
-) -> PyResult<Bound<'py, PyAny>> {
+fn py_add<'py>(left: &Bound<'py, PyAny>, right: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
     left.call_method1("__add__", (right,))
 }
 
@@ -225,8 +222,7 @@ fn filters_decompress_with_limit<'py>(
     let unconsumed_tail = decompressor.getattr("unconsumed_tail")?;
     if unconsumed_tail.is_truthy()? {
         let remaining = unconsumed_tail.len()?;
-        let message =
-            format!("Limit reached while decompressing. {remaining} bytes remaining.");
+        let message = format!("Limit reached while decompressing. {remaining} bytes remaining.");
         return Err(errors::limit_reached_error(py, &message));
     }
     Ok(result.unbind())
@@ -273,8 +269,9 @@ fn filters_decompress<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyResul
             let wbits = zlib.getattr("MAX_WBITS")?.call_method1("__or__", (32,))?;
             let decompressor = zlib.call_method1("decompressobj", (wbits,))?;
             let configuration = configuration(py)?;
-            let mut remaining_limit: i128 =
-                configuration.getattr("zlib_maximum_output_length")?.extract()?;
+            let mut remaining_limit: i128 = configuration
+                .getattr("zlib_maximum_output_length")?
+                .extract()?;
             let recovery_input_limit: i128 = configuration
                 .getattr("zlib_maximum_recovery_input_length")?
                 .extract()?;
@@ -522,7 +519,8 @@ fn decode_png_prediction_bytes(
 
     let columns_usize = columns as usize;
     let bpp = (row_length_usize - 1) / columns_usize;
-    let mut output: Vec<u8> = Vec::with_capacity(data.len().saturating_sub(data.len() / row_length_usize));
+    let mut output: Vec<u8> =
+        Vec::with_capacity(data.len().saturating_sub(data.len() / row_length_usize));
     let mut previous_row_data = vec![0u8; row_length_usize];
 
     let mut row = 0usize;
@@ -634,7 +632,8 @@ fn filters_flate_encode<'py>(
     data: &Bound<'py, PyAny>,
     level: i64,
 ) -> PyResult<Py<PyAny>> {
-    Ok(py.import("zlib")?
+    Ok(py
+        .import("zlib")?
         .call_method1("compress", (data, level))?
         .unbind())
 }
@@ -646,10 +645,7 @@ fn filters_flate_encode<'py>(
 // @pypdf: pypdf.filters.ASCIIHexDecode
 // @pypdf: pypdf.filters.ASCIIHexDecode.decode
 #[pyfunction]
-fn filters_asciihex_decode<'py>(
-    py: Python<'py>,
-    data: &Bound<'py, PyAny>,
-) -> PyResult<Py<PyAny>> {
+fn filters_asciihex_decode<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyResult<Py<PyAny>> {
     let data = if data.is_instance_of::<PyString>() {
         data.call_method0("encode")?
     } else {
@@ -698,10 +694,7 @@ fn filters_asciihex_decode<'py>(
 // @pypdf: pypdf.filters.RunLengthDecode
 // @pypdf: pypdf.filters.RunLengthDecode.decode
 #[pyfunction]
-fn filters_runlength_decode<'py>(
-    py: Python<'py>,
-    data: &Bound<'py, PyAny>,
-) -> PyResult<Py<PyAny>> {
+fn filters_runlength_decode<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyResult<Py<PyAny>> {
     let data = extract_bytes(py, data)?;
     let data_length = data.len();
     let maximum_output_length: i128 =
@@ -712,10 +705,7 @@ fn filters_runlength_decode<'py>(
     let mut total_length: i128 = 0;
     loop {
         if index >= data_length {
-            logger_plain(
-                py,
-                "missing EOD in RunLengthDecode, check if output is OK",
-            )?;
+            logger_plain(py, "missing EOD in RunLengthDecode, check if output is OK")?;
             break; // Reached end of string without an EOD
         }
         let length_byte = data[index];
@@ -744,10 +734,7 @@ fn filters_runlength_decode<'py>(
             count as i128
         } else {
             if index >= data_length {
-                logger_plain(
-                    py,
-                    "Missing EOD in RunLengthDecode, check if output is OK",
-                )?;
+                logger_plain(py, "Missing EOD in RunLengthDecode, check if output is OK")?;
                 break; // Reached end of string without the replicated byte
             }
             let count = 257 - length_byte as usize;
@@ -803,10 +790,7 @@ fn filters_lzw_decode<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyResul
 // @pypdf: pypdf.filters.ASCII85Decode
 // @pypdf: pypdf.filters.ASCII85Decode.decode
 #[pyfunction]
-fn filters_ascii85_decode<'py>(
-    py: Python<'py>,
-    data: &Bound<'py, PyAny>,
-) -> PyResult<Py<PyAny>> {
+fn filters_ascii85_decode<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyResult<Py<PyAny>> {
     let data = if data.is_instance_of::<PyString>() {
         data.call_method0("encode")?
     } else {
@@ -816,7 +800,11 @@ fn filters_ascii85_decode<'py>(
 
     let mut data = data.call_method1("strip", (&whitespaces,))?;
     let length = data.len()?;
-    if length > 2 && data.call_method1("endswith", (py_bytes_obj(py, b">"),))?.is_truthy()? {
+    if length > 2
+        && data
+            .call_method1("endswith", (py_bytes_obj(py, b">"),))?
+            .is_truthy()?
+    {
         let head = data.get_item(py_slice_i64(py, None, Some(-1))?)?;
         let head = head.call_method1("rstrip", (&whitespaces,))?;
         let last = data.get_item(py_slice_i64(py, Some(-1), None)?)?;
@@ -895,10 +883,7 @@ fn filters_brotli_check_available(py: Python<'_>) -> PyResult<()> {
 
 // @pypdf: pypdf.filters.BrotliDecode.decode
 #[pyfunction]
-fn filters_brotli_decode<'py>(
-    py: Python<'py>,
-    data: &Bound<'py, PyAny>,
-) -> PyResult<Py<PyAny>> {
+fn filters_brotli_decode<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyResult<Py<PyAny>> {
     filters_module(py)?
         .getattr("BrotliDecode")?
         .getattr("_check_brotli_available")?
@@ -935,10 +920,8 @@ fn filters_brotli_decode<'py>(
             }
             Err(error) => {
                 if error.is_instance(py, &brotli_error) {
-                    let wrapped = errors::limit_reached_error(
-                        py,
-                        "Limit reached while decompressing.",
-                    );
+                    let wrapped =
+                        errors::limit_reached_error(py, "Limit reached while decompressing.");
                     return Err(error_with_cause(py, wrapped, error.value(py).as_any()));
                 }
                 return Err(error);
@@ -951,10 +934,7 @@ fn filters_brotli_decode<'py>(
 
 // @pypdf: pypdf.filters.BrotliDecode.encode
 #[pyfunction]
-fn filters_brotli_encode<'py>(
-    py: Python<'py>,
-    data: &Bound<'py, PyAny>,
-) -> PyResult<Py<PyAny>> {
+fn filters_brotli_encode<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyResult<Py<PyAny>> {
     filters_module(py)?
         .getattr("BrotliDecode")?
         .getattr("_check_brotli_available")?
@@ -1051,7 +1031,9 @@ fn filters_ccitt_get_parameters<'py>(
         let parameters_unwrapped = parameters.call_method0("get_object")?;
         let decode_parm_list: Vec<Bound<'py, PyAny>> =
             if parameters_unwrapped.is_instance(&generic_class(py, "ArrayObject")?)? {
-                parameters_unwrapped.try_iter()?.collect::<PyResult<Vec<_>>>()?
+                parameters_unwrapped
+                    .try_iter()?
+                    .collect::<PyResult<Vec<_>>>()?
             } else {
                 vec![parameters_unwrapped]
             };
@@ -1155,10 +1137,10 @@ fn filters_ccitt_decode<'py>(
         pack_args.push(value.into_pyobject(py)?.into_any());
     }
     let push_tag = |args: &mut Vec<Bound<'py, PyAny>>,
-                        tag: i64,
-                        kind: i64,
-                        count: i64,
-                        value: Bound<'py, PyAny>|
+                    tag: i64,
+                    kind: i64,
+                    count: i64,
+                    value: Bound<'py, PyAny>|
      -> PyResult<()> {
         args.push(tag.into_pyobject(py)?.into_any());
         args.push(kind.into_pyobject(py)?.into_any());
@@ -1239,10 +1221,7 @@ fn jbig2_decode_impl<'py>(
     environment.set_item("LC_ALL", "C")?;
 
     let binary = configuration(py)?.getattr("jbig2dec_binary")?;
-    let maximum_output_length = pyutil::py_str(&config_value(
-        py,
-        "jbig2_maximum_output_length",
-    )?)?;
+    let maximum_output_length = pyutil::py_str(&config_value(py, "jbig2_maximum_output_length")?)?;
 
     let arguments = PyList::empty(py);
     arguments.append(binary)?;
@@ -1282,12 +1261,7 @@ fn jbig2_decode_impl<'py>(
         let decoded = stderr.call_method1("decode", ("utf-8",))?;
         for line in decoded.call_method0("splitlines")?.try_iter()? {
             let line = line?;
-            pyutil::logger_warning(
-                py,
-                SOURCE,
-                &pyutil::py_str(&line)?,
-                None,
-            )?;
+            pyutil::logger_warning(py, SOURCE, &pyutil::py_str(&line)?, None)?;
         }
     }
     let returncode: i64 = result.getattr("returncode")?.extract()?;
@@ -1321,12 +1295,12 @@ fn filters_jbig2_decode<'py>(
         None => py.None().into_bound(py),
     };
 
-    let tempdir = py.import("tempfile")?.getattr("TemporaryDirectory")?.call0()?;
+    let tempdir = py
+        .import("tempfile")?
+        .getattr("TemporaryDirectory")?
+        .call0()?;
     let entered = tempdir.call_method0("__enter__")?;
-    let directory = py
-        .import("pathlib")?
-        .getattr("Path")?
-        .call1((entered,))?;
+    let directory = py.import("pathlib")?.getattr("Path")?.call1((entered,))?;
     let paths = PyList::empty(py);
     let result = jbig2_decode_impl(py, &module, data, &decode_parms, &directory, &paths);
     let _ = tempdir.call_method1("__exit__", (py.None(), py.None(), py.None()));
@@ -1498,13 +1472,7 @@ fn filters_decode_stream_data<'py>(
         };
 
         if eq_any(filter_name, &["/ASCIIHexDecode", "/AHx"])? {
-            deprecate_inline(
-                py,
-                &module,
-                filter_name,
-                "/AHx",
-                "/ASCIIHexDecode",
-            )?;
+            deprecate_inline(py, &module, filter_name, "/AHx", "/ASCIIHexDecode")?;
             data = class_static_call(
                 py,
                 &module,
@@ -1641,7 +1609,10 @@ pub fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(filters_ccitt_get_parameters, module)?)?;
     module.add_function(wrap_pyfunction!(filters_ccitt_decode, module)?)?;
     module.add_function(wrap_pyfunction!(filters_jbig2_decode, module)?)?;
-    module.add_function(wrap_pyfunction!(filters_jbig2_is_binary_compatible, module)?)?;
+    module.add_function(wrap_pyfunction!(
+        filters_jbig2_is_binary_compatible,
+        module
+    )?)?;
     module.add_function(wrap_pyfunction!(
         filters_deprecate_inline_image_filters,
         module

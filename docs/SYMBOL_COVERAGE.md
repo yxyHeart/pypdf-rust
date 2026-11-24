@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**886/1934**（45.81%）
+总计：**889/1934**（45.97%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -46,12 +46,12 @@
 | `pypdf.annotations._non_markup_annotations` | 0 | 4 | 0% | stub |
 | `pypdf.constants` | 379 | 379 | 100% | python |
 | `pypdf.errors` | 15 | 15 | 100% | python |
-| `pypdf.filters` | 56 | 56 | 100% | stub |
+| `pypdf.filters` | 56 | 56 | 100% | rust |
 | `pypdf.generic` | 4 | 4 | 100% | python |
 | `pypdf.generic._appearance_stream` | 0 | 31 | 0% | stub |
 | `pypdf.generic._base` | 105 | 105 | 100% | rust |
 | `pypdf.generic._color` | 0 | 22 | 0% | stub |
-| `pypdf.generic._data_structures` | 115 | 118 | 97% | stub |
+| `pypdf.generic._data_structures` | 118 | 118 | 100% | stub |
 | `pypdf.generic._files` | 0 | 33 | 0% | stub |
 | `pypdf.generic._fit` | 0 | 12 | 0% | stub |
 | `pypdf.generic._font` | 0 | 61 | 0% | stub |

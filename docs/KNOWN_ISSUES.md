@@ -71,6 +71,21 @@
 
 ---
 
+## `pypdf.filters`
+
+| # | 偏差 | 可观测性 | 处置 |
+|---|---|---|---|
+| F1 | `FlateDecode._decode_png_prediction` 对**负 columns**（私有 API）抛 `ValueError("negative count")` 而非模拟 Python 负索引循环 | `_get_parameters` 强制 ≥1，公开路径不可达；无测试 | 已接受（`columns==0`/负 `row_length` 仍复刻上游 `ZeroDivisionError`/`ValueError`） |
+| F2 | 配置上限以 `i128` 读取；若用户把配置项覆盖成 float，端口抛 `TypeError` 而非 Python 比较语义 | 官方覆盖值均为 int（含 `sys.maxsize`） | 已接受 |
+| F3 | 模块级函数是 PyO3 builtin（`inspect.signature`/`__code__`/`__doc__` 文本不同）；类仍是 Python 且保留上游类属性与 dataclass 语义 | 无测试观测 | 已接受 |
+| F4 | `_SINGLE_BYTES` 保留在 shim（API）；Rust 回退路径每次新建 1 字节对象而非索引 | 无 | 已接受 |
+| F5 | 旧版 `MAX_*` 常量 / `CCITTParameters` 字段放在 shim（数据）；`filters_mod.rs` 用注释块登记其 A6 注解（56/56 仍覆盖） | 无 | 已接受 |
+| F6 | 过滤器名判断用 `name == literal` 而非 tuple-contains 顺序；仅对非 str 的 `/Filter` 覆盖有差异 | 无测试观测 | 已接受 |
+
+差分证据：49 组 / 约 900 个确定性子用例（含 predictors 1–15、低比特深度 #4308 上游 bug、`decompress` 回退与限额消息、CCITT 头字节、JBIG2 错误路径、间接 `/Filter`/`/DecodeParms`）在 oracle 与 dev 下输出**字节一致**。
+
+---
+
 ## 工具链备注
 
 - `tools/fuzz/*` 的语料是对 `resources/` 做确定性结构变异生成；在模块未移植完成前，dev 与 oracle 的差异来自 stub 行为（`TypeError: 'NoneType' ...`），属于"未完成"而非偏差。

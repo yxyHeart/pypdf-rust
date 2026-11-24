@@ -130,5 +130,10 @@
     "mode": "rust",
     "phase": "P2",
     "module_rs": "genutils_mod.rs"
+  },
+  "pypdf.filters": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "filters_mod.rs"
   }
 }
