@@ -118,6 +118,19 @@ class _Missing:
     pass
 
 
+def unwrap_instrumented(fn):
+    """Return the innermost non-instrumentation callable.
+
+    Counting passes run once per workload in the same process; without this the
+    wrappers would nest one level per pass (extra Python frames per call).
+    """
+    seen = 0
+    while getattr(fn, "__rw_instrument__", False) and hasattr(fn, "__wrapped__") and seen < 64:
+        fn = fn.__wrapped__
+        seen += 1
+    return fn
+
+
 _MISSING = _Missing()
 
 
@@ -180,7 +193,7 @@ class StageTimer:
 
     # -- convenience patchers -------------------------------------------------
     def patch_method(self, patches, cls, attr, stage=None):
-        fn = cls.__dict__.get(attr)
+        fn = unwrap_instrumented(cls.__dict__.get(attr))
         if fn is None or not isinstance(fn, types.FunctionType) and not callable(fn):
             patches.failures.append(f"no attr {cls.__name__}.{attr}")
             return False
@@ -194,7 +207,7 @@ class StageTimer:
         if mod is None:
             patches.failures.append(f"module not imported: {module_name}")
             return False
-        fn = mod.__dict__.get(attr)
+        fn = unwrap_instrumented(mod.__dict__.get(attr))
         if not isinstance(fn, types.FunctionType):
             patches.failures.append(f"{module_name}.{attr} not a python function")
             return False
@@ -206,7 +219,10 @@ class StageTimer:
             patches.failures.append(f"{cls.__name__}.{attr} is not a readable property")
             return False
         wrapped = property(
-            self.wrap(stage or attr, prop.fget), prop.fset, prop.fdel, prop.__doc__
+            self.wrap(stage or attr, unwrap_instrumented(prop.fget)),
+            prop.fset,
+            prop.fdel,
+            prop.__doc__,
         )
         return patches.set_class_attr(cls, attr, wrapped)
 
@@ -251,6 +267,9 @@ class BoundaryCounter:
     wrapper objects (the global wrapper calls the original builtin directly).
     """
 
+    #: name -> original extension function, captured before the first patching
+    _ext_originals = None
+
     def __init__(self):
         self.counts = {}
         self.by_phase = {}
@@ -291,6 +310,7 @@ class BoundaryCounter:
             return fn(*args, **kwargs)
 
         wrapper.__wrapped__ = fn
+        wrapper.__rw_instrument__ = True
         return wrapper
 
     def _make_ext_wrapper(self, fn, key):
@@ -307,25 +327,36 @@ class BoundaryCounter:
             return fn(*args, **kwargs)
 
         wrapper.__wrapped__ = fn
+        wrapper.__rw_instrument__ = True
         return wrapper
 
     # -- patching -----------------------------------------------------------
     def patch_boundary(self, patches):
+        """Install boundary counters (idempotent across counting passes).
+
+        Counting passes run one per workload in the same process, so the second
+        pass must wrap the *original* extension functions again -- ``vars(ext)``
+        already holds the previous pass' Python wrappers by then.  The originals
+        are therefore captured once and kept in ``_ext_originals``.
+        """
         try:
             import pypdf._pypdf as ext
         except ImportError:
             patches.failures.append("pypdf._pypdf not importable (reference backend)")
             return False
 
-        ext_funcs = {}
-        for name, value in list(vars(ext).items()):
-            if isinstance(value, types.BuiltinFunctionType):
-                ext_funcs[id(value)] = name
-        self._impl_names = set(ext_funcs.values())
+        if BoundaryCounter._ext_originals is None:
+            originals = {}
+            for name, value in list(vars(ext).items()):
+                raw = getattr(value, "__wrapped__", value)
+                if isinstance(raw, types.BuiltinFunctionType):
+                    originals[name] = raw
+            BoundaryCounter._ext_originals = originals
+        originals = BoundaryCounter._ext_originals
+        self._impl_names = set(originals)
 
         # route (a): extension module attributes (dynamic ``_writermod.x`` style)
-        for name in list(ext_funcs.values()):
-            original = getattr(ext, name)
+        for name, original in originals.items():
             wrapper = self._make_ext_wrapper(original, name)
             if patches.set_module_attr("pypdf._pypdf", name, wrapper):
                 self.patched_ext_attrs += 1
@@ -337,22 +368,28 @@ class BoundaryCounter:
             if not (mod_name == "pypdf" or mod_name.startswith("pypdf.")):
                 continue
             for attr, value in list(vars(mod).items()):
-                if isinstance(value, types.BuiltinFunctionType):
-                    key = ext_funcs.get(id(value))
-                    if key is None:
-                        continue
-                    wrapper = self._make_global_wrapper(value, key)
-                    if patches.set_module_attr(mod_name, attr, wrapper):
-                        self.patched_globals += 1
+                raw = getattr(value, "__wrapped__", value)
+                if not isinstance(raw, types.BuiltinFunctionType):
+                    continue
+                key = None
+                for candidate_name, original in originals.items():
+                    if original is raw:
+                        key = candidate_name
+                        break
+                if key is None:
+                    continue
+                wrapper = self._make_global_wrapper(original, key)
+                if patches.set_module_attr(mod_name, attr, wrapper):
+                    self.patched_globals += 1
         return True
 
     def patch_class_method(self, patches, cls, attr, key=None):
         """Count calls of a Python-level method (works on both backends)."""
         raw = cls.__dict__.get(attr)
         if isinstance(raw, (staticmethod, classmethod)):
-            fn = raw.__func__
+            fn = unwrap_instrumented(raw.__func__)
         elif isinstance(raw, types.FunctionType):
-            fn = raw
+            fn = unwrap_instrumented(raw)
         elif isinstance(raw, property):
             patches.failures.append(f"{cls.__name__}.{attr} is property; use property patcher")
             return False
@@ -372,7 +409,7 @@ class BoundaryCounter:
         if mod is None:
             patches.failures.append(f"module not imported: {module_name}")
             return False
-        fn = mod.__dict__.get(attr)
+        fn = unwrap_instrumented(mod.__dict__.get(attr))
         if not isinstance(fn, types.FunctionType):
             patches.failures.append(f"{module_name}.{attr} not a python function")
             return False
@@ -386,7 +423,9 @@ class BoundaryCounter:
             patches.failures.append(f"{cls.__name__}.{attr} is not a readable property")
             return False
         wrapped = property(
-            self._make_global_wrapper(prop.fget, key or f"py:{cls.__name__}.{attr}"),
+            self._make_global_wrapper(
+                unwrap_instrumented(prop.fget), key or f"py:{cls.__name__}.{attr}"
+            ),
             prop.fset,
             prop.fdel,
             prop.__doc__,

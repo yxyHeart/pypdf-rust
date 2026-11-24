@@ -1,20 +1,20 @@
 # Mutation fuzzing report (§8.4)
 
-Generated: `2026-11-24T12:25:40Z` (UTC)  
-Repository commit: `6b14dbe`
+Generated: `2026-11-24T13:48:00Z` (UTC)  
+Repository commit: `1d8f706`
 
 ## Corpus
 
 * 200 mutated PDF(s), seed `20261124`, source PDFs under `resources/`: 72
 * per-file timeout: 10 s
-* corpus directory: `/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-fuzz-corpus-ztz3xvgv/corpus`
+* corpus directory: `/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-fuzz-corpus-x_zhliiw/corpus`
 
 ## Per-side execution
 
 | Side | Files | Handled | Raised | Timeouts | Panics | Hard crash | Wall |
 |---|---|---|---|---|---|---|---|
-| oracle | 200 | 127 | 73 | 0 | 0 | False | 5.665 s |
-| port | 200 | 127 | 73 | 0 | 0 | False | 15.699 s |
+| oracle | 200 | 127 | 73 | 0 | 0 | False | 5.32 s |
+| port | 200 | 127 | 73 | 0 | 0 | False | 12.613 s |
 
 ## Comparison (must be identical)
 

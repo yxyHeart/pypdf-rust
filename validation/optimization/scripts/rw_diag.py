@@ -220,7 +220,30 @@ def _write_io(writer):
     return buffer.getvalue()
 
 
-def writer_build(wid, files, params, counter=None, facts=None):
+class wall:
+    """Record wall time of one build sub-phase into ``timings`` (no patch)."""
+
+    def __init__(self, timings, name, counter=None):
+        self.timings = timings
+        self.name = name
+        self.counter = counter
+
+    def __enter__(self):
+        if self.counter is not None:
+            self.counter.start_phase(self.name)
+        self.t0 = inst.PERF()
+        return self
+
+    def __exit__(self, *exc):
+        if self.counter is not None:
+            self.counter.end_phase()
+        if self.timings is not None:
+            slot = self.timings.setdefault(self.name, [])
+            slot.append(inst.PERF() - self.t0)
+        return False
+
+
+def writer_build(wid, files, params, counter=None, facts=None, timings=None):
     """Construct the output writer (source readers + page clone + edits).
 
     Shared by the workload operations and by the layered timing, so both use
@@ -230,7 +253,10 @@ def writer_build(wid, files, params, counter=None, facts=None):
 
     writer = PdfWriter()
     if wid == "W5":
-        with Phase(counter, "append"):
+        # The source-reader cost of W5 is measured by the layered/wall-phase
+        # "open"/"open+pages" layers on a fresh writer, never inside the timed
+        # append+write pipeline (that would perturb the pipeline itself).
+        with Phase(counter, "append"), wall(timings, "append"):
             for path in files:
                 writer.append(str(path))
         if facts is not None:
@@ -241,9 +267,9 @@ def writer_build(wid, files, params, counter=None, facts=None):
     lower_left = tuple(params.get("crop_lower_left") or [10.0, 10.0])
     upper_right = tuple(params.get("crop_upper_right") or [500.0, 700.0])
     index = 0
-    with Phase(counter, "read_source"):
+    with Phase(counter, "read_source"), wall(timings, "read_source"):
         sources = [(path, PdfReader(str(path))) for path in files]
-    with Phase(counter, "add_page"):
+    with Phase(counter, "add_page"), wall(timings, "add_page"):
         for _path, reader in sources:
             for page in reader.pages:
                 new_page = writer.add_page(page)
@@ -645,13 +671,24 @@ def run_wall_phases(wid, workload, files, repeats):
                 phase["boxes"] = phase.get("boxes", 0) + (t3 - t2)
                 phase["rotation"] = phase.get("rotation", 0) + (t4 - t3)
         else:
+            timings = {}
             t0 = inst.PERF()
-            writer = writer_build(wid, files, params)
-            t1 = inst.PERF()
+            writer = writer_build(wid, files, params, timings=timings)
             _write_io(writer)
             t2 = inst.PERF()
-            phase["build"] = t1 - t0
-            phase["write"] = t2 - t1
+            phase["total_pipeline"] = t2 - t0
+            for name, values in timings.items():
+                phase[name] = sum(values)
+            if wid == "W5":
+                # source_* are an extra, out-of-band measurement of what
+                # ``append`` does internally (each append re-opens its file).
+                phase["write"] = phase["total_pipeline"] - phase["append"]
+                phase["build"] = phase["append"]
+            else:
+                phase["write"] = (
+                    phase["total_pipeline"] - phase["read_source"] - phase["add_page"]
+                )
+                phase["build"] = phase["total_pipeline"] - phase["write"]
         phase["total"] = inst.PERF() - started
         totals.append(phase["total"])
         repeat_phase = phase
@@ -818,11 +855,10 @@ def main(argv=None):
     )
     parser.add_argument("--repeat", type=int, default=0, help="override repeat count")
     parser.add_argument("--out", required=True)
-    parser.add_argument("--skip-profile", action="store_true")
     parser.add_argument(
         "--no-per-file",
         action="store_true",
-        help="skip the per-input-file pass (it repeats stages+counts once per file)",
+        help="skip the per-input-file passes",
     )
     args = parser.parse_args(argv)
 
@@ -840,88 +876,68 @@ def main(argv=None):
     }
 
     ordered = [wid.strip() for wid in args.workloads.split(",") if wid.strip()]
+    prepared = {}
     for wid in ordered:
         workload = workloads[wid]
         files = resolve_files(workload)
         missing = [str(path) for path in files if not path.is_file()]
         if missing:
             raise SystemExit(f"{wid}: missing input files: {missing}")
-        entry = {
+        prepared[wid] = (workload, files)
+        repeats = args.repeat or (7 if wid in {"W1", "W5", "W6", "W7"} else 5)
+        result["workloads"][wid] = {
             "name": workload["name"],
             "type": workload["type"],
             "files": workload["files"],
             "params": workload.get("params") or {},
             "file_bytes": {str(path.relative_to(ROOT)): path.stat().st_size for path in files},
+            "repeat": repeats,
         }
-        default_repeat = 7 if wid in {"W1", "W5", "W6", "W7"} else 5
-        repeats = args.repeat or default_repeat
-        mode = args.mode
-        started = time.time()
 
-        if mode in {"all", "layers"}:
-            print(f"[{wid}] warm-up", file=sys.stderr, flush=True)
-            warmup(wid, workload, files)
+    mode = args.mode
+    per_file = not args.no_per_file
 
-        if mode in {"all", "phases"}:
-            print(f"[{wid}] wall phases (repeat={repeats})", file=sys.stderr, flush=True)
+    # Passes are executed mode-major (all workloads for one mode, then the next
+    # mode) because the instance-creation counters installed by the counting
+    # passes cannot be removed again on CPython 3.14 and would otherwise pollute
+    # every workload measured after the first counting pass.
+    measurement_passes = []
+    if mode in {"all", "layers"}:
+        measurement_passes.append(("layers", run_layers_wrapper))
+    if mode in {"all", "phases"}:
+        measurement_passes.append(("wall_phases", run_wall_phases))
+    if mode in {"all", "stages"}:
+        measurement_passes.append(("stages", run_stages))
+    if mode in {"all", "stages", "perfile"} and per_file:
+        measurement_passes.append(("per_file", run_per_file_pass))
+    if mode in {"all", "profile"}:
+        measurement_passes.append(("profile", run_profile_pass))
+
+    counting_passes = []
+    if mode in {"all", "counts"}:
+        counting_passes.append(("counts", run_counts))
+    if mode in {"all", "counts", "perfile"} and per_file:
+        counting_passes.append(("per_file_counts", run_per_file_counts_pass))
+
+    for key, runner in measurement_passes + counting_passes:
+        is_counting = key in {"counts", "per_file_counts"}
+        for wid in ordered:
+            workload, files = prepared[wid]
+            repeats = result["workloads"][wid]["repeat"]
+            if is_counting:
+                # counting is deterministic: one repetition is enough (and keeps
+                # the accumulated ``facts`` list from containing duplicates)
+                repeats = 1
+            print(f"[{wid}] {key} (repeat={repeats})", file=sys.stderr, flush=True)
+            started = time.time()
             try:
-                entry["wall_phases"] = run_wall_phases(wid, workload, files, repeats)
+                result["workloads"][wid][key] = runner(wid, workload, files, repeats)
             except Exception:  # noqa: BLE001
-                entry["wall_phases_error"] = traceback.format_exc()
-
-        if mode in {"all", "layers"}:
-            print(f"[{wid}] layers (repeat={repeats})", file=sys.stderr, flush=True)
-            try:
-                entry["layers"] = run_layers(wid, workload, files, repeats)
-            except Exception:  # noqa: BLE001
-                entry["layers_error"] = traceback.format_exc()
-
-        if mode in {"all", "stages"}:
-            print(f"[{wid}] stages (repeat={repeats})", file=sys.stderr, flush=True)
-            try:
-                entry["stages"] = run_stages(wid, workload, files, repeats)
-            except Exception:  # noqa: BLE001
-                entry["stages_error"] = traceback.format_exc()
-
-        if mode in {"all", "stages", "perfile"} and not args.no_per_file:
-            print(f"[{wid}] per-file stages (repeat={max(3, repeats // 2)})", file=sys.stderr, flush=True)
-            try:
-                entry.setdefault("per_file", {})
-                entry["per_file"].update(
-                    run_per_file_stages(wid, workload, files, max(3, repeats // 2))
-                )
-            except Exception:  # noqa: BLE001
-                entry["per_file_stages_error"] = traceback.format_exc()
-
-        if mode in {"all", "profile"}:
-            print(f"[{wid}] profile", file=sys.stderr, flush=True)
-            try:
-                prof = run_profile(wid, workload, files, repeats=3)
-            except Exception:  # noqa: BLE001
-                entry["profile_error"] = traceback.format_exc()
-            else:
-                prof.pop("_stats", None)
-                entry["profile"] = prof
-
-        # The counting passes come last: they install instance-creation counters
-        # that cannot be removed again on CPython 3.14, so this process must not
-        # be used for further measurement afterwards.
-        if mode in {"all", "counts"}:
-            print(f"[{wid}] counts", file=sys.stderr, flush=True)
-            try:
-                entry["counts"] = run_counts(wid, workload, files)
-            except Exception:  # noqa: BLE001
-                entry["counts_error"] = traceback.format_exc()
-
-        if mode in {"all", "counts", "perfile"} and not args.no_per_file:
-            print(f"[{wid}] per-file counts", file=sys.stderr, flush=True)
-            try:
-                entry["per_file_counts"] = run_per_file_counts(wid, workload, files)
-            except Exception:  # noqa: BLE001
-                entry["per_file_counts_error"] = traceback.format_exc()
-
-        entry["seconds"] = round(time.time() - started, 3)
-        result["workloads"][wid] = entry
+                result["workloads"][wid][f"{key}_error"] = traceback.format_exc()
+                print(f"[{wid}] {key} FAILED", file=sys.stderr, flush=True)
+            result["workloads"][wid].setdefault("pass_seconds", {})[key] = round(
+                time.time() - started, 3
+            )
 
     result["env"]["loadavg_end"] = loadavg()
     out = Path(args.out)
@@ -930,6 +946,24 @@ def main(argv=None):
         json.dump(result, handle, indent=1, sort_keys=False)
     print(f"[rw_diag] wrote {out}", file=sys.stderr)
     return 0
+
+
+def run_layers_wrapper(wid, workload, files, repeats):
+    return run_layers(wid, workload, files, repeats)
+
+
+def run_profile_pass(wid, workload, files, repeats):
+    prof = run_profile(wid, workload, files, repeats=3)
+    prof.pop("_stats", None)
+    return prof
+
+
+def run_per_file_pass(wid, workload, files, repeats):
+    return run_per_file_stages(wid, workload, files, max(3, repeats // 2))
+
+
+def run_per_file_counts_pass(wid, workload, files, repeats):
+    return run_per_file_counts(wid, workload, files)
 
 
 if __name__ == "__main__":

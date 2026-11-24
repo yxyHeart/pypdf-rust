@@ -94,6 +94,46 @@ def table_layers(wid, rust, ref):
     return "\n".join(lines)
 
 
+def table_wall_phases(wid, rust, ref):
+    """Direct wall-clock phase decomposition (no monkeypatching)."""
+    data = get(rust, "wall_phases") or {}
+    other = get(ref, "wall_phases") or {}
+    if not data:
+        return f"_no wall-phase data for {wid}_"
+    total = data["total_ms"]["describe"]
+    total_ref = get(other, "total_ms", "describe") or {}
+    lines = [
+        f"#### {wid} — wall-clock phase decomposition (direct timers, {data.get('repeat')} reps)",
+        "",
+        "| phase | port median | port min–max | port share | reference median | reference min–max | port/reference |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for name, phase in data["phases"].items():
+        describe = phase["describe"]
+        ref_phase = get(other, "phases", name, "describe") or {}
+        share = phase.get("median_share_of_total")
+        lines.append(
+            "| `{name}` | {p} ms | {pmin}–{pmax} | {share} | {r} ms | {rmin}–{rmax} | {ratio} |".format(
+                name=name,
+                p=ms(describe["median"]),
+                pmin=ms(describe["min"]),
+                pmax=ms(describe["max"]),
+                share=f"{100.0 * share:.1f}%" if share is not None else "—",
+                r=ms(ref_phase.get("median")),
+                rmin=ms(ref_phase.get("min")),
+                rmax=ms(ref_phase.get("max")),
+                ratio=ratio(describe["median"], ref_phase.get("median")),
+            )
+        )
+    lines.append(
+        f"| **total** | **{ms(total['median'])} ms** | {ms(total['min'])}–{ms(total['max'])} | 100% | "
+        f"**{ms(total_ref.get('median'))} ms** | {ms(total_ref.get('min'))}–{ms(total_ref.get('max'))} | "
+        f"**{ratio(total['median'], total_ref.get('median'))}** |"
+    )
+    return "\n".join(lines)
+
+
+
 def table_stages(wid, rust, ref, top=22):
     stages = get(rust, "stages", "stages") or {}
     stages_ref = get(ref, "stages", "stages") or {}
@@ -121,7 +161,7 @@ def table_stages(wid, rust, ref, top=22):
         )
     lines.append(
         f"| **workload wall** | | **{ms(wall)}** | **{ms(get(ref, 'stages', 'wall_ms', 'describe', 'median'))}** | "
-        f"**{ratio(wall, get(ref, 'stages', 'wall_ms', 'describe', 'median'))}** | 100%% |"
+        f"**{ratio(wall, get(ref, 'stages', 'wall_ms', 'describe', 'median'))}** | 100% |"
     )
     lines.append("")
     lines.append(
@@ -136,11 +176,14 @@ def table_per_file(wid, rust, ref, keys, header):
     files_ref = get(ref, "per_file") or {}
     if not files:
         return f"_no per-file data for {wid}_"
+    counts = get(rust, "per_file_counts", "files") or {}
     lines = [
-        f"#### {wid} — per input file",
+        f"#### {wid} — per input file (port wall time from the stage pass; call counts are exact)",
         "",
-        "| file | bytes | port total | ref total | port/ref | " + " | ".join(header) + " |",
-        "|---|---:|---:|---:|---:|" + "---:|" * len(header),
+        "| file | bytes | port total | ref total | port/ref | "
+        + " | ".join(header)
+        + " | boundary calls | materialised objects |",
+        "|---|---:|---:|---:|---:|" + "---:|" * len(header) + "---:|---:|",
     ]
     rows = []
     for name, data in files.items():
@@ -150,13 +193,24 @@ def table_per_file(wid, rust, ref, keys, header):
         for key in keys:
             stage = get(data, "stages", "stages", key) or {}
             values.append(ms(stage.get("total_ms_median"), 2) if stage else "—")
-        rows.append((wall, name, data, wall_ref, values))
+        facts = (counts.get(name) or {}).get("counts") or {}
+        rows.append((wall, name, data, wall_ref, values, facts))
     rows.sort(key=lambda row: -row[0])
-    for wall, name, data, wall_ref, values in rows:
+    for wall, name, data, wall_ref, values, facts in rows:
         lines.append(
             f"| `{name}` | {data.get('file_bytes', '—')} | {ms(wall)} | {ms(wall_ref)} | "
-            f"{ratio(wall, wall_ref)} | " + " | ".join(values) + " |"
+            f"{ratio(wall, wall_ref)} | " + " | ".join(values)
+            + f" | {facts.get('total_boundary_calls', 0):,} | {facts.get('total_materialized', 0):,} |"
         )
+    total_wall = sum(row[0] for row in rows)
+    total_ref = sum(row[3] for row in rows)
+    total_bnd = sum((row[5] or {}).get("total_boundary_calls", 0) for row in rows)
+    total_mat = sum((row[5] or {}).get("total_materialized", 0) for row in rows)
+    lines.append(
+        f"| **sum** | | **{ms(total_wall)}** | **{ms(total_ref)}** | **{ratio(total_wall, total_ref)}** | "
+        + " | ".join("" for _ in keys)
+        + f" | **{total_bnd:,}** | **{total_mat:,}** |"
+    )
     return "\n".join(lines)
 
 
@@ -168,9 +222,10 @@ def table_boundary(wid, rust, ref, top=25):
     lines = [
         f"#### {wid} — call counts (port; Python→Rust boundary and object materialisation)",
         "",
-        f"Total Python→Rust boundary calls: **{counts['total_boundary_calls']:,}** "
-        f"(reference: {counts_ref.get('total_boundary_calls', 'n/a') if counts_ref else 'n/a'} — the reference has no "
-        f"extension boundary). Materialised PDF objects: **{counts['total_materialized']:,}**.",
+        f"Total Python→Rust boundary calls: **{counts['total_boundary_calls']:,}**; "
+        f"materialised PDF objects: **{counts['total_materialized']:,}**. "
+        f"({counts['patched_globals']} shim globals and {counts['patched_ext_attrs']} extension "
+        f"attributes intercepted; the reference has no extension boundary.)",
         "",
         "| # | intercepted callable | port calls | share of boundary calls |",
         "|---|---|---:|---:|",
@@ -205,25 +260,33 @@ def table_materialization(wid, rust):
 
 def table_phases(wid, rust, ref):
     phases = get(rust, "counts", "by_phase") or {}
-    phases_ref = get(ref, "counts", "by_phase") or {}
     if not phases:
         return f"_no phase data for {wid}_"
     lines = [
         f"#### {wid} — calls per workload phase (port)",
         "",
-        "| phase | Python→Rust boundary calls | materialised objects | ref boundary calls |",
+        "| phase | Python→Rust boundary calls | share | materialised PDF objects |",
         "|---|---:|---:|---:|",
     ]
     for name, slot in phases.items():
         boundary = sum(v for k, v in slot.items() if not k.startswith("new:"))
         created = sum(v for k, v in slot.items() if k.startswith("new:"))
-        other = phases_ref.get(name) or {}
-        other_boundary = sum(v for k, v in other.items() if not k.startswith("new:"))
-        lines.append(
-            f"| `{name}` | {boundary:,} | {created:,} | {other_boundary:,} |"
-            if other
-            else f"| `{name}` | {boundary:,} | {created:,} | — |"
+        lines.append(f"| `{name}` | {boundary:,} | — | {created:,} |")
+    total_b = sum(v for slot in phases.values() for k, v in slot.items() if not k.startswith("new:"))
+    total_m = sum(v for slot in phases.values() for k, v in slot.items() if k.startswith("new:"))
+    for name, slot in phases.items():
+        boundary = sum(v for k, v in slot.items() if not k.startswith("new:"))
+        lines[-len(phases) + list(phases).index(name)] = (
+            f"| `{name}` | {boundary:,} | {100.0 * boundary / total_b:.1f}% | "
+            f"{sum(v for k, v in slot.items() if k.startswith('new:')):,} |"
         )
+    lines.append(f"| **total** | **{total_b:,}** | 100.0% | **{total_m:,}** |")
+    lines.append("")
+    lines.append(
+        "_The reference has no extension boundary: its equivalent work is ordinary Python calls "
+        "counted by cProfile (see the profile tables). `py:` counters appear on both backends and "
+        "are reported in the call-count table instead._"
+    )
     return "\n".join(lines)
 
 
@@ -280,12 +343,41 @@ def table_facts(wid, rust, ref):
     return "\n".join(lines)
 
 
+CLONE_KEYS = [
+    "datastructures_dictionaryobject_clone",
+    "datastructures_dictionaryobject_clone_inner",
+    "datastructures_arrayobject_clone",
+    "datastructures_streamobject_clone",
+    "datastructures_streamobject_clone_inner",
+    "basemod_indirect_clone",
+    "basemod_float_clone",
+    "basemod_number_clone",
+    "basemod_name_clone",
+    "basemod_bytestring_clone",
+    "basemod_textstring_clone",
+    "basemod_boolean_clone",
+    "datastructures_contentstream_clone",
+    "datastructures_contentstream_clone_inner",
+]
+WRITE_KEYS = [
+    "datastructures_dictionaryobject_write_to_stream",
+    "datastructures_arrayobject_write_to_stream",
+    "datastructures_streamobject_write_to_stream",
+    "basemod_name_write_to_stream",
+    "basemod_number_write_to_stream",
+    "basemod_float_write_to_stream",
+    "basemod_indirect_write_to_stream",
+    "basemod_bytestring_write_to_stream",
+    "basemod_boolean_write_to_stream",
+]
+
+
 def table_counts_by_workload(wids, rust, ref):
     lines = [
-        "#### Writer workloads — key call counts (all numbers are per workload repetition)",
+        "#### Writer workloads — key call counts (per workload repetition, port)",
         "",
-        "| workload | boundary calls (port) | materialised objects (port) | clone calls (port) | `_add_object` | `write_to_stream` | objects in writer | out bytes |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| workload | boundary calls | materialised objects | object `clone` calls | `_clone` (dict) | `_add_object` | `write_to_stream` calls | objects in writer | bytes written |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for wid in wids:
         entry = get(rust, "workloads", wid) or {}
@@ -293,17 +385,20 @@ def table_counts_by_workload(wids, rust, ref):
         if not counts:
             continue
         table = counts["counts"]
-        clone_keys = [k for k in table if k.endswith("_clone") or k == "py:IndirectObject.clone"]
-        clones = sum(table[k] for k in clone_keys)
-        writes = table.get("datastructures_dictionaryobject_write_to_stream", 0) + table.get(
-            "datastructures_arrayobject_write_to_stream", 0
-        ) + table.get("datastructures_streamobject_write_to_stream", 0)
+        clones = sum(table.get(k, 0) for k in CLONE_KEYS)
+        inner = table.get("datastructures_dictionaryobject_clone_inner", 0)
+        writes = sum(table.get(k, 0) for k in WRITE_KEYS)
         facts = (counts.get("facts") or [{}])[-1]
         lines.append(
             f"| {wid} | {counts['total_boundary_calls']:,} | {counts['total_materialized']:,} | {clones:,} | "
-            f"{table.get('py:PdfWriter._add_object', 0):,} | {writes:,} | {facts.get('objects_in_writer', '—')} | "
-            f"{facts.get('out_bytes', '—'):,} |"
+            f"{inner:,} | {table.get('py:PdfWriter._add_object', 0):,} | {writes:,} | "
+            f"{facts.get('objects_in_writer', '—')} | {facts.get('out_bytes', 0):,} |"
         )
+    lines.append("")
+    lines.append(
+        "`clone` sums the extension-level clone entry points (dictionary / array / stream / scalar); "
+        "`_clone` is the recursive dictionary clone body, called once per cloned dictionary."
+    )
     return "\n".join(lines)
 
 
@@ -329,11 +424,11 @@ def table_microbench(rust, ref):
     for label, values in rows.items():
         port = values.get("rust")
         refv = values.get("reference")
+        port_text = f"{port:,.0f}" if port is not None else "—"
+        ref_text = f"{refv:,.0f}" if refv is not None else "—"
+        ratio_text = ratio(port, refv) if port and refv else "—"
         lines.append(
-            f"| `{label}` | {port:,.0f} | {refv:,.0f} | "
-            f"{ratio(port, refv) if port and refv else '—'} | {notes.get(label, '')} |"
-            if port and refv
-            else f"| `{label}` | {port:,.0f} | {refv or 0:,.0f} | — | {notes.get(label, '')} |"
+            f"| `{label}` | {port_text} | {ref_text} | {ratio_text} | {notes.get(label, '')} |"
         )
     return "\n".join(lines)
 
@@ -359,6 +454,8 @@ def main(argv=None):
     if args.section in {"all", "reader"}:
         for wid in ("W1", "W2"):
             out.append(f"<!-- {wid} -->")
+            out.append(table_wall_phases(wid, get(rust, "workloads", wid), get(ref, "workloads", wid)))
+            out.append("")
             out.append(table_layers(wid, get(rust, "workloads", wid), get(ref, "workloads", wid)))
             out.append("")
             if wid == "W1":
@@ -396,6 +493,8 @@ def main(argv=None):
     if args.section in {"all", "writer"}:
         for wid in ("W5", "W6", "W7"):
             out.append(f"<!-- {wid} -->")
+            out.append(table_wall_phases(wid, get(rust, "workloads", wid), get(ref, "workloads", wid)))
+            out.append("")
             out.append(table_layers(wid, get(rust, "workloads", wid), get(ref, "workloads", wid)))
             out.append("")
             out.append(table_stages(wid, get(rust, "workloads", wid), get(ref, "workloads", wid)))

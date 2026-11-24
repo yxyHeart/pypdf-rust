@@ -101,3 +101,47 @@ audit / round-trip 冒烟）；性能报告采用**冻结的已有 run** + 显�
    前先记录一次“干净树 + 现 .so”的对照 run。
 3. **目标环境**：需要一台 Linux aarch64（或交叉工具链 + glibc 版本）才能完成
    §17 第 10 项；当前状态 BLOCKED。
+
+## P1/P2 implementation result (lead, 2026-11-24)
+
+Implemented the first two plan items directly:
+
+**P1 (OPT-020…OPT-040, DONE)** — pure-Rust byte-level content-stream parser.
+- New `crates/pypdf-rs-core/src/content_stream.rs` (13 unit tests: grammar, strings,
+  hex, arrays/dicts, inline-image position, limits, fuzz-no-panic).
+- `contentstream_parse_fast` in `data_structures_mod.rs`: one `stream.read()`, then
+  Rust scan + one materialisation per operand; Python inline-image reader kept for
+  `BI/ID/EI`; `PYPDF_RS_LEGACY_CONTENT_STREAM=1` rolls back.
+- Semantics kept: `read_non_whitespace`/`read_until_regex` chunked length limits
+  (240-vs-128 message), per-stream vs nested budget messages, partial `_operations`
+  on aborted streams, duplicate-dictionary-key warnings, `NameObject.unnumber`
+  (leading `/` retained), bytes `repr` in error messages, BytesIO negative-seek clamp.
+
+**P2 (OPT-070, PARTIAL)** — text extractor dispatch.
+- `process_operation` now `match`es operator bytes → Rust handlers (Python handler
+  table still honoured if replaced; `_rs_default_handlers` identity check).
+- `page_mod/text.rs` calls the Rust `process_operation` / `process_tj_offset`
+  directly instead of through `call_method1`.
+
+**Measured (10 workload harness, `--repeat 5`, same machine):**
+
+| workload | baseline port (before P1) | after P1 | after P1+P2 |
+|---|---|---|---|
+| W1 | 0.36× | 0.34× | 0.33× |
+| W2 | 0.40× | 0.29× | 0.30× |
+| W3 | 0.25× | 0.38× | 0.39× |
+| W4 | 0.33× | 1.39× | 1.40× |
+| W5 | 0.29× | 0.28× | 0.29× |
+| W6 | 0.28× | 0.29× | 0.26× |
+| W7 | 0.29× | 0.27× | 0.27× |
+| W8 | 0.33× | 0.33× | 0.34× |
+
+`issue-301.pdf` extraction: 1.75 s → 0.31 s (reference 0.48 s; now 1.55× faster).
+A1 stays `2691 passed / 25 skipped / 8 xfailed` (baseline MATCH), differential
+`IDENTICAL`.
+
+**Next (P0 diagnosis still valid):** W3/W8 remaining cost is the text consumer
+(`get_text_operands` / `get_display_str` / `_flush_text` shim round-trips per
+operation, ~300 ms of W3), then W1/W2 reader object parsing and W5–W7 object-graph
+copy (48–56 % of W5–W7).
+
