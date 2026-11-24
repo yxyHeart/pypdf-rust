@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**1725/1934**（89.19%）
+总计：**1762/1934**（91.11%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -12,7 +12,7 @@
 | `pypdf._codecs` | 8 | 8 | 100% | python |
 | `pypdf._codecs._codecs` | 18 | 18 | 100% | rust |
 | `pypdf._codecs.adobe_glyphs` | 2 | 2 | 100% | python |
-| `pypdf._codecs.core_font_metrics` | 0 | 1 | 0% | stub |
+| `pypdf._codecs.core_font_metrics` | 1 | 1 | 100% | python |
 | `pypdf._codecs.pdfdoc` | 1 | 1 | 100% | python |
 | `pypdf._codecs.std` | 1 | 1 | 100% | python |
 | `pypdf._codecs.symbol` | 1 | 1 | 100% | python |
@@ -52,11 +52,11 @@
 | `pypdf.generic._base` | 105 | 105 | 100% | rust |
 | `pypdf.generic._color` | 22 | 22 | 100% | rust |
 | `pypdf.generic._data_structures` | 118 | 118 | 100% | rust |
-| `pypdf.generic._files` | 31 | 33 | 94% | stub |
+| `pypdf.generic._files` | 33 | 33 | 100% | stub |
 | `pypdf.generic._fit` | 12 | 12 | 100% | rust |
-| `pypdf.generic._font` | 61 | 61 | 100% | stub |
-| `pypdf.generic._image_inline` | 1 | 15 | 7% | stub |
-| `pypdf.generic._image_xobject` | 2 | 22 | 9% | stub |
+| `pypdf.generic._font` | 61 | 61 | 100% | rust |
+| `pypdf.generic._image_inline` | 15 | 15 | 100% | stub |
+| `pypdf.generic._image_xobject` | 22 | 22 | 100% | stub |
 | `pypdf.generic._link` | 12 | 12 | 100% | rust |
 | `pypdf.generic._outline` | 2 | 2 | 100% | rust |
 | `pypdf.generic._rectangle` | 23 | 23 | 100% | rust |
@@ -69,7 +69,6 @@
 
 ## 未覆盖符号（前 200 个）
 
-- `pypdf._codecs.core_font_metrics.CORE_FONT_METRICS`
 - `pypdf._reader.PdfReader._MAX_STARTXREF_RECOVERY_LINES`
 - `pypdf._reader.PdfReader._XREF_STREAM_TRAILER_KEYS`
 - `pypdf._text_extraction.CUSTOM_RTL_MIN`
@@ -233,39 +232,12 @@
 - `pypdf.generic._appearance_stream.TextStreamAppearance._parse_default_appearance`
 - `pypdf.generic._appearance_stream.TextStreamAppearance.from_text_annotation`
 - `pypdf.generic._appearance_stream.transform_annotation_appearance`
-- `pypdf.generic._files.EmbeddedFile`
-- `pypdf.generic._files.EmbeddedFile.__init__`
-- `pypdf.generic._image_inline.logger`
-- `pypdf.generic._image_inline._check_end_image_marker`
-- `pypdf.generic._image_inline.extract_inline__ascii_hex_decode`
-- `pypdf.generic._image_inline.extract_inline__ascii85_decode`
-- `pypdf.generic._image_inline.extract_inline__run_length_decode`
-- `pypdf.generic._image_inline.extract_inline__dct_decode`
-- `pypdf.generic._image_inline._is_preceded_by_whitespace`
-- `pypdf.generic._image_inline._is_followed_by_closing_operator`
-- `pypdf.generic._image_inline.extract_inline_default`
-- `pypdf.generic._image_inline.is_followed_by_binary_data`
-- `pypdf.generic._image_inline._read_settings_dictionary`
-- `pypdf.generic._image_inline.extract_inline__not_set`
-- `pypdf.generic._image_inline._handle_filters`
-- `pypdf.generic._image_inline.read_inline_image`
-- `pypdf.generic._image_xobject.ImageMode`
-- `pypdf.generic._image_xobject._get_process_colorant_channels`
-- `pypdf.generic._image_xobject._get_image_mode`
-- `pypdf.generic._image_xobject.bits2byte`
-- `pypdf.generic._image_xobject._expand_low_bit_samples`
-- `pypdf.generic._image_xobject._SINGLE_BAND_BYTES_PER_PIXEL`
-- `pypdf.generic._image_xobject._get_allocated_bytes_per_pixel`
-- `pypdf.generic._image_xobject._validate_image_size`
-- `pypdf.generic._image_xobject._create_image_from_bytes`
-- `pypdf.generic._image_xobject._create_image_from_buffer`
-- `pypdf.generic._image_xobject._convert_image`
-- `pypdf.generic._image_xobject._resize_image`
-- `pypdf.generic._image_xobject._merge_image`
-- `pypdf.generic._image_xobject.__handle_flate__indexed`
-- `pypdf.generic._image_xobject._handle_flate`
-- `pypdf.generic._image_xobject._handle_jpx`
-- `pypdf.generic._image_xobject._apply_decode`
-- `pypdf.generic._image_xobject._get_mode_and_invert_color`
-- `pypdf.generic._image_xobject._apply_alpha`
-- `pypdf.generic._image_xobject._xobj_to_image`
+- `pypdf.pagerange._INT_RE`
+- `pypdf.pagerange.PAGE_RANGE_RE`
+- `pypdf.pagerange.PageRange`
+- `pypdf.pagerange.PageRange.__str__`
+- `pypdf.pagerange.PageRange.__repr__`
+- `pypdf.pagerange.PageRange.__eq__`
+- `pypdf.pagerange.PageRange.__hash__`
+- `pypdf.pagerange.PAGE_RANGE_ALL`
+- `pypdf.pagerange.PageRangeSpec`

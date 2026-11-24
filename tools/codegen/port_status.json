@@ -94,9 +94,9 @@
     "reason": "pure data table (17k entries)"
   },
   "pypdf._codecs.core_font_metrics": {
-    "mode": "stub",
+    "mode": "python",
     "phase": "P4",
-    "reason": "needs generic._font.FontDescriptor (ported in P4)"
+    "reason": "pure data table; FontDescriptor is ported so the upstream module can be used verbatim"
   },
   "pypdf._codecs._codecs": {
     "mode": "rust",
@@ -230,5 +230,10 @@
     "mode": "rust",
     "phase": "P9",
     "module_rs": "actions_mod.rs"
+  },
+  "pypdf.generic._font": {
+    "mode": "rust",
+    "phase": "P4",
+    "module_rs": "font_mod.rs"
   }
 }
