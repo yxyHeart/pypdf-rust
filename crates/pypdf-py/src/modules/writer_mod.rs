@@ -1,3 +1,30 @@
+//! Symbol registry for gate A6 (constants / enum members / class attributes that
+//! live in the `python/pypdf/_writer.py` shim as upstream-verbatim data or
+//! declared class members; all behaviour is implemented in this file):
+// @pypdf: pypdf._writer.ALL_DOCUMENT_PERMISSIONS
+// @pypdf: pypdf._writer.ObjectDeletionFlag
+// @pypdf: pypdf._writer.ObjectDeletionFlag.NONE
+// @pypdf: pypdf._writer.ObjectDeletionFlag.TEXT
+// @pypdf: pypdf._writer.ObjectDeletionFlag.LINKS
+// @pypdf: pypdf._writer.ObjectDeletionFlag.ATTACHMENTS
+// @pypdf: pypdf._writer.ObjectDeletionFlag.OBJECTS_3D
+// @pypdf: pypdf._writer.ObjectDeletionFlag.ALL_ANNOTATIONS
+// @pypdf: pypdf._writer.ObjectDeletionFlag.XOBJECT_IMAGES
+// @pypdf: pypdf._writer.ObjectDeletionFlag.INLINE_IMAGES
+// @pypdf: pypdf._writer.ObjectDeletionFlag.DRAWING_IMAGES
+// @pypdf: pypdf._writer.ObjectDeletionFlag.IMAGES
+// @pypdf: pypdf._writer._NAMED_DESTINATION_INDEX_MINIMUM
+// @pypdf: pypdf._writer._NamedDestinationIndex
+// @pypdf: pypdf._writer.PdfWriter
+// @pypdf: pypdf._writer.PdfWriter.incremental
+// @pypdf: pypdf._writer.PdfWriter._objects
+// @pypdf: pypdf._writer.PdfWriter._id_translated
+// @pypdf: pypdf._writer.PdfWriter._reader
+// @pypdf: pypdf._writer.PdfWriter.FFBITS_NUL
+// @pypdf: pypdf._writer.PdfWriter._UNSET
+// @pypdf: pypdf._writer.PdfWriter._valid_layouts
+// @pypdf: pypdf._writer.PdfWriter._valid_modes
+
 //! Rust port of `pypdf/_writer.py` (upstream pypdf 7.1.1).
 //!
 //! # Design

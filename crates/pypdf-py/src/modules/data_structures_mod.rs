@@ -1407,6 +1407,13 @@ fn datastructures_dictionaryobject_read_from_stream<'py>(
         )?;
 
         // Inner `try:` block: read the key.
+        //
+        // Upstream nests this in the outer `try`, so the bare `raise` of the
+        // inner `except PdfReadError` handler does *not* leave `read_from_stream`:
+        // it is caught again by the outer `except Exception as exc:` arm, which
+        // (in strict mode) wraps it as `PdfReadError("Error reading PDF file.")`
+        // with the original error as `__cause__`.  Routing the strict re-raise
+        // through `handle_read_value_error` reproduces exactly that.
         let key = match call_read_object(py, stream, pdf, None, parsing_budget) {
             Ok(key) => {
                 if key.is_instance(&null_class)? {
@@ -1419,7 +1426,8 @@ fn datastructures_dictionaryobject_read_from_stream<'py>(
                     );
                     let error = errors::pdf_read_error(py, &message);
                     if pdf_strict(py, pdf)? {
-                        return Err(error);
+                        // Upstream: inner `raise` -> outer `except Exception`.
+                        return handle_read_value_error(py, pdf, &data, error);
                     }
                     let values = PyDict::new(py);
                     values.set_item("exception", error.value(py).clone().into_any())?;
@@ -1431,7 +1439,9 @@ fn datastructures_dictionaryobject_read_from_stream<'py>(
             Err(error) => {
                 if err_is_pdf_read_error(py, &error) {
                     if pdf_strict(py, pdf)? {
-                        return Err(error);
+                        // Upstream: inner `raise` -> outer `except Exception`
+                        // -> `raise PdfReadError("Error reading PDF file.") from exc`.
+                        return handle_read_value_error(py, pdf, &data, error);
                     }
                     let values = PyDict::new(py);
                     values.set_item("exception", error.value(py).clone().into_any())?;

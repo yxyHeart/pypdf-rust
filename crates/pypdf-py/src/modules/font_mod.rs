@@ -823,10 +823,14 @@ fn parse_font_descriptor_impl<'py>(
                     ),
                 ));
             }
-            match font_descriptor_obj
-                .get_item(source_key)?
-                .call_method0("get_object")
-            {
+            // Upstream wraps the whole `font_descriptor_obj[source_key].get_object()`
+            // expression in try/except; `DictionaryObject.__getitem__` already calls
+            // `get_object()` internally, so the PdfReadError can come from `get_item`
+            // itself and must be caught here (not propagated by `?`).
+            let attempt = font_descriptor_obj
+                .get_item(source_key)
+                .and_then(|value| value.call_method0("get_object"));
+            match attempt {
                 Ok(font_file) => {
                     font_descriptor_kwargs.set_item("font_file", font_file)?;
                 }
@@ -1167,8 +1171,16 @@ fn get_font_flags_from_truetype_font_tables_impl<'py>(
         // byte only describes the subclass. We only need the high byte, hence the bit shift below:
         family_class = os2_table.getattr("sFamilyClass")?.extract::<i64>()? >> 8;
     }
-    let font_flags = py.import("pypdf.constants")?.getattr("FontFlags")?;
-    let flag = |name: &str| -> PyResult<i64> { font_flags.getattr(name)?.extract::<i64>() };
+    // Upstream imports `FontFlags` into the module namespace and combines the
+    // flag members with `|=`.  `0 | FontFlags.X` must go through Python: CPython
+    // gives the *reflected* operation of the int subclass precedence, so the
+    // accumulated value is a `FontFlags` member (not a plain `int`), which is
+    // observable through `repr(FontDescriptor(...))`.
+    let font_flags = font_attr(py, "FontFlags")?;
+    let flag = |name: &str| -> PyResult<Bound<'py, PyAny>> { font_flags.getattr(name) };
+    let or_flag = |flags: Bound<'py, PyAny>,
+                   flag: &Bound<'py, PyAny>|
+     -> PyResult<Bound<'py, PyAny>> { flags.bitor(flag) };
     let italic_flag = flag("ITALIC")?;
     let fixed_pitch_flag = flag("FIXED_PITCH")?;
     let script_flag = flag("SCRIPT")?;
@@ -1184,7 +1196,7 @@ fn get_font_flags_from_truetype_font_tables_impl<'py>(
         }
     };
 
-    let mut flags: i64 = 0;
+    let mut flags: Bound<'py, PyAny> = py_int_obj(py, 0);
 
     // ITALIC
     let mac_style = header_table.getattr("macStyle")?.extract::<i64>()?;
@@ -1194,17 +1206,17 @@ fn get_font_flags_from_truetype_font_tables_impl<'py>(
         italic = (fs_selection & OS2_FSSELECTION_ITALIC) != 0;
     }
     if italic {
-        flags |= italic_flag;
+        flags = or_flag(flags, &italic_flag)?;
     }
     if postscript_present && !postscript_table.getattr("italicAngle")?.eq(0.0)? {
-        flags |= italic_flag;
+        flags = or_flag(flags, &italic_flag)?;
     }
 
     // FIXED_PITCH
     if (os2_present && panose_field("bProportion")? == OS2_PANOSE_BPROPORTION_MONOSPACED)
         || (postscript_present && postscript_table.getattr("isFixedPitch")?.gt(0)?)
     {
-        flags |= fixed_pitch_flag;
+        flags = or_flag(flags, &fixed_pitch_flag)?;
     }
 
     // SCRIPT
@@ -1212,7 +1224,7 @@ fn get_font_flags_from_truetype_font_tables_impl<'py>(
         && (family_class == OS2_SFAMILYSCLASS_SCRIPTS
             || panose_field("bFamilyType")? == OS2_PANOSE_BFAMILYTYPE_SCRIPT)
     {
-        flags |= script_flag;
+        flags = or_flag(flags, &script_flag)?;
     }
 
     // SERIF
@@ -1221,7 +1233,7 @@ fn get_font_flags_from_truetype_font_tables_impl<'py>(
         if (2..=10).contains(&serif_style) || (1..=5).contains(&family_class) || family_class == 7
         // 6 is reserved, all 8 and above are not serif
         {
-            flags |= serif_flag;
+            flags = or_flag(flags, &serif_flag)?;
         }
     }
 
@@ -1234,12 +1246,12 @@ fn get_font_flags_from_truetype_font_tables_impl<'py>(
             ]
             .contains(&panose_field("bFamilyType")?))
     {
-        flags |= symbolic_flag;
+        flags = or_flag(flags, &symbolic_flag)?;
     } else {
-        flags |= nonsymbolic_flag;
+        flags = or_flag(flags, &nonsymbolic_flag)?;
     }
 
-    Ok(py_int_obj(py, flags))
+    Ok(flags)
 }
 
 // @pypdf: pypdf.generic._font.Font._get_font_flags_from_truetype_font_tables

@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**1911/1934**（98.81%）
+总计：**1934/1934**（100.00%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -28,7 +28,7 @@
 | `pypdf._page` | 108 | 108 | 100% | rust |
 | `pypdf._page_labels` | 36 | 36 | 100% | rust |
 | `pypdf._protocols` | 24 | 24 | 100% | python |
-| `pypdf._reader` | 50 | 50 | 100% | stub |
+| `pypdf._reader` | 50 | 50 | 100% | rust |
 | `pypdf._text_extraction` | 18 | 18 | 100% | stub |
 | `pypdf._text_extraction._layout_mode` | 1 | 1 | 100% | python |
 | `pypdf._text_extraction._layout_mode._fixed_width_page` | 19 | 19 | 100% | stub |
@@ -37,7 +37,7 @@
 | `pypdf._text_extraction._text_extractor` | 24 | 24 | 100% | stub |
 | `pypdf._utils` | 63 | 63 | 100% | rust |
 | `pypdf._version` | 1 | 1 | 100% | python |
-| `pypdf._writer` | 108 | 131 | 82% | rust |
+| `pypdf._writer` | 131 | 131 | 100% | rust |
 | `pypdf.actions` | 1 | 1 | 100% | python |
 | `pypdf.actions._actions` | 13 | 13 | 100% | rust |
 | `pypdf.annotations` | 1 | 1 | 100% | python |
@@ -66,29 +66,3 @@
 | `pypdf.papersizes` | 15 | 15 | 100% | python |
 | `pypdf.types` | 9 | 9 | 100% | python |
 | `pypdf.xmp` | 94 | 94 | 100% | rust |
-
-## 未覆盖符号（前 200 个）
-
-- `pypdf._writer.ALL_DOCUMENT_PERMISSIONS`
-- `pypdf._writer.ObjectDeletionFlag`
-- `pypdf._writer.ObjectDeletionFlag.NONE`
-- `pypdf._writer.ObjectDeletionFlag.TEXT`
-- `pypdf._writer.ObjectDeletionFlag.LINKS`
-- `pypdf._writer.ObjectDeletionFlag.ATTACHMENTS`
-- `pypdf._writer.ObjectDeletionFlag.OBJECTS_3D`
-- `pypdf._writer.ObjectDeletionFlag.ALL_ANNOTATIONS`
-- `pypdf._writer.ObjectDeletionFlag.XOBJECT_IMAGES`
-- `pypdf._writer.ObjectDeletionFlag.INLINE_IMAGES`
-- `pypdf._writer.ObjectDeletionFlag.DRAWING_IMAGES`
-- `pypdf._writer.ObjectDeletionFlag.IMAGES`
-- `pypdf._writer._NAMED_DESTINATION_INDEX_MINIMUM`
-- `pypdf._writer._NamedDestinationIndex`
-- `pypdf._writer.PdfWriter`
-- `pypdf._writer.PdfWriter.incremental`
-- `pypdf._writer.PdfWriter._objects`
-- `pypdf._writer.PdfWriter._id_translated`
-- `pypdf._writer.PdfWriter._reader`
-- `pypdf._writer.PdfWriter.FFBITS_NUL`
-- `pypdf._writer.PdfWriter._UNSET`
-- `pypdf._writer.PdfWriter._valid_layouts`
-- `pypdf._writer.PdfWriter._valid_modes`
