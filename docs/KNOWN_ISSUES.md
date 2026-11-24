@@ -101,6 +101,21 @@
 
 ---
 
+## `pypdf._page_labels` / `pypdf._cmap`
+
+| # | 偏差 | 可观测性 | 处置 |
+|---|---|---|---|
+| L1 | 日志经 `pyutil::logger_warning`（及本地 `logger_error`）发出，而非调用 shim 中 import 的名字 | 仅在运行期 monkeypatch 模块属性时可观测；文本/格式/source 完全一致 | 已接受 |
+| L2 | `_cmap` 限额常量在 Rust 侧镜像为 const，而非每次调用读取模块全局 | 仅在 monkeypatch 常量时可观测 | 已接受 |
+| L3 | shim 暴露额外私有导入别名（`_rust_*`/`_firstkidfinder_*`），`dir()` 多出条目 | 上游可见名字/类型经命名空间 diff 一致 | 已接受 |
+| L4 | 两个 shim 移除了 stub 生成的 `from __future__ import annotations`（上游没有） | 仅 `__annotations__`/`dir()` | 已接受 |
+| L5 | `_FirstKidFinder` 页索引用 Rust `i64`（受 page_count 约束） | 无 | 已接受 |
+| L6 | `_parse_to_unicode`/`get_encoding`/`process_cm_line` 经 shim 全局分派（保留 monkeypatch） | 无 | 无偏差 |
+
+差分证据：`_page_labels` 合成矩阵 + 4×400 随机数字树；`_cmap` 编码/ToUnicode/CMap 状态机/CFF（真+损坏）、fontTools 缺失、4×(300+300+150+200) 随机语料 → **0 diff**。fuzz 过程中修复了 3 个真实 bug（`NullObject`/prefix 运算符协议、Python 赋值右手先求值的顺序、`_check_token_length(lst[0])` 先于 `lst[1]`）。
+
+---
+
 ## 工具链备注
 
 - `tools/fuzz/*` 的语料是对 `resources/` 做确定性结构变异生成；在模块未移植完成前，dev 与 oracle 的差异来自 stub 行为（`TypeError: 'NoneType' ...`），属于"未完成"而非偏差。

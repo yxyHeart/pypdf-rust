@@ -3,12 +3,12 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**1466/1934**（75.80%）
+总计：**1582/1934**（81.80%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
 | `pypdf` | 4 | 4 | 100% | python |
-| `pypdf._cmap` | 20 | 20 | 100% | stub |
+| `pypdf._cmap` | 20 | 20 | 100% | rust |
 | `pypdf._codecs` | 8 | 8 | 100% | python |
 | `pypdf._codecs._codecs` | 18 | 18 | 100% | rust |
 | `pypdf._codecs.adobe_glyphs` | 2 | 2 | 100% | python |
@@ -26,7 +26,7 @@
 | `pypdf._doc_common` | 89 | 89 | 100% | stub |
 | `pypdf._encryption` | 58 | 58 | 100% | rust |
 | `pypdf._page` | 108 | 108 | 100% | stub |
-| `pypdf._page_labels` | 28 | 36 | 78% | stub |
+| `pypdf._page_labels` | 36 | 36 | 100% | rust |
 | `pypdf._protocols` | 24 | 24 | 100% | python |
 | `pypdf._reader` | 0 | 50 | 0% | stub |
 | `pypdf._text_extraction` | 0 | 18 | 0% | stub |
@@ -37,7 +37,7 @@
 | `pypdf._text_extraction._text_extractor` | 0 | 24 | 0% | stub |
 | `pypdf._utils` | 63 | 63 | 100% | rust |
 | `pypdf._version` | 1 | 1 | 100% | python |
-| `pypdf._writer` | 0 | 131 | 0% | stub |
+| `pypdf._writer` | 108 | 131 | 82% | stub |
 | `pypdf.actions` | 1 | 1 | 100% | python |
 | `pypdf.actions._actions` | 13 | 13 | 100% | stub |
 | `pypdf.annotations` | 1 | 1 | 100% | python |
@@ -70,14 +70,6 @@
 ## 未覆盖符号（前 200 个）
 
 - `pypdf._codecs.core_font_metrics.CORE_FONT_METRICS`
-- `pypdf._page_labels._TreeNode.node`
-- `pypdf._page_labels._TreeNode.indexes`
-- `pypdf._page_labels._TreeNode.level`
-- `pypdf._page_labels._KidPages.kid`
-- `pypdf._page_labels._KidPages.indexes`
-- `pypdf._page_labels._LeafPages.nums`
-- `pypdf._page_labels._LeafPages.leaf`
-- `pypdf._page_labels._LeafPages.indexes`
 - `pypdf._reader.PdfReader`
 - `pypdf._reader.PdfReader.xref`
 - `pypdf._reader.PdfReader.trailer`
@@ -249,23 +241,31 @@
 - `pypdf._writer.ObjectDeletionFlag.IMAGES`
 - `pypdf._writer._NAMED_DESTINATION_INDEX_MINIMUM`
 - `pypdf._writer._NamedDestinationIndex`
-- `pypdf._writer._NamedDestinationIndex.__init__`
-- `pypdf._writer._NamedDestinationIndex._update`
-- `pypdf._writer._NamedDestinationIndex.contains`
-- `pypdf._writer._NamedDestinationIndex.insert`
-- `pypdf._writer._NamedDestinationIndex.record_insertion`
-- `pypdf._writer._NamedDestinationIndex.flush`
 - `pypdf._writer.PdfWriter`
 - `pypdf._writer.PdfWriter.incremental`
 - `pypdf._writer.PdfWriter._objects`
 - `pypdf._writer.PdfWriter._id_translated`
 - `pypdf._writer.PdfWriter._reader`
-- `pypdf._writer.PdfWriter.__init__`
-- `pypdf._writer.PdfWriter.is_encrypted`
-- `pypdf._writer.PdfWriter.root_object`
-- `pypdf._writer.PdfWriter._info`
-- `pypdf._writer.PdfWriter._info`
-- `pypdf._writer.PdfWriter.xmp_metadata`
-- `pypdf._writer.PdfWriter.xmp_metadata`
-- `pypdf._writer.PdfWriter.__enter__`
-- `pypdf._writer.PdfWriter.__exit__`
+- `pypdf._writer.PdfWriter.FFBITS_NUL`
+- `pypdf._writer.PdfWriter._UNSET`
+- `pypdf._writer.PdfWriter._valid_layouts`
+- `pypdf._writer.PdfWriter._valid_modes`
+- `pypdf.generic._appearance_stream.HAS_RTL_SUPPORT`
+- `pypdf.generic._appearance_stream.HAS_RTL_SUPPORT`
+- `pypdf.generic._appearance_stream.DEFAULT_FONT_SIZE_IN_MULTILINE`
+- `pypdf.generic._appearance_stream.TEXT_SPACE_TO_GLYPH_SPACE_FACTOR`
+- `pypdf.generic._appearance_stream.BaseStreamConfig`
+- `pypdf.generic._appearance_stream.BaseStreamConfig.rectangle`
+- `pypdf.generic._appearance_stream.BaseStreamConfig.border_width`
+- `pypdf.generic._appearance_stream.BaseStreamConfig.border_style`
+- `pypdf.generic._appearance_stream.BaseStreamConfig.border_color`
+- `pypdf.generic._appearance_stream.BaseStreamConfig.background_color`
+- `pypdf.generic._appearance_stream.BaseStreamConfig.rotation`
+- `pypdf.generic._appearance_stream.BaseStreamAppearance`
+- `pypdf.generic._appearance_stream.BaseStreamAppearance._add_matrix`
+- `pypdf.generic._appearance_stream.BaseStreamAppearance.__init__`
+- `pypdf.generic._appearance_stream.TextAlignment`
+- `pypdf.generic._appearance_stream.TextAlignment.LEFT`
+- `pypdf.generic._appearance_stream.TextAlignment.CENTER`
+- `pypdf.generic._appearance_stream.TextAlignment.RIGHT`
+- `pypdf.generic._appearance_stream.WidthWordGlyphs`

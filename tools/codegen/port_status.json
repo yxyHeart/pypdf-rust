@@ -195,5 +195,15 @@
     "mode": "rust",
     "phase": "P3",
     "module_rs": "encryption_mod.rs"
+  },
+  "pypdf._page_labels": {
+    "mode": "rust",
+    "phase": "P5",
+    "module_rs": "page_labels_mod.rs"
+  },
+  "pypdf._cmap": {
+    "mode": "rust",
+    "phase": "P5",
+    "module_rs": "cmap_mod.rs"
   }
 }
