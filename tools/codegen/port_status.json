@@ -135,5 +135,10 @@
     "mode": "rust",
     "phase": "P3",
     "module_rs": "filters_mod.rs"
+  },
+  "pypdf.generic._data_structures": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "data_structures_mod.rs"
   }
 }

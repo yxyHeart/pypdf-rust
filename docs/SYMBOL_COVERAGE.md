@@ -51,7 +51,7 @@
 | `pypdf.generic._appearance_stream` | 0 | 31 | 0% | stub |
 | `pypdf.generic._base` | 105 | 105 | 100% | rust |
 | `pypdf.generic._color` | 0 | 22 | 0% | stub |
-| `pypdf.generic._data_structures` | 118 | 118 | 100% | stub |
+| `pypdf.generic._data_structures` | 118 | 118 | 100% | rust |
 | `pypdf.generic._files` | 0 | 33 | 0% | stub |
 | `pypdf.generic._fit` | 0 | 12 | 0% | stub |
 | `pypdf.generic._font` | 0 | 61 | 0% | stub |
