@@ -1,3 +1,21 @@
+//! Symbol registry for gate A6 (each symbol is implemented in this file or in
+//! the `python/pypdf/pagerange.py` shim):
+// @pypdf: pypdf.pagerange._INT_RE
+// @pypdf: pypdf.pagerange.PAGE_RANGE_RE
+// @pypdf: pypdf.pagerange.PageRange
+// @pypdf: pypdf.pagerange.PageRange.__init__
+// @pypdf: pypdf.pagerange.PageRange.valid
+// @pypdf: pypdf.pagerange.PageRange.to_slice
+// @pypdf: pypdf.pagerange.PageRange.indices
+// @pypdf: pypdf.pagerange.PageRange.__str__
+// @pypdf: pypdf.pagerange.PageRange.__repr__
+// @pypdf: pypdf.pagerange.PageRange.__eq__
+// @pypdf: pypdf.pagerange.PageRange.__hash__
+// @pypdf: pypdf.pagerange.PageRange.__add__
+// @pypdf: pypdf.pagerange.PAGE_RANGE_ALL
+// @pypdf: pypdf.pagerange.parse_filename_page_ranges
+// @pypdf: pypdf.pagerange.PageRangeSpec
+
 //! Rust port of `pypdf/pagerange.py` (upstream pypdf 7.1.1).
 //!
 //! `PageRange` is a slice-like value object.  To stay exact with CPython

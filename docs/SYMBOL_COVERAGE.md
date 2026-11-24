@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**1902/1934**（98.35%）
+总计：**1911/1934**（98.81%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -62,7 +62,7 @@
 | `pypdf.generic._rectangle` | 23 | 23 | 100% | rust |
 | `pypdf.generic._utils` | 11 | 11 | 100% | rust |
 | `pypdf.generic._viewerpref` | 14 | 14 | 100% | rust |
-| `pypdf.pagerange` | 6 | 15 | 40% | rust |
+| `pypdf.pagerange` | 15 | 15 | 100% | rust |
 | `pypdf.papersizes` | 15 | 15 | 100% | python |
 | `pypdf.types` | 9 | 9 | 100% | python |
 | `pypdf.xmp` | 94 | 94 | 100% | rust |
@@ -92,12 +92,3 @@
 - `pypdf._writer.PdfWriter._UNSET`
 - `pypdf._writer.PdfWriter._valid_layouts`
 - `pypdf._writer.PdfWriter._valid_modes`
-- `pypdf.pagerange._INT_RE`
-- `pypdf.pagerange.PAGE_RANGE_RE`
-- `pypdf.pagerange.PageRange`
-- `pypdf.pagerange.PageRange.__str__`
-- `pypdf.pagerange.PageRange.__repr__`
-- `pypdf.pagerange.PageRange.__eq__`
-- `pypdf.pagerange.PageRange.__hash__`
-- `pypdf.pagerange.PAGE_RANGE_ALL`
-- `pypdf.pagerange.PageRangeSpec`
