@@ -17,6 +17,8 @@
 
 产物：`validation/results/env-reference.json`、`env-rust.json`、`logs/build-quality.log`。
 
+**关于方案 §0.2 的 `PYPDF_BACKEND=rust`**：`NOT_APPLICABLE`。本端口以包名 `pypdf` 交付，Rust 扩展 `pypdf._pypdf` 是其唯一后端——不存在"选择后端 + 静默回退"的机制，因此"后端选择失败即失败"的风险从结构上不存在。参考实现与被测实现通过**两个隔离的 venv**（`.venvs/oracle` / `.venvs/dev`）保证互不覆盖；每份输入 PDF 均有 sha256 manifest（`validation/fixtures/manifest.csv`）；测试只读语料、输出写入临时目录；除网络标记测试外不下载语料。
+
 ## 2. API 兼容性（§4）
 
 方法：`validation/api_surface.py` 在两侧分别导出 59 个模块的完整 API surface（类/MRO/抽象性/方法/签名/默认值/属性读写器/常量 repr）；`validation/compare_api.py` 逐项对比，并区分**结构差异**与**仅类型注解差异**（注解差异通过读取上游签名文本、忽略语法结构以外的内容）。
