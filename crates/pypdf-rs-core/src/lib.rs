@@ -7,5 +7,6 @@
 /// Upstream pypdf release this port tracks.
 pub const PYPDF_VERSION: &str = "7.1.1";
 
+pub mod content_stream;
 pub mod prng;
 pub mod pyfmt;

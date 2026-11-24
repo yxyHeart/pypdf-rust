@@ -1,0 +1,225 @@
+{
+ "schema": "rw-microbench-v1",
+ "backend": "rust",
+ "created_local": "2026-11-24T21:23:46+0800",
+ "python": "3.14.7",
+ "executable": "/Users/yxy/Desktop/pypdf-rust/.venvs/dev/bin/python",
+ "pypdf_file": "/Users/yxy/Desktop/pypdf-rust/python/pypdf/__init__.py",
+ "loadavg": [
+  22.8017578125,
+  18.25244140625,
+  12.9560546875
+ ],
+ "results": [
+  {
+   "label": "python_plain_function_call",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    54.19917,
+    54.46271,
+    54.38083,
+    54.32146,
+    54.10521
+   ],
+   "median_ns_per_op": 54.32146,
+   "min_ns_per_op": 54.10521,
+   "note": "reference floor for one call"
+  },
+  {
+   "label": "python_to_rust_pyfunction_call",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    422.944585,
+    425.90396,
+    421.775835,
+    421.693335,
+    423.59875
+   ],
+   "median_ns_per_op": 422.944585,
+   "min_ns_per_op": 421.693335,
+   "note": "one crossing, trivial Rust body (is_null_or_none)"
+  },
+  {
+   "label": "python_to_rust_pyfunction_call_args2",
+   "iters_per_sample": 100000,
+   "samples_ns_per_op": [
+    174.35917,
+    174.70208,
+    175.33292,
+    174.74125,
+    173.5725
+   ],
+   "median_ns_per_op": 174.70208,
+   "min_ns_per_op": 173.5725,
+   "note": "one crossing, keyword arguments (check_limits)"
+  },
+  {
+   "label": "read_object_parse_number",
+   "iters_per_sample": 20000,
+   "samples_ns_per_op": [
+    4715.65625,
+    5260.3375,
+    4743.68125,
+    4731.80625,
+    4730.65625
+   ],
+   "median_ns_per_op": 4731.80625,
+   "min_ns_per_op": 4715.65625,
+   "note": "pypdf.generic.read_object(b'123')"
+  },
+  {
+   "label": "read_object_parse_name",
+   "iters_per_sample": 20000,
+   "samples_ns_per_op": [
+    4039.3229,
+    4031.7354,
+    4009.7125,
+    3992.0875,
+    4027.23955
+   ],
+   "median_ns_per_op": 4027.23955,
+   "min_ns_per_op": 3992.0875,
+   "note": "pypdf.generic.read_object(b'/SomeName')"
+  },
+  {
+   "label": "read_object_parse_literal_string",
+   "iters_per_sample": 20000,
+   "samples_ns_per_op": [
+    12681.0125,
+    12630.0604,
+    12693.57705,
+    12678.9208,
+    12695.47085
+   ],
+   "median_ns_per_op": 12681.0125,
+   "min_ns_per_op": 12630.0604,
+   "note": "pypdf.generic.read_object(b'(a short literal string)')"
+  },
+  {
+   "label": "read_object_parse_array_4",
+   "iters_per_sample": 20000,
+   "samples_ns_per_op": [
+    23658.96665,
+    23467.86875,
+    23688.8292,
+    23719.85,
+    31590.25835
+   ],
+   "median_ns_per_op": 23688.8292,
+   "min_ns_per_op": 23467.86875,
+   "note": "pypdf.generic.read_object(b'[1 2 3 4]')"
+  },
+  {
+   "label": "read_object_parse_dict_2",
+   "iters_per_sample": 20000,
+   "samples_ns_per_op": [
+    46539.40205,
+    56991.3104,
+    32170.9729,
+    30040.7021,
+    49784.0958
+   ],
+   "median_ns_per_op": 46539.40205,
+   "min_ns_per_op": 30040.7021,
+   "note": "pypdf.generic.read_object(b'<< /Type /Page /Rotate 90 >>')"
+  },
+  {
+   "label": "bytesio_read1_seek",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    83.763125,
+    92.769795,
+    108.0575,
+    83.696665,
+    121.656455
+   ],
+   "median_ns_per_op": 92.769795,
+   "min_ns_per_op": 83.696665,
+   "note": "per-token stream access primitive"
+  },
+  {
+   "label": "create_NameObject",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    148.55729,
+    221.488955,
+    137.877295,
+    169.101045,
+    186.74104
+   ],
+   "median_ns_per_op": 169.101045,
+   "min_ns_per_op": 137.877295,
+   "note": "str subclass, Rust __new__ on the port"
+  },
+  {
+   "label": "create_NumberObject",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    752.189585,
+    992.309585,
+    691.354585,
+    845.515,
+    837.7325
+   ],
+   "median_ns_per_op": 837.7325,
+   "min_ns_per_op": 691.354585,
+   "note": "int subclass, Rust __new__ on the port"
+  },
+  {
+   "label": "create_FloatObject",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    963.93,
+    1026.153955,
+    1034.57354,
+    1166.127085,
+    912.686875
+   ],
+   "median_ns_per_op": 1026.153955,
+   "min_ns_per_op": 912.686875,
+   "note": "float subclass, Rust __new__ on the port"
+  },
+  {
+   "label": "create_DictionaryObject",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    149.414165,
+    164.62604,
+    88.989375,
+    145.860415,
+    127.47375
+   ],
+   "median_ns_per_op": 145.860415,
+   "min_ns_per_op": 88.989375,
+   "note": "dict subclass (no Rust __init__)"
+  },
+  {
+   "label": "create_ByteStringObject",
+   "iters_per_sample": 200000,
+   "samples_ns_per_op": [
+    126.35396,
+    161.72375,
+    210.669165,
+    168.51146,
+    160.78604
+   ],
+   "median_ns_per_op": 161.72375,
+   "min_ns_per_op": 126.35396,
+   "note": "bytes subclass"
+  },
+  {
+   "label": "import_module_plus_getattr",
+   "iters_per_sample": 100000,
+   "samples_ns_per_op": [
+    400.19,
+    373.78667,
+    351.42667,
+    293.76917,
+    283.69542
+   ],
+   "median_ns_per_op": 351.42667,
+   "min_ns_per_op": 283.69542,
+   "note": "approximation of py.import()+getattr() per Rust call-site resolution"
+  }
+ ]
+}

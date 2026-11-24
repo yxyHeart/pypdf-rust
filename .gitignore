@@ -15,3 +15,5 @@ crates/*/target/
 /validation/results/logs/
 /validation/perf/__pycache__/
 validation/**/__pycache__/
+/validation/optimization/baseline/raw/
+/validation/results/perf-*.json

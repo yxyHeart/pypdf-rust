@@ -2843,9 +2843,8 @@ fn content_stream_check_limits(
     Ok(())
 }
 
-// @pypdf: pypdf.generic._data_structures.ContentStream._parse_content_stream
-#[pyfunction]
-fn datastructures_contentstream_parse_content_stream<'py>(
+/// Legacy per-token parser (rollback / fallback path).
+fn contentstream_parse_legacy<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
     stream: &Bound<'py, PyAny>,
@@ -3723,6 +3722,329 @@ fn datastructures_destination_outline_count<'py>(
 // ---------------------------------------------------------------------------
 // Registration
 // ---------------------------------------------------------------------------
+
+
+// ---------------------------------------------------------------------------
+// Fast content-stream parsing (P1)
+//
+// One PyO3 call per stream: the byte-level scanner in `pypdf_rs_core` parses the
+// whole (already filter-decoded) content stream, so no per-token Python
+// `read_object` / `_check_limits` callbacks happen.  Python objects are still
+// materialised once per operand because the public `ContentStream.operations`
+// API needs them (P2/P3 will add a Rust-native consumer).
+// ---------------------------------------------------------------------------
+
+use pypdf_rs_core::content_stream as cs;
+
+const LEGACY_SWITCH: &str = "PYPDF_RS_LEGACY_CONTENT_STREAM";
+
+fn cs_limits(py: Python<'_>) -> PyResult<cs::Limits> {
+    let configuration = configuration(py)?;
+    Ok(cs::Limits {
+        budget: configuration
+            .getattr("stream_parsing_work_maximum_count")?
+            .extract::<i64>()?,
+        array_max: configuration
+            .getattr("array_maximum_element_count")?
+            .extract::<i64>()?,
+        dictionary_max: configuration
+            .getattr("dictionary_maximum_element_count")?
+            .extract::<i64>()?,
+        operator_length: 128,
+        name_length: 4096,
+        number_length: 64,
+    })
+}
+
+fn cs_error(py: Python<'_>, error: cs::ScanError) -> PyErr {
+    match error {
+        cs::ScanError::Limit(message) => errors::limit_reached_error(py, &message),
+        cs::ScanError::Stream(message) => errors::pdf_stream_error(py, &message),
+        cs::ScanError::Read(message) => errors::pdf_read_error(py, &message),
+        cs::ScanError::NegativeSeek(value) => {
+            pyo3::exceptions::PyValueError::new_err(format!("negative seek value {value}"))
+        }
+        cs::ScanError::Assert => pyo3::exceptions::PyAssertionError::new_err(""),
+        cs::ScanError::Fallback => pyo3::exceptions::PyRuntimeError::new_err("fallback"),
+    }
+}
+
+/// `NameObject.unnumber` (kept byte-exact: invalid `#xx` sequences are left as is).
+fn cs_unnumber(raw: &[u8]) -> Vec<u8> {
+    if !raw.contains(&b'#') {
+        return raw.to_vec();
+    }
+    let mut result = Vec::with_capacity(raw.len());
+    let mut index = 0usize;
+    while index < raw.len() {
+        if raw[index] == b'#' {
+            let end = (index + 3).min(raw.len());
+            if let Some(text) = raw.get(index + 1..end).and_then(|slice| std::str::from_utf8(slice).ok()) {
+                if let Ok(value) = u8::from_str_radix(text, 16) {
+                    result.push(value);
+                    index = end;
+                    continue;
+                }
+            }
+        }
+        result.push(raw[index]);
+        index += 1;
+    }
+    result
+}
+
+fn cs_materialize_name<'py>(py: Python<'py>, raw: &[u8]) -> PyResult<Bound<'py, PyAny>> {
+    // `NameObject.read_from_stream` keeps the leading slash in the value.
+    let mut with_slash = Vec::with_capacity(raw.len() + 1);
+    with_slash.push(b'/');
+    with_slash.extend_from_slice(raw);
+    let unnumbered = cs_unnumber(&with_slash);
+    let name_class = base_class(py, "NameObject")?;
+    if let Ok(text) = std::str::from_utf8(&unnumbered) {
+        return name_class.call1((text,));
+    }
+    // Non-ASCII: upstream tries `NameObject.CHARSETS` (utf-8, gbk, latin1).
+    let bytes = py_bytes(py, &unnumbered);
+    for encoding in ["gbk", "latin1"] {
+        if let Ok(text) = bytes.call_method1("decode", (encoding,)) {
+            return name_class.call1((text,));
+        }
+    }
+    let text = String::from_utf8_lossy(&unnumbered).into_owned();
+    name_class.call1((text,))
+}
+
+fn cs_materialize_value<'py>(
+    py: Python<'py>,
+    value: &cs::Value,
+    forced_encoding: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    match value {
+        cs::Value::Integer(raw) => base_class(py, "NumberObject")?.call1((py_bytes(py, raw),)),
+        cs::Value::Real(raw) => base_class(py, "FloatObject")?.call1((py_bytes(py, raw),)),
+        cs::Value::Name(raw) => cs_materialize_name(py, raw),
+        cs::Value::LiteralString(bytes) | cs::Value::HexString(bytes) => generic_utils_module(py)?
+            .getattr("create_string_object")?
+            .call1((py_bytes(py, bytes), forced_encoding.clone())),
+        cs::Value::Boolean(value) => base_class(py, "BooleanObject")?.call1((*value,)),
+        cs::Value::Null => base_class(py, "NullObject")?.call0(),
+        cs::Value::Array(values) => {
+            let items = PyList::empty(py);
+            for value in values {
+                items.append(cs_materialize_value(py, value, forced_encoding)?)?;
+            }
+            shim_class(py, "ArrayObject")?.call1((items,))
+        }
+        cs::Value::Dictionary(entries) => {
+            let mapping = PyDict::new(py);
+            for (key, value) in entries {
+                let key = cs_materialize_value(py, key, forced_encoding)?;
+                let value = cs_materialize_value(py, value, forced_encoding)?;
+                mapping.set_item(key, value)?;
+            }
+            shim_class(py, "DictionaryObject")?.call1((mapping,))
+        }
+        cs::Value::Indirect { idnum, generation } => {
+            base_class(py, "IndirectObject")?.call1((*idnum, *generation, py.None()))
+        }
+    }
+}
+
+/// `repr(exception)[:500]` for the partial-dictionary warning.
+fn cs_repr_truncated(py: Python<'_>, error: PyErr) -> PyResult<String> {
+    let instance = error.value(py).clone();
+    let text = py
+        .import("builtins")?
+        .getattr("repr")?
+        .call1((instance,))?
+        .extract::<String>()?;
+    Ok(text.chars().take(500).collect())
+}
+
+fn cs_emit_warnings(py: Python<'_>, warnings: &[cs::WarningEvent]) -> PyResult<()> {
+    for warning in warnings {
+        match warning {
+            cs::WarningEvent::UnexpectedEscape(byte) => {
+                // `tok.decode("utf-8", "ignore")`: lone high bytes vanish.
+                let token = if *byte < 0x80 {
+                    (*byte as char).to_string()
+                } else {
+                    String::new()
+                };
+                let values = PyDict::new(py);
+                values.set_item("token", token)?;
+                pyutil::logger_warning(
+                    py,
+                    "pypdf.generic._utils",
+                    "Unexpected escaped string: %(token)s",
+                    Some(&values),
+                )?;
+            }
+            cs::WarningEvent::MultipleDefinition { position, key } => {
+                let values = PyDict::new(py);
+                values.set_item("position", format!("0x{position:x}"))?;
+                values.set_item("key", cs_materialize_name(py, key)?)?;
+                pyutil::logger_warning(
+                    py,
+                    "pypdf.generic._data_structures",
+                    "Multiple definitions in dictionary at byte %(position)s for key %(key)s",
+                    Some(&values),
+                )?;
+            }
+            cs::WarningEvent::NonNameKeyValue(value) => {
+                let key = cs_materialize_value(py, value, &py.None().into_bound(py))?;
+                let repr = py.import("builtins")?.getattr("repr")?.call1((key,))?;
+                let message = format!(
+                    "Expecting a NameObject for key but found {}",
+                    repr.extract::<String>()?
+                );
+                let error = errors::pdf_read_error(py, &message);
+                let values = PyDict::new(py);
+                values.set_item("exception", error.value(py))?;
+                pyutil::logger_warning(
+                    py,
+                    "pypdf.generic._data_structures",
+                    "%(exception)r",
+                    Some(&values),
+                )?;
+            }
+            cs::WarningEvent::KeyParseError(message) => {
+                let error = errors::pdf_read_error(py, message);
+                let values = PyDict::new(py);
+                values.set_item("exception", error.value(py))?;
+                pyutil::logger_warning(
+                    py,
+                    "pypdf.generic._data_structures",
+                    "%(exception)r",
+                    Some(&values),
+                )?;
+            }
+            cs::WarningEvent::PartialDictionary(error) => {
+                let rendered = cs_repr_truncated(py, cs_error(py, (**error).clone()))?;
+                let values = PyDict::new(py);
+                values.set_item("exception", rendered)?;
+                pyutil::logger_warning(
+                    py,
+                    "pypdf.generic._data_structures",
+                    "%(exception)s",
+                    Some(&values),
+                )?;
+            }
+        }
+    }
+    Ok(())
+}
+
+fn cs_materialize_items(
+    py: Python<'_>,
+    operations: &Bound<'_, PyList>,
+    items: &[cs::Item],
+    forced_encoding: &Bound<'_, PyAny>,
+) -> PyResult<()> {
+    for item in items {
+        match item {
+            cs::Item::Operation { operands, operator } => {
+                let operand_list = PyList::empty(py);
+                for value in operands {
+                    operand_list.append(cs_materialize_value(py, value, forced_encoding)?)?;
+                }
+                let pair = py_tuple(py, vec![operand_list.into_any(), py_bytes(py, operator)])?;
+                operations.append(pair)?;
+            }
+            cs::Item::InlineImage { .. } => {}
+        }
+    }
+    Ok(())
+}
+
+/// Fast path: parse the whole decoded content stream in Rust and materialise the
+/// operations once.  Falls back to the legacy per-token parser for byte patterns
+/// the scanner deliberately does not handle (a `stream` keyword inside a
+/// content-stream dictionary), or when `PYPDF_RS_LEGACY_CONTENT_STREAM` is set.
+fn contentstream_parse_fast<'py>(
+    py: Python<'py>,
+    slf: &Bound<'py, PyAny>,
+    stream: &Bound<'py, PyAny>,
+) -> PyResult<()> {
+    let data: Vec<u8> = stream.call_method0("read")?.extract()?;
+    let forced_encoding = slf.getattr("forced_encoding")?;
+    let limits = cs_limits(py)?;
+    let operations_any = slf.getattr("_operations")?;
+    let operations = operations_any.cast::<PyList>()?.clone();
+    let generic_utils = generic_utils_module(py)?;
+    let mut offset = 0usize;
+    let mut budget = limits.budget;
+    let mut budget_object: Option<Bound<'py, PyAny>> = None;
+    loop {
+        let segment = match cs::parse_segment(&data, cs::Limits { budget, ..limits }, offset) {
+            Ok(segment) => segment,
+            Err(failure) => {
+                if matches!(failure.error, cs::ScanError::Fallback) {
+                    operations.del_slice(0, operations.len())?;
+                    return contentstream_parse_legacy(py, slf, stream);
+                }
+                // Upstream appends operations while parsing, so an aborted
+                // stream still exposes everything parsed before the failure.
+                cs_emit_warnings(py, &failure.warnings)?;
+                cs_materialize_items(py, &operations, &failure.items, &forced_encoding)?;
+                return Err(cs_error(py, failure.error));
+            }
+        };
+        cs_emit_warnings(py, &segment.warnings)?;
+        cs_materialize_items(py, &operations, &segment.items, &forced_encoding)?;
+        budget = segment.budget_left;
+        let Some(start) = segment.inline_image_start else {
+            break;
+        };
+        // Inline images keep using the Python implementation (BI/ID/EI heuristics
+        // are subtle); it consumes a BytesIO over the remaining bytes.
+        let buffer = py
+            .import("io")?
+            .getattr("BytesIO")?
+            .call1((py_bytes(py, &data[start..]),))?;
+        let budget_instance = match &budget_object {
+            Some(existing) => existing.clone(),
+            None => {
+                let kwargs = PyDict::new(py);
+                kwargs.set_item("remaining_budget", budget)?;
+                let created = generic_utils
+                    .getattr("StreamParsingBudget")?
+                    .call((), Some(&kwargs))?;
+                budget_object = Some(created.clone());
+                created
+            }
+        };
+        budget_instance.setattr("remaining_budget", budget)?;
+        let kwargs = PyDict::new(py);
+        kwargs.set_item("content_stream", slf)?;
+        kwargs.set_item("stream", &buffer)?;
+        kwargs.set_item("parsing_budget", &budget_instance)?;
+        let image = py
+            .import("pypdf.generic._image_inline")?
+            .getattr("read_inline_image")?
+            .call((), Some(&kwargs))?;
+        budget = budget_instance.getattr("remaining_budget")?.extract::<i64>()?;
+        operations.append(py_tuple(
+            py,
+            vec![image, py_bytes(py, b"INLINE IMAGE")],
+        )?)?;
+        offset = start + buffer.call_method0("tell")?.extract::<usize>()?;
+    }
+    Ok(())
+}
+
+// @pypdf: pypdf.generic._data_structures.ContentStream._parse_content_stream
+#[pyfunction]
+fn datastructures_contentstream_parse_content_stream<'py>(
+    py: Python<'py>,
+    slf: &Bound<'py, PyAny>,
+    stream: &Bound<'py, PyAny>,
+) -> PyResult<()> {
+    if std::env::var_os(LEGACY_SWITCH).is_some() {
+        return contentstream_parse_legacy(py, slf, stream);
+    }
+    contentstream_parse_fast(py, slf, stream)
+}
 
 pub fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(datastructures_read_object, module)?)?;

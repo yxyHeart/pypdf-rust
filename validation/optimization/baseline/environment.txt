@@ -1,0 +1,42 @@
+# P0 baseline environment (validation/optimization/baseline/environment.txt)
+captured_at_local=2026-11-24T21:19:21+0800
+captured_at_utc=2026-11-24T13:19:21Z
+
+## host
+hostname=yxydeMacBook-Pro.local
+uname=uname_result(system='Darwin', node='yxydeMacBook-Pro.local', release='25.6.0', version='Darwin Kernel Version 25.6.0: Fri Jul 31 19:18:49 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6000', machine='arm64')
+platform=macOS-26.6.2-arm64-arm-64bit-Mach-O
+machine=arm64
+macos=26.6.2
+kernel=25.6.0
+cpu_brand=Apple M1 Pro
+cpu_cores_logical=10
+cpu_cores_physical=10
+mem_bytes=17179869184
+arch_reported=arm64
+loadavg_at_capture=(27.11962890625, 13.0380859375, 9.9501953125)
+uptime=21:19  up 12 days,  6:06, 2 users, load averages: 27.12 13.04 9.95
+
+## interpreters
+python_port=/Users/yxy/Desktop/pypdf-rust/.venvs/dev/bin/python :: 3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)] CPython
+python_reference=/Users/yxy/Desktop/pypdf-rust/.venvs/oracle/bin/python :: 3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)] CPython
+pypdf_reference=7.1.1 /Users/yxy/Desktop/pypdf-rust/.venvs/oracle/lib/python3.14/site-packages/pypdf/__init__.py
+pypdf_port=7.1.1 /Users/yxy/Desktop/pypdf-rust/python/pypdf/__init__.py
+extension=/Users/yxy/Desktop/pypdf-rust/python/pypdf/_pypdf.cpython-314-darwin.so
+extension_sha256=8b40f70d2f6975e9a3fb5b70a709c2eb1de511df9de7e6f4b7be70ba3fa03546
+
+## toolchain (as reported; the P0 stage does not rebuild)
+rustc=rustc 1.100.0 (0ef1bc386 2026-11-09)
+cargo=cargo 1.100.0 (3acc79c0c 2026-11-05)
+rustup_show=stable-aarch64-apple-darwin (default)
+rust_targets=aarch64-apple-darwin
+maturin=maturin 1.16.0
+pyo3_cargo_toml=15:pyo3 = { version = "0.30.1", features = ["extension-module"] }
+cc=Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+
+## constraints
+offline=yes (no network in this environment; cargo/vendor: vendor/ present)
+measurement_notes=loadavg is high (shared laptop); absolute numbers move by tens of percent between runs. Compare medians of the recorded 10-repetition run; the repeat=2 re-check in raw/quick/ only confirms the harness still runs.
