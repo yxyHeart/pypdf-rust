@@ -255,5 +255,10 @@
     "mode": "rust",
     "phase": "P4",
     "module_rs": "filesimages_mod.rs"
+  },
+  "pypdf.generic._appearance_stream": {
+    "mode": "rust",
+    "phase": "P9",
+    "module_rs": "appearance_mod.rs"
   }
 }
