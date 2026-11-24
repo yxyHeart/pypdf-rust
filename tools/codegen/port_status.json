@@ -140,5 +140,35 @@
     "mode": "rust",
     "phase": "P2",
     "module_rs": "data_structures_mod.rs"
+  },
+  "pypdf.generic._color": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "genbasic_mod.rs"
+  },
+  "pypdf.generic._fit": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "genbasic_mod.rs"
+  },
+  "pypdf.generic._outline": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "genbasic_mod.rs"
+  },
+  "pypdf.generic._link": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "genbasic_mod.rs"
+  },
+  "pypdf.generic._viewerpref": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "genbasic_mod.rs"
+  },
+  "pypdf.generic._rectangle": {
+    "mode": "rust",
+    "phase": "P2",
+    "module_rs": "genbasic_mod.rs"
   }
 }

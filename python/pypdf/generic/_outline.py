@@ -1,15 +1,19 @@
-"""pypdf port stub
+"""Outline items (Rust port of ``pypdf/generic/_outline.py``, pypdf 7.1.1).
 
-AUTO-GENERATED stub for the Rust port (upstream pypdf 7.1.1, module ``pypdf.generic._outline``).
-Replaced by a Rust-backed implementation in phase later.
+``OutlineItem`` subclasses the *Python* ``Destination`` class from
+``pypdf.generic._data_structures`` exactly like upstream; ``write_to_stream``
+delegates to ``crates/pypdf-py/src/modules/genbasic_mod.rs``.
 """
 
-from __future__ import annotations
+from pypdf._pypdf import (
+    genbasic_outlineitem_write_to_stream as _outlineitem_write_to_stream,
+)
 
 from .._utils import StreamType
 from ._base import NameObject
 from ._data_structures import Destination
+
+
 class OutlineItem(Destination):
-    """Stub for pypdf.generic._outline.OutlineItem."""
-    def write_to_stream(self, *args, **kwargs):
-        return None  # inert stub
+    def write_to_stream(self, stream: StreamType) -> None:
+        return _outlineitem_write_to_stream(self, stream)
