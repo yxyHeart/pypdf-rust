@@ -9,3 +9,6 @@ __pycache__/
 /.coverage
 .coverage.*
 python/pypdf/_pypdf*.so
+/tests/pdf_cache/
+crates/*/target/
+**/target/
