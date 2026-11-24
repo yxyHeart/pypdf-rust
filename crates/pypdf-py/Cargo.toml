@@ -1,0 +1,15 @@
+[package]
+name = "pypdf-py"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "PyO3 bindings for the pypdf 7.1.1 Rust port"
+
+[lib]
+name = "_pypdf"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { workspace = true }
+pypdf-rs-core = { path = "../pypdf-rs-core" }

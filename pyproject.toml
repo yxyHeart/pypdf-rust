@@ -15,9 +15,9 @@ classifiers = [
 ]
 
 [tool.maturin]
+manifest-path = "crates/pypdf-py/Cargo.toml"
 python-source = "python"
 module-name = "pypdf._pypdf"
-features = ["pyo3/extension-module"]
 profile = "release"
 
 # ---------------------------------------------------------------------------
