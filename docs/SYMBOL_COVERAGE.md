@@ -3,22 +3,22 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**49/1934**（2.53%）
+总计：**704/1934**（36.40%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
-| `pypdf` | 0 | 4 | 0% | stub |
+| `pypdf` | 4 | 4 | 100% | python |
 | `pypdf._cmap` | 0 | 20 | 0% | stub |
-| `pypdf._codecs` | 0 | 8 | 0% | stub |
-| `pypdf._codecs._codecs` | 0 | 18 | 0% | stub |
-| `pypdf._codecs.adobe_glyphs` | 0 | 2 | 0% | stub |
+| `pypdf._codecs` | 8 | 8 | 100% | python |
+| `pypdf._codecs._codecs` | 18 | 18 | 100% | rust |
+| `pypdf._codecs.adobe_glyphs` | 2 | 2 | 100% | python |
 | `pypdf._codecs.core_font_metrics` | 0 | 1 | 0% | stub |
-| `pypdf._codecs.pdfdoc` | 0 | 1 | 0% | stub |
-| `pypdf._codecs.std` | 0 | 1 | 0% | stub |
-| `pypdf._codecs.symbol` | 0 | 1 | 0% | stub |
-| `pypdf._codecs.zapfding` | 0 | 1 | 0% | stub |
-| `pypdf._configuration` | 0 | 43 | 0% | stub |
-| `pypdf._crypt_providers` | 0 | 1 | 0% | stub |
+| `pypdf._codecs.pdfdoc` | 1 | 1 | 100% | python |
+| `pypdf._codecs.std` | 1 | 1 | 100% | python |
+| `pypdf._codecs.symbol` | 1 | 1 | 100% | python |
+| `pypdf._codecs.zapfding` | 1 | 1 | 100% | python |
+| `pypdf._configuration` | 43 | 43 | 100% | python |
+| `pypdf._crypt_providers` | 1 | 1 | 100% | python |
 | `pypdf._crypt_providers._base` | 0 | 4 | 0% | stub |
 | `pypdf._crypt_providers._cryptography` | 0 | 18 | 0% | stub |
 | `pypdf._crypt_providers._fallback` | 0 | 16 | 0% | stub |
@@ -30,26 +30,26 @@
 | `pypdf._protocols` | 24 | 24 | 100% | python |
 | `pypdf._reader` | 0 | 50 | 0% | stub |
 | `pypdf._text_extraction` | 0 | 18 | 0% | stub |
-| `pypdf._text_extraction._layout_mode` | 0 | 1 | 0% | stub |
+| `pypdf._text_extraction._layout_mode` | 1 | 1 | 100% | python |
 | `pypdf._text_extraction._layout_mode._fixed_width_page` | 0 | 19 | 0% | stub |
 | `pypdf._text_extraction._layout_mode._text_state_manager` | 0 | 20 | 0% | stub |
 | `pypdf._text_extraction._layout_mode._text_state_params` | 0 | 26 | 0% | stub |
 | `pypdf._text_extraction._text_extractor` | 0 | 24 | 0% | stub |
-| `pypdf._utils` | 0 | 63 | 0% | stub |
+| `pypdf._utils` | 63 | 63 | 100% | stub |
 | `pypdf._version` | 1 | 1 | 100% | python |
 | `pypdf._writer` | 0 | 131 | 0% | stub |
-| `pypdf.actions` | 0 | 1 | 0% | stub |
+| `pypdf.actions` | 1 | 1 | 100% | python |
 | `pypdf.actions._actions` | 0 | 13 | 0% | stub |
-| `pypdf.annotations` | 0 | 1 | 0% | stub |
+| `pypdf.annotations` | 1 | 1 | 100% | python |
 | `pypdf.annotations._base` | 0 | 5 | 0% | stub |
 | `pypdf.annotations._markup_annotations` | 0 | 20 | 0% | stub |
 | `pypdf.annotations._non_markup_annotations` | 0 | 4 | 0% | stub |
-| `pypdf.constants` | 0 | 379 | 0% | stub |
+| `pypdf.constants` | 379 | 379 | 100% | python |
 | `pypdf.errors` | 15 | 15 | 100% | python |
 | `pypdf.filters` | 0 | 56 | 0% | stub |
-| `pypdf.generic` | 0 | 4 | 0% | stub |
+| `pypdf.generic` | 4 | 4 | 100% | python |
 | `pypdf.generic._appearance_stream` | 0 | 31 | 0% | stub |
-| `pypdf.generic._base` | 0 | 105 | 0% | stub |
+| `pypdf.generic._base` | 105 | 105 | 100% | stub |
 | `pypdf.generic._color` | 0 | 22 | 0% | stub |
 | `pypdf.generic._data_structures` | 0 | 118 | 0% | stub |
 | `pypdf.generic._files` | 0 | 33 | 0% | stub |
@@ -62,17 +62,13 @@
 | `pypdf.generic._rectangle` | 0 | 23 | 0% | stub |
 | `pypdf.generic._utils` | 0 | 11 | 0% | stub |
 | `pypdf.generic._viewerpref` | 0 | 14 | 0% | stub |
-| `pypdf.pagerange` | 0 | 15 | 0% | stub |
-| `pypdf.papersizes` | 0 | 15 | 0% | stub |
+| `pypdf.pagerange` | 6 | 15 | 40% | rust |
+| `pypdf.papersizes` | 15 | 15 | 100% | python |
 | `pypdf.types` | 9 | 9 | 100% | python |
 | `pypdf.xmp` | 0 | 94 | 0% | stub |
 
 ## 未覆盖符号（前 200 个）
 
-- `pypdf.pil_version`
-- `pypdf.pil_version`
-- `pypdf._debug_versions`
-- `pypdf.__all__`
 - `pypdf._cmap._predefined_cmap`
 - `pypdf._cmap.get_encoding`
 - `pypdf._cmap._parse_encoding`
@@ -93,83 +89,7 @@
 - `pypdf._cmap._derive_character_map_from_font_file`
 - `pypdf._cmap._derive_character_map_from_cff_type1_font_file`
 - `pypdf._cmap._derive_character_map_from_type1_font_file`
-- `pypdf._codecs.fill_from_encoding`
-- `pypdf._codecs.rev_encoding`
-- `pypdf._codecs.encoding_dict_from_named_encoding`
-- `pypdf._codecs._win_encoding`
-- `pypdf._codecs._mac_encoding`
-- `pypdf._codecs._pdfdoc_encoding_rev`
-- `pypdf._codecs.charset_encoding`
-- `pypdf._codecs.__all__`
-- `pypdf._codecs._codecs.Codec`
-- `pypdf._codecs._codecs.Codec.encode`
-- `pypdf._codecs._codecs.Codec.decode`
-- `pypdf._codecs._codecs.LzwCodec`
-- `pypdf._codecs._codecs.LzwCodec.CLEAR_TABLE_MARKER`
-- `pypdf._codecs._codecs.LzwCodec.EOD_MARKER`
-- `pypdf._codecs._codecs.LzwCodec.INITIAL_BITS_PER_CODE`
-- `pypdf._codecs._codecs.LzwCodec.MAX_BITS_PER_CODE`
-- `pypdf._codecs._codecs.LzwCodec._AND_TABLE`
-- `pypdf._codecs._codecs.LzwCodec.__init__`
-- `pypdf._codecs._codecs.LzwCodec._initialize_encoding_table`
-- `pypdf._codecs._codecs.LzwCodec._increase_next_code`
-- `pypdf._codecs._codecs.LzwCodec.encode`
-- `pypdf._codecs._codecs.LzwCodec._pack_codes_into_bytes`
-- `pypdf._codecs._codecs.LzwCodec._initialize_decoding_table`
-- `pypdf._codecs._codecs.LzwCodec._next_code_decode`
-- `pypdf._codecs._codecs.LzwCodec.decode`
-- `pypdf._codecs._codecs.LzwCodec._add_entry_decode`
-- `pypdf._codecs.adobe_glyphs.adobe_glyphs`
-- `pypdf._codecs.adobe_glyphs._complete`
 - `pypdf._codecs.core_font_metrics.CORE_FONT_METRICS`
-- `pypdf._codecs.pdfdoc._pdfdoc_encoding`
-- `pypdf._codecs.std._std_encoding`
-- `pypdf._codecs.symbol._symbol_encoding`
-- `pypdf._codecs.zapfding._zapfding_encoding`
-- `pypdf._configuration._determine_jbig2dec_binary`
-- `pypdf._configuration.Configuration`
-- `pypdf._configuration.Configuration.maximum_declared_stream_length`
-- `pypdf._configuration.Configuration.array_based_stream_maximum_output_length`
-- `pypdf._configuration.Configuration.array_maximum_element_count`
-- `pypdf._configuration.Configuration.dictionary_maximum_element_count`
-- `pypdf._configuration.Configuration.jbig2_maximum_output_length`
-- `pypdf._configuration.Configuration.lzw_maximum_output_length`
-- `pypdf._configuration.Configuration.run_length_maximum_output_length`
-- `pypdf._configuration.Configuration.zlib_maximum_output_length`
-- `pypdf._configuration.Configuration.zlib_maximum_recovery_input_length`
-- `pypdf._configuration.Configuration.brotli_maximum_output_length`
-- `pypdf._configuration.Configuration.flate_maximum_columns`
-- `pypdf._configuration.Configuration.flate_maximum_row_length`
-- `pypdf._configuration.Configuration.image_maximum_buffer_size`
-- `pypdf._configuration.Configuration.stream_filters_maximum_length`
-- `pypdf._configuration.Configuration.stream_decoding_work_maximum_length`
-- `pypdf._configuration.Configuration.stream_parsing_work_maximum_count`
-- `pypdf._configuration.Configuration.xmp_maximum_input_length`
-- `pypdf._configuration.Configuration.xmp_maximum_element_count`
-- `pypdf._configuration.Configuration.outline_maximum_entries`
-- `pypdf._configuration.Configuration.outline_maximum_depth`
-- `pypdf._configuration.Configuration.page_tree_maximum_entries`
-- `pypdf._configuration.Configuration.page_tree_maximum_depth`
-- `pypdf._configuration.Configuration.page_tree_maximum_page_entries`
-- `pypdf._configuration.Configuration.form_fields_maximum_entries`
-- `pypdf._configuration.Configuration.form_fields_maximum_depth`
-- `pypdf._configuration.Configuration.named_destinations_maximum_entries`
-- `pypdf._configuration.Configuration.named_destinations_maximum_depth`
-- `pypdf._configuration.Configuration.xform_maximum_invocations_per_extraction`
-- `pypdf._configuration.Configuration.xfa_decoding_work_maximum_length`
-- `pypdf._configuration.Configuration.jbig2dec_binary`
-- `pypdf._configuration.Configuration.page_merge_box`
-- `pypdf._configuration.Configuration.disable_legacy_handling`
-- `pypdf._configuration.Configuration.with_overwrites`
-- `pypdf._configuration.DEFAULT_CONFIGURATION`
-- `pypdf._configuration.CURRENT_CONFIGURATION`
-- `pypdf._configuration.get_configuration`
-- `pypdf._configuration._build_configuration`
-- `pypdf._configuration.overwrite_configuration`
-- `pypdf._configuration.apply_configuration`
-- `pypdf._configuration.LEGACY_NAME_MAPPING`
-- `pypdf._configuration.apply_legacy_configuration`
-- `pypdf._crypt_providers.__all__`
 - `pypdf._crypt_providers._base.CryptBase`
 - `pypdf._crypt_providers._base.CryptBase.encrypt`
 - `pypdf._crypt_providers._base.CryptBase.decrypt`
@@ -269,3 +189,83 @@
 - `pypdf._doc_common.PdfDocCommon._get_page_in_node`
 - `pypdf._doc_common.PdfDocCommon.named_destinations`
 - `pypdf._doc_common.PdfDocCommon.get_named_dest_root`
+- `pypdf._doc_common.PdfDocCommon._get_named_destinations`
+- `pypdf._doc_common.PdfDocCommon.get_fields`
+- `pypdf._doc_common.PdfDocCommon._get_qualified_field_name`
+- `pypdf._doc_common.PdfDocCommon._normal_appearance`
+- `pypdf._doc_common.PdfDocCommon._build_field`
+- `pypdf._doc_common.PdfDocCommon._check_kids`
+- `pypdf._doc_common.PdfDocCommon._write_field`
+- `pypdf._doc_common.PdfDocCommon.get_form_text_fields`
+- `pypdf._doc_common.PdfDocCommon.get_pages_showing_field`
+- `pypdf._doc_common.PdfDocCommon.open_destination`
+- `pypdf._doc_common.PdfDocCommon.open_destination`
+- `pypdf._doc_common.PdfDocCommon.outline`
+- `pypdf._doc_common.PdfDocCommon._get_outline`
+- `pypdf._doc_common.PdfDocCommon.threads`
+- `pypdf._doc_common.PdfDocCommon._get_page_number_by_indirect`
+- `pypdf._doc_common.PdfDocCommon.get_page_number`
+- `pypdf._doc_common.PdfDocCommon.get_destination_page_number`
+- `pypdf._doc_common.PdfDocCommon._build_destination`
+- `pypdf._doc_common.PdfDocCommon._build_outline_item`
+- `pypdf._doc_common.PdfDocCommon.pages`
+- `pypdf._doc_common.PdfDocCommon.page_labels`
+- `pypdf._doc_common.PdfDocCommon.page_layout`
+- `pypdf._doc_common.PdfDocCommon.page_mode`
+- `pypdf._doc_common.PdfDocCommon._flatten`
+- `pypdf._doc_common.PdfDocCommon._enter_page_tree_node`
+- `pypdf._doc_common.PdfDocCommon._pop_next_page_tree_kid`
+- `pypdf._doc_common.PdfDocCommon._flatten_leaf_page`
+- `pypdf._doc_common.PdfDocCommon.remove_page`
+- `pypdf._doc_common.PdfDocCommon._get_indirect_object`
+- `pypdf._doc_common.PdfDocCommon.user_access_permissions`
+- `pypdf._doc_common.PdfDocCommon.are_permissions_valid`
+- `pypdf._doc_common.PdfDocCommon.is_encrypted`
+- `pypdf._doc_common.PdfDocCommon.xfa`
+- `pypdf._doc_common.PdfDocCommon.attachments`
+- `pypdf._doc_common.PdfDocCommon._get_attachment_contents`
+- `pypdf._doc_common.PdfDocCommon.attachment_list`
+- `pypdf._doc_common.PdfDocCommon._repr_mimebundle_`
+- `pypdf._doc_common.LazyDict`
+- `pypdf._doc_common.LazyDict.__init__`
+- `pypdf._doc_common.LazyDict.__getitem__`
+- `pypdf._doc_common.LazyDict.__iter__`
+- `pypdf._doc_common.LazyDict.__len__`
+- `pypdf._doc_common.LazyDict.__str__`
+- `pypdf._encryption.CryptFilter`
+- `pypdf._encryption.CryptFilter.__init__`
+- `pypdf._encryption.CryptFilter.encrypt_object`
+- `pypdf._encryption.CryptFilter.decrypt_object`
+- `pypdf._encryption._PADDING`
+- `pypdf._encryption._padding`
+- `pypdf._encryption._SASLPREP_PROHIBITED_CHECKS`
+- `pypdf._encryption.AlgV4`
+- `pypdf._encryption.AlgV4.compute_key`
+- `pypdf._encryption.AlgV4.compute_O_value_key`
+- `pypdf._encryption.AlgV4.compute_O_value`
+- `pypdf._encryption.AlgV4.compute_U_value`
+- `pypdf._encryption.AlgV4.verify_user_password`
+- `pypdf._encryption.AlgV4.verify_owner_password`
+- `pypdf._encryption.AlgV5`
+- `pypdf._encryption.AlgV5.verify_owner_password`
+- `pypdf._encryption.AlgV5.verify_user_password`
+- `pypdf._encryption.AlgV5.calculate_hash`
+- `pypdf._encryption.AlgV5.verify_perms`
+- `pypdf._encryption.AlgV5.generate_values`
+- `pypdf._encryption.AlgV5.compute_U_value`
+- `pypdf._encryption.AlgV5.compute_O_value`
+- `pypdf._encryption.AlgV5.compute_Perms_value`
+- `pypdf._encryption.PasswordType`
+- `pypdf._encryption.PasswordType.NOT_DECRYPTED`
+- `pypdf._encryption.PasswordType.USER_PASSWORD`
+- `pypdf._encryption.PasswordType.OWNER_PASSWORD`
+- `pypdf._encryption._saslprep`
+- `pypdf._encryption.EncryptAlgorithm`
+- `pypdf._encryption.EncryptAlgorithm.RC4_40`
+- `pypdf._encryption.EncryptAlgorithm.RC4_128`
+- `pypdf._encryption.EncryptAlgorithm.AES_128`
+- `pypdf._encryption.EncryptAlgorithm.AES_256_R5`
+- `pypdf._encryption.EncryptAlgorithm.AES_256`
+- `pypdf._encryption.EncryptionValues`
+- `pypdf._encryption.EncryptionValues.O`
+- `pypdf._encryption.EncryptionValues.U`

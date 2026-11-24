@@ -97,5 +97,15 @@
     "mode": "stub",
     "phase": "P4",
     "reason": "needs generic._font.FontDescriptor (ported in P4)"
+  },
+  "pypdf._codecs._codecs": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "codecs_mod.rs"
+  },
+  "pypdf._configuration": {
+    "mode": "python",
+    "phase": "P2",
+    "reason": "frozen-dataclass config container + contextvar/contextmanager plumbing (Pillow/PIL detection); data/config layer kept verbatim"
   }
 }
