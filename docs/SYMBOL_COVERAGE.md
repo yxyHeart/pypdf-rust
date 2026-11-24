@@ -37,7 +37,7 @@
 | `pypdf._text_extraction._text_extractor` | 24 | 24 | 100% | stub |
 | `pypdf._utils` | 63 | 63 | 100% | rust |
 | `pypdf._version` | 1 | 1 | 100% | python |
-| `pypdf._writer` | 108 | 131 | 82% | stub |
+| `pypdf._writer` | 108 | 131 | 82% | rust |
 | `pypdf.actions` | 1 | 1 | 100% | python |
 | `pypdf.actions._actions` | 13 | 13 | 100% | rust |
 | `pypdf.annotations` | 1 | 1 | 100% | python |

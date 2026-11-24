@@ -265,5 +265,10 @@
     "mode": "rust",
     "phase": "P6",
     "module_rs": "page_mod.rs"
+  },
+  "pypdf._writer": {
+    "mode": "rust",
+    "phase": "P6",
+    "module_rs": "writer_mod.rs"
   }
 }
