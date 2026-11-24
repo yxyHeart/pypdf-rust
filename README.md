@@ -21,7 +21,7 @@ Rust 移植版 **pypdf 7.1.1**（PyO3 形态）：Python 侧 `import pypdf` 即�
 ```
 crates/pypdf-rs-core/   # 纯 Rust 算法（PRNG、Python 兼容格式化、过滤器、编解码…）
 crates/pypdf-py/        # PyO3 扩展（pypdf._pypdf）
-python/pypdf/           # Python 包（模块树镜像上游；未移植模块为自动生成的 stub）
+python/pypdf/           # Python 包（模块树镜像上游；类定义 + 一行委托到 Rust）
 tests/ resources/       # 上游官方测试与测试资源（原样）
 vendor/                 # 上游源码参照与第三方编码器（pypdf / zlib-ng / libjpeg-turbo）
 tools/                  # oracle 差分、符号清单、代码生成、探针
@@ -41,6 +41,125 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profil
 # 3) 构建并安装本端口（venv-dev，绝不与上游 pypdf 共存）
 ./scripts/build.sh
 ```
+
+## 使用说明
+
+本库**不是新 API**：打包出的包名就是 `pypdf`（7.1.1），是上游 pypdf 的**直接替代品**，Python API 完全一致。
+把项目里的 `pypdf` 换成本库即可，代码无需改动。
+
+> 它与上游 pypdf **不能安装在同一个环境**（同一个 import 名）。装上本库等于替换 pypdf。
+
+### 安装
+
+```bash
+# 方式 A：仓库自带脚本（装进 .venvs/dev，用于开发/验证）
+./scripts/build.sh
+
+# 方式 B：装进你自己的 venv（maturin 已安装时可离线构建）
+pip install --no-build-isolation /path/to/pypdf-rust
+
+# 方式 C：先出 wheel 再安装（wheel 可分发到同平台 + 同 Python 版本）
+maturin build --release
+pip install target/wheels/pypdf-7.1.1-*.whl
+```
+
+要求：Python **≥ 3.10**、Rust **≥ 1.83**、`maturin >= 1.7`。
+扩展**未启用 abi3**（绑定本机 CPython 版本，如 `_pypdf.cpython-314-darwin.so`），换 Python 版本或平台需重新编译。
+直接 `pip install /path`（不带 `--no-build-isolation`）会创建隔离构建环境并联网下载 maturin。
+
+### 基本用法
+
+```python
+from pypdf import PdfReader
+
+reader = PdfReader("input.pdf")          # 也接受 io.BytesIO、pathlib.Path
+print(len(reader.pages))
+print(dict(reader.metadata))             # {'/Producer': ..., '/CreationDate': ...}
+print(reader.pages[0].extract_text())
+print(reader.page_labels, reader.outline, list(reader.attachments))
+```
+
+```python
+from pypdf import PdfReader, PdfWriter
+
+# 合并（pypdf 5+ 已移除 PdfMerger，改用 append）
+writer = PdfWriter()
+for name in ["a.pdf", "b.pdf"]:
+    writer.append(name)
+writer.write("merged.pdf")
+
+# 拆分 / 选页 / 插入
+reader = PdfReader("merged.pdf")
+writer = PdfWriter()
+for page in reader.pages[1:3]:
+    writer.add_page(page)
+writer.insert_page(reader.pages[0], 0)
+writer.write("subset.pdf")
+```
+
+```python
+from pypdf import PdfReader, PdfWriter, Transformation
+
+# 旋转 / 裁剪 / 变换（pypdf 7 起，页面需先属于某个 writer）
+writer = PdfWriter(clone_from="in.pdf")
+page = writer.pages[0]
+page.rotate(90)
+page.cropbox.lower_left = (10, 10)
+page.add_transformation(Transformation().scale(0.5))
+writer.write("transformed.pdf")
+
+# 加密 / 解密
+writer = PdfWriter()
+writer.append("in.pdf")
+writer.encrypt("user-pwd", "owner-pwd", algorithm="AES-256")   # 需要 cryptography
+writer.write("encrypted.pdf")
+
+reader = PdfReader("encrypted.pdf")
+print(reader.is_encrypted)
+reader.decrypt("user-pwd")     # 返回 PasswordType.OWNER_PASSWORD / USER_PASSWORD
+```
+
+```python
+from pypdf import PdfReader, PdfWriter
+
+# 表单
+reader = PdfReader("form.pdf")
+writer = PdfWriter(clone_from=reader)
+writer.update_page_form_field_values(writer.pages[0], {"/Name": "Ada Lovelace"})
+writer.write("filled.pdf")
+
+# 图像提取（需要 Pillow）
+page = PdfReader("with_images.pdf").pages[0]
+for img in page.images:
+    open(img.name, "wb").write(img.data)
+```
+
+### 可选依赖
+
+与上游一致，按需安装；缺库时的异常/警告行为与 pypdf 完全相同：
+
+| 功能 | 依赖 |
+|---|---|
+| AES 加密（`algorithm="AES-*"`） | `cryptography` |
+| 图像提取 / 替换（`page.images`） | `Pillow` |
+| 字体解析、CMap / CFF | `fonttools` |
+| Brotli 流解码 | `brotli` |
+| RTL 文本与外观流（阿拉伯文、希伯来文） | `arabic-reshaper` + `python-bidi` |
+
+### 确认运行的是 Rust 版
+
+```python
+import pypdf, pypdf._pypdf
+print(pypdf.__version__)        # 7.1.1
+print(pypdf._pypdf.__file__)    # .../_pypdf.cpython-314-darwin.so
+print(pypdf._debug_versions)    # pypdf==7.1.1, crypt_provider=(...), PIL=...
+```
+
+### 已知限制
+
+- 只保证**行为与字节**和上游一致，不保证性能提升；本仓库未做系统基准测试。
+- 存在一个非上游的私有调试接口（`pypdf._pypdf.cp_prng_set_seed(seed)` / `PYPDF_RS_PRNG_SEED`），用于让 `/ID` 等随机源可复现，日常使用不需要。
+- 内部实现差异（日志函数名、私有导入别名等）见 [`docs/KNOWN_ISSUES.md`](docs/KNOWN_ISSUES.md)，均已判定为官方测试不可观测。
 
 ## 验证
 
