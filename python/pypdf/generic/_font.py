@@ -310,3 +310,8 @@ class Font:
     def can_encode(self, text: str) -> bool:
         """Check whether the font is able to encode a text string."""
         return _rust_can_encode(self, text)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())

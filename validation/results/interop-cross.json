@@ -1,0 +1,11 @@
+{
+ "compared_renders": 75,
+ "compared_status_fields": 1010,
+ "compared_text": 197,
+ "dev_file": "/Users/yxy/Desktop/pypdf-rust/validation/results/interop-dev.json",
+ "diffs": [],
+ "generator": "validation/interop.py --cross",
+ "oracle_file": "/Users/yxy/Desktop/pypdf-rust/validation/results/interop-oracle.json",
+ "status": "MATCH",
+ "tool_availability_diffs": []
+}

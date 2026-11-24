@@ -178,7 +178,7 @@ pub(super) fn skip_over_comments(
 
 // @pypdf: pypdf._utils.read_until_regex
 #[pyfunction]
-#[pyo3(signature = (*, stream, regex, length=i64::MAX))]
+#[pyo3(signature = (*, stream, regex, length=9223372036854775807))]
 pub(super) fn read_until_regex(
     py: Python<'_>,
     stream: &Bound<'_, PyAny>,

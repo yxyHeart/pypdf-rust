@@ -185,3 +185,9 @@ def _derive_character_map_from_type1_font_file(
     return _rust_derive_character_map_from_type1_font_file(
         font_data, map_dict, int_entry
     )
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

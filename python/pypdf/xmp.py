@@ -492,3 +492,9 @@ class XmpInformation(PdfObject):
     def _update_stream(self) -> None:
         """Update the stream with the current XML content."""
         _rust.xmpmod_xmpinformation_update_stream(self)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

@@ -288,3 +288,8 @@ class EmbeddedFile:
             Iterable of class instances for the files found.
         """
         yield from _load_impl(cls, catalog, strict)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())

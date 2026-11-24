@@ -1,0 +1,9 @@
+{
+  "python": "3.14.7",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "pypdf_version": "7.1.1",
+  "module": "/Users/yxy/Desktop/pypdf-rust/python/pypdf/__init__.py",
+  "rust_extension": "/Users/yxy/Desktop/pypdf-rust/python/pypdf/_pypdf.cpython-314-darwin.so",
+  "executable": "/Users/yxy/Desktop/pypdf-rust/.venvs/dev/bin/python"
+}

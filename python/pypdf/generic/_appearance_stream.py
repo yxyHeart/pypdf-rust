@@ -364,3 +364,8 @@ def transform_annotation_appearance(annotation_obj: DictionaryObject, transforma
     /AP /N dict used by checkbox/radio-button widgets.
     """
     return _transform_annotation_appearance(annotation_obj, transformation)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())

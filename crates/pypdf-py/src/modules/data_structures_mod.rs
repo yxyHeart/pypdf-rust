@@ -791,6 +791,26 @@ fn slice_object<'py>(
     obj.get_item(&slice)
 }
 
+/// True when `obj` is still the shim's own `def` (i.e. not monkeypatched).
+fn is_default_shim_function(
+    obj: &Bound<'_, PyAny>,
+    module: &str,
+    qualname: &str,
+) -> PyResult<bool> {
+    let obj_module = match obj.getattr("__module__") {
+        Ok(value) => value.extract::<String>().unwrap_or_default(),
+        Err(_) => return Ok(false),
+    };
+    if obj_module != module {
+        return Ok(false);
+    }
+    let obj_qualname = match obj.getattr("__qualname__") {
+        Ok(value) => value.extract::<String>().unwrap_or_default(),
+        Err(_) => return Ok(false),
+    };
+    Ok(obj_qualname == qualname || obj_qualname.ends_with(&format!(".{qualname}")))
+}
+
 /// `read_object(stream, pdf[, forced_encoding], parsing_budget=...)` via the
 /// module-level function, so recursive calls go through the same Python entry
 /// point as upstream.
@@ -802,6 +822,15 @@ fn call_read_object<'py>(
     parsing_budget: Option<&Bound<'py, PyAny>>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let read_object = shim_attr(py, "read_object")?;
+    // Fast path: for content streams this is called once per token (hundreds of
+    // thousands of times per page), so call the Rust implementation directly
+    // instead of bouncing through the Python shim wrapper.  Monkeypatching the
+    // module-level `read_object` still works: the identity check below falls
+    // back to the Python entry point.
+    if is_default_shim_function(&read_object, "pypdf.generic._data_structures", "read_object")? {
+        let result = datastructures_read_object(py, stream, pdf, forced_encoding, parsing_budget)?;
+        return Ok(result.into_bound(py));
+    }
     let kwargs = PyDict::new(py);
     if let Some(budget) = parsing_budget {
         kwargs.set_item("parsing_budget", budget)?;
@@ -2789,6 +2818,31 @@ fn datastructures_contentstream_check_limits<'py>(
     })
 }
 
+/// Fast path for `ContentStream._check_limits(parsing_budget=..., token_decrement=...)`.
+/// Falls back to the Python entry point when the class attribute is monkeypatched.
+fn content_stream_check_limits(
+    py: Python<'_>,
+    content_stream_class: &Bound<'_, PyAny>,
+    budget: &Bound<'_, PyAny>,
+    token_decrement: i64,
+) -> PyResult<()> {
+    let check_limits = content_stream_class.getattr("_check_limits")?;
+    if !is_default_shim_function(&check_limits, "pypdf.generic._data_structures", "_check_limits")? {
+        let kwargs = PyDict::new(py);
+        kwargs.set_item("parsing_budget", budget)?;
+        kwargs.set_item("token_decrement", py_int(py, token_decrement))?;
+        check_limits.call((), Some(&kwargs))?;
+        return Ok(());
+    }
+    datastructures_contentstream_check_limits(
+        py,
+        None,
+        budget,
+        &py_int(py, token_decrement),
+    )?;
+    Ok(())
+}
+
 // @pypdf: pypdf.generic._data_structures.ContentStream._parse_content_stream
 #[pyfunction]
 fn datastructures_contentstream_parse_content_stream<'py>(
@@ -2831,9 +2885,7 @@ fn datastructures_contentstream_parse_content_stream<'py>(
                 let kwargs = PyDict::new(py);
                 kwargs.set_item("parsing_budget", &budget)?;
                 kwargs.set_item("token_decrement", py_int(py, 2))?;
-                content_stream_class
-                    .getattr("_check_limits")?
-                    .call((), Some(&kwargs))?;
+                content_stream_check_limits(py, &content_stream_class, &budget, 2)?;
                 let read_inline_image = py
                     .import("pypdf.generic._image_inline")?
                     .getattr("read_inline_image")?;
@@ -2849,9 +2901,7 @@ fn datastructures_contentstream_parse_content_stream<'py>(
                 let kwargs = PyDict::new(py);
                 kwargs.set_item("parsing_budget", &budget)?;
                 kwargs.set_item("token_decrement", py_int(py, 1))?;
-                content_stream_class
-                    .getattr("_check_limits")?
-                    .call((), Some(&kwargs))?;
+                content_stream_check_limits(py, &content_stream_class, &budget, 1)?;
                 let pair = py_tuple(py, vec![operands.clone(), operator])?;
                 slf.getattr("_operations")?
                     .call_method1("append", (pair,))?;
@@ -2874,9 +2924,7 @@ fn datastructures_contentstream_parse_content_stream<'py>(
             let kwargs = PyDict::new(py);
             kwargs.set_item("parsing_budget", &budget)?;
             kwargs.set_item("token_decrement", py_int(py, 1))?;
-            content_stream_class
-                .getattr("_check_limits")?
-                .call((), Some(&kwargs))?;
+            content_stream_check_limits(py, &content_stream_class, &budget, 1)?;
             let encoding = slf.getattr("forced_encoding")?;
             let none = py.None().into_bound(py);
             let value = call_read_object(py, stream, &none, Some(&encoding), Some(&budget))?;

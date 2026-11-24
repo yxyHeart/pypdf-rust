@@ -99,3 +99,9 @@ def _build_link(indirect_object: IndirectObject, page: "PageObject") -> Referenc
 
 def _create_link(reference: PdfObject, source_pdf: "PdfReader") -> ReferenceLink | None:
     return _create_link_impl(reference, source_pdf)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

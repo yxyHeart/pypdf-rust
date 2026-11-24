@@ -188,3 +188,9 @@ def _get_content_stream_for_text(
     a visitor has to see its operators.
     """
     return _get_content_stream_for_text_impl(obj, pdf, content_key, has_visitor)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

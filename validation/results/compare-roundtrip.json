@@ -1,0 +1,53 @@
+{
+ "by_workflow": {
+  "EDIT": {
+   "cases": 25,
+   "diffs": 0,
+   "with_diffs": 0
+  },
+  "ENCRYPT": {
+   "cases": 25,
+   "diffs": 0,
+   "with_diffs": 0
+  },
+  "INCREMENTAL": {
+   "cases": 25,
+   "diffs": 0,
+   "with_diffs": 0
+  },
+  "MERGE": {
+   "cases": 25,
+   "diffs": 0,
+   "with_diffs": 0
+  },
+  "RW": {
+   "cases": 25,
+   "diffs": 0,
+   "with_diffs": 0
+  },
+  "TRANSFORM": {
+   "cases": 25,
+   "diffs": 0,
+   "with_diffs": 0
+  }
+ },
+ "common_cases": 150,
+ "dev": {
+  "backend": "dev",
+  "cases": 150,
+  "file": "/Users/yxy/Desktop/pypdf-rust/validation/results/roundtrip-dev.json",
+  "pypdf": "7.1.1"
+ },
+ "diff_count": 0,
+ "diffs": [],
+ "missing_in_dev": [],
+ "missing_in_oracle": [],
+ "oracle": {
+  "backend": "oracle",
+  "cases": 150,
+  "file": "/Users/yxy/Desktop/pypdf-rust/validation/results/roundtrip-oracle.json",
+  "pypdf": "7.1.1"
+ },
+ "status": "MATCH",
+ "truncated": false
+}

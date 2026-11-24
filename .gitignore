@@ -12,3 +12,6 @@ python/pypdf/_pypdf*.so
 /tests/pdf_cache/
 crates/*/target/
 **/target/
+/validation/results/logs/
+/validation/perf/__pycache__/
+validation/**/__pycache__/

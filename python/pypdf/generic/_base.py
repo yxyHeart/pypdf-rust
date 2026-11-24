@@ -620,3 +620,31 @@ def is_null_or_none(x: Any) -> TypeGuard[NullObject | IndirectObject | None]:
 
     """
     return _is_null_or_none(x)
+
+
+# --- upstream module-namespace parity (validation §4.1) -----------------------
+from collections.abc import Sequence as Sequence  # noqa: F811 - upstream imports it from here
+from math import log10 as log10
+from struct import iter_unpack as iter_unpack
+from typing import Self as Self, Union as Union
+
+from pypdf._codecs import _pdfdoc_encoding_rev as _pdfdoc_encoding_rev
+from pypdf._pypdf import (  # noqa: F401 - upstream module globals
+    WHITESPACES as WHITESPACES,
+    StreamType as StreamType,
+    logger_warning as logger_warning,
+    read_non_whitespace as read_non_whitespace,
+    read_until_regex as read_until_regex,
+)
+from pypdf._protocols import PdfWriterProtocol as PdfWriterProtocol
+from pypdf.errors import (
+    PdfReadError as PdfReadError,
+    PdfStreamError as PdfStreamError,
+    STREAM_TRUNCATED_PREMATURELY as STREAM_TRUNCATED_PREMATURELY,
+)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

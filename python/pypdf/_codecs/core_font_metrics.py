@@ -4481,3 +4481,9 @@ CORE_FONT_METRICS["TimesNewRoman"] = CORE_FONT_METRICS["Times-Roman"]
 CORE_FONT_METRICS["TimesNewRoman,Italic"] = CORE_FONT_METRICS["Times-Italic"]
 CORE_FONT_METRICS["TimesNewRoman,Bold"] = CORE_FONT_METRICS["Times-Bold"]
 CORE_FONT_METRICS["TimesNewRoman,BoldItalic"] = CORE_FONT_METRICS["Times-BoldItalic"]
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

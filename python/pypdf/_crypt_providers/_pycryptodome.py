@@ -105,3 +105,9 @@ def aes_cbc_encrypt(key: bytes, iv: bytes, data: bytes) -> bytes:
 
 def aes_cbc_decrypt(key: bytes, iv: bytes, data: bytes) -> bytes:
     return _aes_cbc_decrypt(key, iv, data)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

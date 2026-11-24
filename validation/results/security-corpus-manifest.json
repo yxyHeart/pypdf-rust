@@ -1,0 +1,1362 @@
+{
+ "cases": [
+  {
+   "category": "nesting",
+   "expectation": "recover",
+   "file": "nested_arrays_d10.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_arrays_d10",
+   "intent": "Deeply nested inline array (depth 10) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "6b38a17db8b178628a7d0e6bfcd73d358d208863dfee4a8f47176070e9668011",
+   "size_bytes": 641,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "nesting",
+   "expectation": "recover",
+   "file": "nested_arrays_d100.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_arrays_d100",
+   "intent": "Deeply nested inline array (depth 100) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "1dd9f5a73a4d09a3acd66466b1a480924ca1447aaf994abbb0aecb71f4671e21",
+   "size_bytes": 821,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "nesting",
+   "expectation": "reject",
+   "file": "nested_arrays_d1000.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_arrays_d1000",
+   "intent": "Deeply nested inline array (depth 1000) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "f833b770dc4f5387576ee3a7cea3a8a69c4492a9877a145e0e36bc47cc2c182b",
+   "size_bytes": 2622,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "nesting",
+   "expectation": "reject",
+   "file": "nested_arrays_d10000.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_arrays_d10000",
+   "intent": "Deeply nested inline array (depth 10000) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "072ac962ff2388076d5a3f0b8ee7b121c774ac5b4970d6f29ad0eaa606bb4f95",
+   "size_bytes": 20623,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "nesting",
+   "expectation": "recover",
+   "file": "nested_dicts_d10.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_dicts_d10",
+   "intent": "Deeply nested inline dictionaries (depth 10) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "1af4e21cdd58101b92aeb261b290f7df54f9e0a8d76a44d22a5ec8c96677bc76",
+   "size_bytes": 711,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "nesting",
+   "expectation": "recover",
+   "file": "nested_dicts_d100.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_dicts_d100",
+   "intent": "Deeply nested inline dictionaries (depth 100) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "f68ba3754daf5947fe4328ff5e4ef6703893de698a7346e5f9dd86e59a895d41",
+   "size_bytes": 1522,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "nesting",
+   "expectation": "either",
+   "file": "nested_dicts_d1000.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_dicts_d1000",
+   "intent": "Deeply nested inline dictionaries (depth 1000) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "265f6bbdb65556492a13ce8f600af4cc5b1ef13b24d69a31356261391ccf0be3",
+   "size_bytes": 9622,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "nesting",
+   "expectation": "either",
+   "file": "nested_dicts_d10000.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "nested_dicts_d10000",
+   "intent": "Deeply nested inline dictionaries (depth 10000) reached through /Nest.",
+   "note": "",
+   "resolve_path": [
+    "/Nest"
+   ],
+   "sha256": "69b6881d47ca264562b73e3d6c6f9095f221daab0e0407c06a98d0cf7a90fa04",
+   "size_bytes": 90623,
+   "steps": [
+    "parse",
+    "pages",
+    "depth"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "recover",
+   "file": "cycle_indirect_self.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "cycle_indirect_self",
+   "intent": "Indirect object /Cycle resolves to a dictionary whose /Next points at itself.",
+   "note": "",
+   "resolve_path": [
+    "/Cycle"
+   ],
+   "sha256": "3369ef0e71157ea0fecc974d4a913f649d7ed39dc80cc8cdbd3384645a8a6c3f",
+   "size_bytes": 701,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve",
+    "cycle"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "recover",
+   "file": "cycle_indirect_two.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "cycle_indirect_two",
+   "intent": "Two indirect objects reference each other through /Next (A->B->A).",
+   "note": "",
+   "resolve_path": [
+    "/Cycle"
+   ],
+   "sha256": "5afb5a8d2a8c1a41e279adcd78accc7d28754eb752eb339d9b058bd7298ec5d6",
+   "size_bytes": 776,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve",
+    "cycle"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "reject",
+   "file": "cycle_stream_length_self.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "cycle_stream_length_self",
+   "intent": "Stream declares /Length 6 0 R where object 6 is the stream itself.",
+   "note": "",
+   "resolve_path": [
+    "/Stream"
+   ],
+   "sha256": "a78a90548ea81d818c915d1a84fed651dd3bc8a2a223adfdfbe3ea689c609ba8",
+   "size_bytes": 703,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "reject",
+   "file": "page_tree_cycle_self.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "page_tree_cycle_self",
+   "intent": "/Pages node lists itself in /Kids.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "d6de033545720c8056dec473495e539f21a41e230d890f00272a95de2c40cb1e",
+   "size_bytes": 613,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "reject",
+   "file": "page_tree_cycle_two.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "page_tree_cycle_two",
+   "intent": "Two /Pages nodes reference each other in /Kids (A->B->A).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "c6546ba867b1133a33d677d81a25131a9b1b8e6db5fe4a1c400e83b179944d97",
+   "size_bytes": 690,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "reject",
+   "file": "page_tree_depth_150.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "page_tree_depth_150",
+   "intent": "Page tree nested 150 levels deep (limit is 100).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "8caaa270b6423a2d4ec708b4ef2d6abdbd48cfdfe656aab9ba8a357e89997a77",
+   "size_bytes": 14761,
+   "steps": [
+    "parse",
+    "pages"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "recover",
+   "file": "outline_cycle_self.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "outline_cycle_self",
+   "intent": "Outline items chain to themselves via /Next and /Prev.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "8872331ef98e1644c59fab0de563d110b4c4b5a7b92fb4180180e5ba4505a1f5",
+   "size_bytes": 968,
+   "steps": [
+    "parse",
+    "pages",
+    "outline"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "recover",
+   "file": "outline_self_parent.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "outline_self_parent",
+   "intent": "Outline item is its own /Parent and points at itself in /Dest.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "9975499dd41fa630a26c0f62a4ba8336ef2e15b9ce47a936d614865c9d65d609",
+   "size_bytes": 893,
+   "steps": [
+    "parse",
+    "pages",
+    "outline"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "reject",
+   "file": "outline_depth_170.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "outline_depth_170",
+   "intent": "Outline nested 170 levels deep (limit is 100).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "04c0b8876037879140caed16677e0ae9009989ca8f34d84347a4bac94889d0d2",
+   "size_bytes": 18700,
+   "steps": [
+    "parse",
+    "pages",
+    "outline"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "either",
+   "file": "form_field_cycle_self.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "form_field_cycle_self",
+   "intent": "AcroForm field lists itself in /Kids.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "5b7201ac49a7b69bf0fa163950ff6d2a27b05b947a59062e01f3d14ec9adacb2",
+   "size_bytes": 715,
+   "steps": [
+    "parse",
+    "pages",
+    "fields"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "cycles",
+   "expectation": "recover",
+   "file": "annotation_cycle.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "annotation_cycle",
+   "intent": "Two annotations reference each other through /Popup and /Parent.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "929a03205011962aebecd19bedd463d454c5435d4eee01833b9421b5a056cd93",
+   "size_bytes": 844,
+   "steps": [
+    "parse",
+    "pages",
+    "annotations"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "recover",
+   "file": "xref_offsets_shifted_1000.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_offsets_shifted_1000",
+   "intent": "Every classic-xref object offset is 1000 bytes too large.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "400e838666f6c1b5062043e6f4438ad71daba222d5f31a0b33cbc8e4ab42b7b4",
+   "size_bytes": 613,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "recover",
+   "file": "xref_startxref_garbage.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_startxref_garbage",
+   "intent": "startxref points at a non-existent offset (999999999).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "1bb1da41a87f3c0e61568f8e38ed7c77e8f890baea2714f722e4a46917f0406e",
+   "size_bytes": 619,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "recover",
+   "file": "xref_table_truncated.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_table_truncated",
+   "intent": "File is cut inside the classic xref table; no trailer/startxref.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "2019b8211ccdc2d8a70a66e5632a3ad0b21b59bde4bf9453b632234643dd4dca",
+   "size_bytes": 613,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "reject",
+   "file": "xref_declared_size_huge.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_declared_size_huge",
+   "intent": "Classic xref declares 200000 entries in a file of a few hundred bytes.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "c8584273f45f5cb29af242fe267bdeb19eaa1ece383df018e1eb9e5fd84a16a3",
+   "size_bytes": 618,
+   "steps": [
+    "parse",
+    "pages"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "recover",
+   "file": "xref_trailer_size_too_small.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_trailer_size_too_small",
+   "intent": "Trailer /Size is 3 while objects up to 5 exist.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "90509d9f830d1c8e85577a1bc2353519fbe1b41e7762bc61ed1a01da456baad3",
+   "size_bytes": 613,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "recover",
+   "file": "xref_nonmonotonic_offsets.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_nonmonotonic_offsets",
+   "intent": "Object bodies are stored out of order, so xref offsets are non-monotonic.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "121ed8152046ba47d33ecf3b1ab7195a617e196fe7c3a4dcd25173b1cf58af26",
+   "size_bytes": 613,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "recover",
+   "file": "xref_entry_offset_out_of_range.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_entry_offset_out_of_range",
+   "intent": "xref entry for object 5 points past the end of the file.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "47d12e24fb21444268b77b9f4905684930376b67082be48f40217928ed58b814",
+   "size_bytes": 613,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "reject",
+   "file": "xref_negative_subsection_size.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_negative_subsection_size",
+   "intent": "Classic xref subsection declares a negative entry count (0 -3); the parser desynchronises and reads an entry line as the next subsection size, which the declared-size guard then rejects.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "2905f7a723d2cf2ea1eb5969ea36573f8908203d7cb628572526ed6f36926735",
+   "size_bytes": 614,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "recover",
+   "file": "duplicate_object_numbers.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "duplicate_object_numbers",
+   "intent": "Object 5 is defined twice; the xref points at a duplicate copy after %%EOF.",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "c7ac685ed19c2f915588f978bd4b1fd83d36b16198d8c462b1354f5b6082c54c",
+   "size_bytes": 734,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "either",
+   "file": "xref_conflicting_entries.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "xref_conflicting_entries",
+   "intent": "xref defines object 5 twice (main subsection plus an extra 5 1 subsection).",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "09bdb5c64a9d8920e3f5cb8db30bcc50991f57be417248dfaa4eab5adf12d2cb",
+   "size_bytes": 707,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "xref",
+   "expectation": "either",
+   "file": "indirect_ref_number_2_32.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "indirect_ref_number_2_32",
+   "intent": "Indirect reference uses object number 2**32, beyond 32-bit and not in the xref.",
+   "note": "",
+   "resolve_path": [
+    "/Weird"
+   ],
+   "sha256": "520ad31b23a66fa00371dcf3ae1d0795d247d0d69311e353765da197da1bb83f",
+   "size_bytes": 635,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "stream_length_huge.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "stream_length_huge",
+   "intent": "Content stream declares /Length 999999999 (limit is 75 MB).",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "f3b7ded970903a1df844fa475f11e5dea59ae9e95b46404db94d8d6b6061c5ca",
+   "size_bytes": 589,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "stream_length_huge_indirect.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "stream_length_huge_indirect",
+   "intent": "Stream /Length is an indirect reference to the number 999999999.",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "85daedb2b5fc2fc091cb3300cc3ddc79ca2af91982d381ae5738a279c1d07a09",
+   "size_bytes": 630,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "recover",
+   "file": "stream_length_negative.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "stream_length_negative",
+   "intent": "Stream declares /Length -1; data must be found by scanning for endstream.",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "2f914cba00b14fc4ee548ba9659b2e2f5d16e3d6af8962dc11b52f7df31437ce",
+   "size_bytes": 582,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "stream_truncated.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "stream_truncated",
+   "intent": "Stream declares 5000 bytes but the file ends after 5 bytes; no endstream.",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "1151f95da85316e4f19a5810f50e5dc8f37c9659950d21e6607404d62d40d8c2",
+   "size_bytes": 568,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "stream_missing_endstream.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "stream_missing_endstream",
+   "intent": "Stream is terminated by endobj instead of endstream.",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "c77a36472603d21efea8dc407fbfda252de3939c6bf683f4a3eb15868264dcfe",
+   "size_bytes": 579,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "filter_chain_50_flate.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "filter_chain_50_flate",
+   "intent": "Content stream declares a 50-entry /FlateDecode filter chain (limit is 16).",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "f0564e7dc59121e941ee2186643796d79b13a4b16318525267cef29db74f196c",
+   "size_bytes": 1253,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "recover",
+   "file": "filter_chain_16_flate.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "filter_chain_16_flate",
+   "intent": "Content stream declares exactly 16 nested /FlateDecode filters (at the limit).",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "a67ee4d66702c1cc513ed86214a56ba8a352d5c8258d42b5bc38481326ef1a81",
+   "size_bytes": 964,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "filter_unknown_name.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "filter_unknown_name",
+   "intent": "Stream uses an unknown filter /FooBar.",
+   "note": "",
+   "resolve_path": [
+    "/Pages",
+    "/Kids",
+    0,
+    "/Contents"
+   ],
+   "sha256": "828b8c45388aada62ff6c5875fc3ad88730d7c4bc7a550a84e3c4863f697bd6f",
+   "size_bytes": 597,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "inline_image_huge_dimensions.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "inline_image_huge_dimensions",
+   "intent": "Inline image declares 100000x100000 pixels (sample buffer > 75 MB limit).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "a66c9ba0b7b1cb0b54feee95c61d1a0f10d68b002b23101c9b1392b5db197ff9",
+   "size_bytes": 647,
+   "steps": [
+    "parse",
+    "pages",
+    "operations"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "streams",
+   "expectation": "reject",
+   "file": "inline_image_truncated.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "inline_image_truncated",
+   "intent": "Inline image data ends abruptly without the EI operator.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "8d6d462dff6d81a39b61ae92e4c56d57fc87462e4aceb8ee672fd1548383596c",
+   "size_bytes": 614,
+   "steps": [
+    "parse",
+    "pages",
+    "operations"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "reject",
+   "file": "structure_missing_eof.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_missing_eof",
+   "intent": "File has no %%EOF marker at all.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "078fb3058ef1f0de764dc587d8b20bb87e5cd03aa286f4c59fd2df4068a599c0",
+   "size_bytes": 607,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "recover",
+   "file": "structure_eof_trailing_garbage.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_eof_trailing_garbage",
+   "intent": "Bytes follow the %%EOF marker (incremental-update leftovers).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "999f738db40b768ebde352a8bcba0f3c367093d607d17c5a4d85745f3d9c4340",
+   "size_bytes": 634,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "either",
+   "file": "structure_missing_header.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_missing_header",
+   "intent": "File does not start with a %PDF- header.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "96fc7accdb3beb9f9cc1ee9b1609f8e80320ccb73c149c64661e9f79929689bc",
+   "size_bytes": 598,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "reject",
+   "file": "structure_empty_file.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_empty_file",
+   "intent": "Zero-byte input file.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size_bytes": 0,
+   "steps": [
+    "parse",
+    "pages"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "reject",
+   "file": "structure_header_only.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_header_only",
+   "intent": "File contains only a %PDF- header and an %%EOF marker.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "1e7313ace78f0fb481a486939b4885902663102818090805515553d84e0bbfd3",
+   "size_bytes": 15,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "recover",
+   "file": "structure_trailer_no_root.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_trailer_no_root",
+   "intent": "Trailer has no /Root entry.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "e8c11d2418cf660a62c22452448959a79c8b7dd4cb3deceb10495641158a31b1",
+   "size_bytes": 601,
+   "steps": [
+    "parse",
+    "pages"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "recover",
+   "file": "structure_root_not_dictionary.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_root_not_dictionary",
+   "intent": "/Root points at the number 42 instead of a catalog dictionary.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "a11af2859877994393be27be9aa77abb8073b78c3389d42f6b77644ae8eef66f",
+   "size_bytes": 651,
+   "steps": [
+    "parse",
+    "pages"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "reject",
+   "file": "structure_catalog_no_pages.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_catalog_no_pages",
+   "intent": "Catalog dictionary has no /Pages entry.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "23ac59591243c680ae63a2127036d4431cec048dfbb3fc186fb84ffafd9c6f03",
+   "size_bytes": 600,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "recover",
+   "file": "structure_page_count_lie.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "structure_page_count_lie",
+   "intent": "/Pages /Count claims 999999 pages but only one kid exists.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "8e49ce951fa84ff0e6f6a5ea6caec3976b6b838d05285ffa07e0ebcee6901b23",
+   "size_bytes": 618,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "resources",
+   "expectation": "recover",
+   "file": "bomb_flate_1mb.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "bomb_flate_1mb",
+   "intent": "Flate stream inflates to 1 MiB from a few KiB (bounded, within limits).",
+   "note": "",
+   "resolve_path": [
+    "/Bomb"
+   ],
+   "sha256": "1f7f64f886595a36c66c81040e04acf5ecc9adb5935eedb16e4099df8a7e651f",
+   "size_bytes": 1758,
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 30.0,
+   "write": false
+  },
+  {
+   "category": "resources",
+   "expectation": "recover",
+   "generated": false,
+   "heavy": true,
+   "id": "bomb_flate_60mb",
+   "intent": "Flate stream inflates to 60 MiB, just below the 75 MB output limit.",
+   "note": "",
+   "resolve_path": [
+    "/Bomb"
+   ],
+   "skip_reason": "requires --heavy",
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 60.0,
+   "write": false
+  },
+  {
+   "category": "resources",
+   "expectation": "reject",
+   "generated": false,
+   "heavy": true,
+   "id": "bomb_flate_1gb",
+   "intent": "Flate stream inflates to 1 GiB from ~1 MiB of input; /Length is realistic.",
+   "note": "",
+   "resolve_path": [
+    "/Bomb"
+   ],
+   "skip_reason": "requires --heavy",
+   "steps": [
+    "parse",
+    "pages",
+    "resolve"
+   ],
+   "timeout_s": 60.0,
+   "write": false
+  },
+  {
+   "category": "oversized",
+   "expectation": "reject",
+   "file": "cmap_oversized_mapping.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "cmap_oversized_mapping",
+   "intent": "ToUnicode CMap defines 100500 bfchar mappings (limit is 100000).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "28f39242ccbc6b45a8f13cce5403aa1c9db499eb567af21d6d5d436459e5ef2b",
+   "size_bytes": 1434138,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 60.0,
+   "write": false
+  },
+  {
+   "category": "oversized",
+   "expectation": "reject",
+   "file": "cmap_oversized_code_token.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "cmap_oversized_code_token",
+   "intent": "ToUnicode bfchar uses a 34-hex-digit source code (limit is 16).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "80808c9c9d01b7063b85564ca581428a6ce2bbf971e1c64f75baf9134f5075bc",
+   "size_bytes": 945,
+   "steps": [
+    "parse",
+    "pages",
+    "text"
+   ],
+   "timeout_s": 20.0,
+   "write": false
+  },
+  {
+   "category": "oversized",
+   "expectation": "reject",
+   "file": "page_labels_oversized_nums.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "page_labels_oversized_nums",
+   "intent": "/PageLabels /Nums holds 100002 array elements (array limit is 100000).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "3f1e27d09cf7e1929d4107bdf604487bbcb76d65c7e7594f809dc7b89ea50a13",
+   "size_bytes": 889593,
+   "steps": [
+    "parse",
+    "pages",
+    "labels"
+   ],
+   "timeout_s": 60.0,
+   "write": false
+  },
+  {
+   "category": "oversized",
+   "expectation": "recover",
+   "file": "page_label_huge_prefix.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "page_label_huge_prefix",
+   "intent": "Page label prefix string is 1 MB long.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "93df31dcd6a70d64a9a164849efc3ffa1c91fb62c6871c773f34091368a65b7c",
+   "size_bytes": 1000706,
+   "steps": [
+    "parse",
+    "pages",
+    "labels"
+   ],
+   "timeout_s": 40.0,
+   "write": false
+  },
+  {
+   "category": "oversized",
+   "expectation": "reject",
+   "file": "attachments_oversized_names_array.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "attachments_oversized_names_array",
+   "intent": "EmbeddedFiles /Names array holds 100002 elements (array limit is 100000).",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "a156f3ae467db2bcad42b6dbecb85e111a05e9d43d98134e486fb3efcc777951",
+   "size_bytes": 750896,
+   "steps": [
+    "parse",
+    "pages",
+    "attachments"
+   ],
+   "timeout_s": 60.0,
+   "write": false
+  },
+  {
+   "category": "oversized",
+   "expectation": "recover",
+   "file": "attachment_name_1mb.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "attachment_name_1mb",
+   "intent": "Single embedded-file name string is 1 MB long.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "cd6a3cc8ecca59f996257cb94d3d9bf16c98f3c4c7095a72cf07bfcf7c3d5c60",
+   "size_bytes": 1000891,
+   "steps": [
+    "parse",
+    "pages",
+    "attachments"
+   ],
+   "timeout_s": 40.0,
+   "write": false
+  },
+  {
+   "category": "structure",
+   "expectation": "either",
+   "file": "writer_page_parent_cycle.pdf",
+   "generated": true,
+   "heavy": false,
+   "id": "writer_page_parent_cycle",
+   "intent": "Page's /Parent points at the page itself; writer round-trip must not leave a broken file.",
+   "note": "",
+   "resolve_path": [],
+   "sha256": "9f2ede5e6f4fc2b85d6a36dd07fc902656844e32158e7d13ff452ba2a1604200",
+   "size_bytes": 613,
+   "steps": [
+    "parse",
+    "pages",
+    "write"
+   ],
+   "timeout_s": 20.0,
+   "write": true
+  }
+ ],
+ "coverage": {
+  "Decompression bombs": [
+   "bomb_flate_1mb"
+  ],
+  "Deeply nested arrays/dictionaries": [
+   "nested_arrays_d10",
+   "nested_arrays_d100",
+   "nested_arrays_d1000",
+   "nested_arrays_d10000",
+   "nested_dicts_d10",
+   "nested_dicts_d100",
+   "nested_dicts_d1000",
+   "nested_dicts_d10000"
+  ],
+  "Duplicate / conflicting object numbers": [
+   "duplicate_object_numbers",
+   "xref_conflicting_entries"
+  ],
+  "Excessive stream filter chains": [
+   "filter_chain_50_flate",
+   "filter_chain_16_flate",
+   "filter_unknown_name"
+  ],
+  "Huge /Length, truncated streams": [
+   "stream_length_huge",
+   "stream_length_huge_indirect",
+   "stream_length_negative",
+   "stream_truncated",
+   "stream_missing_endstream"
+  ],
+  "Indirect reference cycles": [
+   "cycle_indirect_self",
+   "cycle_indirect_two",
+   "cycle_stream_length_self",
+   "page_tree_cycle_self",
+   "page_tree_cycle_two",
+   "page_tree_depth_150",
+   "outline_cycle_self",
+   "outline_self_parent",
+   "outline_depth_170",
+   "form_field_cycle_self",
+   "annotation_cycle"
+  ],
+  "Inline image boundary errors": [
+   "inline_image_huge_dimensions",
+   "inline_image_truncated"
+  ],
+  "Malformed xref and wrong object offsets": [
+   "xref_offsets_shifted_1000",
+   "xref_startxref_garbage",
+   "xref_table_truncated",
+   "xref_declared_size_huge",
+   "xref_trailer_size_too_small",
+   "xref_nonmonotonic_offsets",
+   "xref_entry_offset_out_of_range",
+   "xref_negative_subsection_size",
+   "duplicate_object_numbers",
+   "xref_conflicting_entries",
+   "indirect_ref_number_2_32"
+  ],
+  "Missing PDF header / EOF": [
+   "structure_missing_eof",
+   "structure_eof_trailing_garbage",
+   "structure_missing_header",
+   "structure_empty_file",
+   "structure_header_only",
+   "structure_trailer_no_root",
+   "structure_root_not_dictionary",
+   "structure_catalog_no_pages",
+   "structure_page_count_lie"
+  ],
+  "Outline / form / annotation tree cycles": [
+   "outline_cycle_self",
+   "outline_self_parent",
+   "outline_depth_170",
+   "form_field_cycle_self",
+   "annotation_cycle"
+  ],
+  "Oversized CMap / page labels / attachment names": [
+   "cmap_oversized_mapping",
+   "cmap_oversized_code_token",
+   "page_labels_oversized_nums",
+   "page_label_huge_prefix",
+   "attachments_oversized_names_array",
+   "attachment_name_1mb"
+  ],
+  "Page-tree cycles": [
+   "page_tree_cycle_self",
+   "page_tree_cycle_two",
+   "page_tree_depth_150"
+  ]
+ },
+ "generated_at": "2026-11-24T12:24:53Z",
+ "generator": "validation/security.py",
+ "git_commit": "6b14dbe",
+ "heavy": false,
+ "limit_as_mb": 1024,
+ "totals": {
+  "cases": 59,
+  "generated_cases": 57,
+  "skipped_heavy": 2,
+  "total_bytes": 5265428
+ }
+}

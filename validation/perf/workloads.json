@@ -1,0 +1,221 @@
+{
+  "schema": "perf-workloads-v1",
+  "plan_section": "§10.2",
+  "description": "Performance workloads W1-W8 for the pypdf-rust validation plan (§10). Every workload lists its input PDFs explicitly, its operation parameters, and the kind of output whose byte size is compared between backends.",
+  "large_file_threshold_bytes": 250000,
+  "warmup_runs": 1,
+  "repetitions_default": 7,
+  "repetitions_minimum": 5,
+  "workloads": [
+    {
+      "id": "W1",
+      "name": "reader_init_20_small",
+      "description": "Open 20 small PDFs, read the page count and selected document-information fields. Baseline for the read/parse path.",
+      "type": "reader_init",
+      "size_class": "small",
+      "output_kind": "derived_summary",
+      "files": [
+        "resources/AutoCad_Simple.pdf",
+        "resources/Sample_Td-matrix.pdf",
+        "resources/crazyones.pdf",
+        "resources/bytes.pdf",
+        "resources/box.pdf",
+        "resources/commented.pdf",
+        "resources/commented-xmp.pdf",
+        "resources/issue-297.pdf",
+        "resources/hello-world.pdf",
+        "resources/toy.pdf",
+        "resources/multilang.pdf",
+        "resources/metadata.pdf",
+        "resources/two-different-pages.pdf",
+        "resources/imagemagick-ASCII85Decode.pdf",
+        "resources/imagemagick-lzw.pdf",
+        "resources/imagemagick-CCITTFaxDecode.pdf",
+        "resources/reportlab-inline-image.pdf",
+        "resources/selenium-pypdf-issue-177.pdf",
+        "resources/superscript-pdftex.pdf",
+        "resources/pdflatex-forms.pdf"
+      ],
+      "params": {
+        "metadata_fields": [
+          "/Title",
+          "/Author",
+          "/Producer",
+          "/Creator",
+          "/CreationDate"
+        ]
+      },
+      "expected_output_bytes": 2389
+    },
+    {
+      "id": "W2",
+      "name": "page_traverse_5_large",
+      "description": "Open 5 large PDFs and walk every page of the page tree, touching all five page boxes and the rotation attribute. Exercises page-tree traversal and object caching on large documents.",
+      "type": "page_traverse",
+      "size_class": "large",
+      "output_kind": "derived_summary",
+      "files": [
+        "resources/issue-604.pdf",
+        "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
+        "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
+        "resources/fontsampler.pdf",
+        "sample-files/018-base64-image/base64image.pdf"
+      ],
+      "params": {
+        "boxes": [
+          "mediabox",
+          "cropbox",
+          "trimbox",
+          "artbox",
+          "bleedbox"
+        ],
+        "include_rotation": true,
+        "max_pages": 0
+      },
+      "expected_output_bytes": 47166
+    },
+    {
+      "id": "W3",
+      "name": "text_extract_12",
+      "description": "Extract text from up to 5 pages of 12 text-bearing PDFs (small and large mixed) and concatenate it. Exercises content-stream parsing, fonts and CMaps.",
+      "type": "text_extract",
+      "size_class": "mixed",
+      "output_kind": "extracted_text",
+      "files": [
+        "resources/crazyones.pdf",
+        "resources/multilang.pdf",
+        "resources/hello-world.pdf",
+        "resources/toy.pdf",
+        "resources/Sample_Td-matrix.pdf",
+        "resources/superscript-pdftex.pdf",
+        "resources/selenium-pypdf-issue-177.pdf",
+        "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
+        "resources/pdflatex-outline.pdf",
+        "sample-files/026-latex-multicolumn/multicolumn.pdf",
+        "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
+        "resources/test Orient.pdf"
+      ],
+      "params": {
+        "max_pages": 5
+      },
+      "expected_output_bytes": 35165
+    },
+    {
+      "id": "W4",
+      "name": "image_extract_10",
+      "description": "Enumerate and extract every image of 10 image-bearing PDFs: read the raw image bytes and decode them through Pillow, recording name, byte length, pixel size and mode.",
+      "type": "image_extract",
+      "size_class": "mixed",
+      "output_kind": "image_bytes",
+      "files": [
+        "resources/imagemagick-images.pdf",
+        "resources/jpeg.pdf",
+        "resources/box.pdf",
+        "resources/issue-301.pdf",
+        "sample-files/031-png-predictors/png-predictors.pdf",
+        "resources/imagemagick-ASCII85Decode.pdf",
+        "sample-files/008-reportlab-inline-image/inline-image.pdf",
+        "sample-files/019-grayscale-image/grayscale-image.pdf",
+        "resources/git.pdf",
+        "sample-files/023-cmyk-image/cmyk-image.pdf"
+      ],
+      "params": {
+        "max_pages": 0,
+        "decode_with_pillow": true
+      },
+      "expected_output_bytes": 1620399
+    },
+    {
+      "id": "W5",
+      "name": "merge_append_5",
+      "description": "Merge 5 small multi-page PDFs with PdfWriter.append in one writer and serialize the result into memory. Exercises object-graph copying and the writer.",
+      "type": "merge_append",
+      "size_class": "small",
+      "output_kind": "pdf_bytes",
+      "files": [
+        "resources/two-different-pages.pdf",
+        "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
+        "resources/pdflatex-outline.pdf",
+        "sample-files/015-arabic/habibi-rotated.pdf",
+        "sample-files/026-latex-multicolumn/multicolumn.pdf"
+      ],
+      "params": {},
+      "expected_output_bytes": 185316
+    },
+    {
+      "id": "W6",
+      "name": "rotate_crop_merge_write_5",
+      "description": "Clone the pages of 5 small PDFs into a writer, rotate each page by a 90/180/270 cycle, replace the cropbox, then serialize the merged document.",
+      "type": "page_ops_write",
+      "size_class": "small",
+      "output_kind": "pdf_bytes",
+      "files": [
+        "resources/FormTestFromOo.pdf",
+        "resources/attachment.pdf",
+        "resources/form.pdf",
+        "resources/commented.pdf",
+        "resources/outline-without-title.pdf"
+      ],
+      "params": {
+        "rotate_cycle": [
+          90,
+          180,
+          270
+        ],
+        "crop_lower_left": [
+          10.0,
+          10.0
+        ],
+        "crop_upper_right": [
+          500.0,
+          700.0
+        ]
+      },
+      "expected_output_bytes": 245923
+    },
+    {
+      "id": "W7",
+      "name": "clone_write_10",
+      "description": "Clone every page of a fixed 10-PDF set (20 pages) into a fresh PdfWriter and write it. Serialization/xref baseline for a typical archive rebuild.",
+      "type": "clone_write",
+      "size_class": "small",
+      "output_kind": "pdf_bytes",
+      "files": [
+        "sample-files/001-trivial/minimal-document.pdf",
+        "sample-files/002-trivial-libre-office-writer/002-trivial-libre-office-writer.pdf",
+        "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
+        "sample-files/006-pdflatex-outline/pdflatex-outline.pdf",
+        "sample-files/011-google-doc-document/google-doc-document.pdf",
+        "sample-files/013-reportlab-overlay/reportlab-overlay.pdf",
+        "sample-files/014-outlines/mistitled_outlines_example.pdf",
+        "sample-files/015-arabic/habibi-rotated.pdf",
+        "sample-files/016-libre-office-link/libre-office-link.pdf",
+        "sample-files/024-annotations/annotated_pdf.pdf"
+      ],
+      "params": {},
+      "expected_output_bytes": 298006
+    },
+    {
+      "id": "W8",
+      "name": "end_to_end_mixed_7",
+      "description": "Full business workflow on a mixed 7-PDF set: open each file, extract text from the first pages, merge all pages with PdfWriter.append, write the result and re-open it to verify the page count.",
+      "type": "end_to_end",
+      "size_class": "mixed",
+      "output_kind": "pdf_bytes",
+      "files": [
+        "resources/issue-604.pdf",
+        "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
+        "resources/side-by-side-subfig.pdf",
+        "resources/crazyones.pdf",
+        "resources/multilang.pdf",
+        "resources/imagemagick-images.pdf",
+        "resources/pdflatex-outline.pdf"
+      ],
+      "params": {
+        "text_pages": 2
+      },
+      "expected_output_bytes": 6194871
+    }
+  ],
+  "expected_output_bytes_source": "Measured with the reference implementation (PyPI pypdf 7.1.1, .venvs/oracle) during the final 10-repetition run recorded in validation/results/perf-reference.json; output sizes are deterministic and identical across both backends (see that file for the raw repetitions)."
+}

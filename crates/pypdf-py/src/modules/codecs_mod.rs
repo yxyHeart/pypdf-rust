@@ -30,7 +30,7 @@ const LOGGER_SOURCE: &str = "pypdf._codecs._codecs";
 /// (PyO3 installs `Py_TPFLAGS_DISALLOW_INSTANTIATION`); subclasses must provide
 /// their own constructor.
 // @pypdf: pypdf._codecs._codecs.Codec
-#[pyclass(name = "Codec", module = "pypdf._codecs._codecs", subclass, dict)]
+#[pyclass(name = "_Codec", module = "pypdf._codecs._codecs", subclass, dict)]
 pub struct Codec {}
 
 #[pymethods]
@@ -57,7 +57,7 @@ fn abstract_method(name: &str) -> PyErr {
 /// Lempel-Ziv-Welch (LZW) adaptive compression codec.
 // @pypdf: pypdf._codecs._codecs.LzwCodec
 #[pyclass(
-    name = "LzwCodec",
+    name = "_LzwCodecImpl",
     module = "pypdf._codecs._codecs",
     extends = Codec,
     subclass,

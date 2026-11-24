@@ -758,3 +758,9 @@ def _create_outline_item(
     bold: bool,
 ):
     return _writermod.writermod_private_create_outline_item(action_ref, title, color, italic, bold)
+
+# --- upstream type-annotation parity (validation §4.2) -----------------------
+from pypdf._api_annotations import apply_module as _apply_api_annotations
+
+_apply_api_annotations(globals())
+globals().pop("annotations", None)  # `from __future__ import annotations` binds this name; upstream modules do not have it

@@ -1,0 +1,9 @@
+{
+  "python": "3.14.7",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "pypdf_version": "7.1.1",
+  "module": "/Users/yxy/Desktop/pypdf-rust/.venvs/oracle/lib/python3.14/site-packages/pypdf/__init__.py",
+  "rust_extension": null,
+  "executable": "/Users/yxy/Desktop/pypdf-rust/.venvs/oracle/bin/python"
+}
