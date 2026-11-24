@@ -235,5 +235,10 @@
     "mode": "rust",
     "phase": "P4",
     "module_rs": "font_mod.rs"
+  },
+  "pypdf._doc_common": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "doc_common_mod.rs"
   }
 }

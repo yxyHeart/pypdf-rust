@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**1762/1934**（91.11%）
+总计：**1902/1934**（98.35%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -23,18 +23,18 @@
 | `pypdf._crypt_providers._cryptography` | 18 | 18 | 100% | rust |
 | `pypdf._crypt_providers._fallback` | 16 | 16 | 100% | rust |
 | `pypdf._crypt_providers._pycryptodome` | 15 | 15 | 100% | rust |
-| `pypdf._doc_common` | 89 | 89 | 100% | stub |
+| `pypdf._doc_common` | 89 | 89 | 100% | rust |
 | `pypdf._encryption` | 58 | 58 | 100% | rust |
 | `pypdf._page` | 108 | 108 | 100% | stub |
 | `pypdf._page_labels` | 36 | 36 | 100% | rust |
 | `pypdf._protocols` | 24 | 24 | 100% | python |
-| `pypdf._reader` | 48 | 50 | 96% | stub |
-| `pypdf._text_extraction` | 0 | 18 | 0% | stub |
+| `pypdf._reader` | 50 | 50 | 100% | stub |
+| `pypdf._text_extraction` | 18 | 18 | 100% | stub |
 | `pypdf._text_extraction._layout_mode` | 1 | 1 | 100% | python |
-| `pypdf._text_extraction._layout_mode._fixed_width_page` | 0 | 19 | 0% | stub |
-| `pypdf._text_extraction._layout_mode._text_state_manager` | 0 | 20 | 0% | stub |
-| `pypdf._text_extraction._layout_mode._text_state_params` | 0 | 26 | 0% | stub |
-| `pypdf._text_extraction._text_extractor` | 0 | 24 | 0% | stub |
+| `pypdf._text_extraction._layout_mode._fixed_width_page` | 19 | 19 | 100% | stub |
+| `pypdf._text_extraction._layout_mode._text_state_manager` | 20 | 20 | 100% | stub |
+| `pypdf._text_extraction._layout_mode._text_state_params` | 26 | 26 | 100% | stub |
+| `pypdf._text_extraction._text_extractor` | 24 | 24 | 100% | stub |
 | `pypdf._utils` | 63 | 63 | 100% | rust |
 | `pypdf._version` | 1 | 1 | 100% | python |
 | `pypdf._writer` | 108 | 131 | 82% | stub |
@@ -48,7 +48,7 @@
 | `pypdf.errors` | 15 | 15 | 100% | python |
 | `pypdf.filters` | 56 | 56 | 100% | rust |
 | `pypdf.generic` | 4 | 4 | 100% | python |
-| `pypdf.generic._appearance_stream` | 0 | 31 | 0% | stub |
+| `pypdf.generic._appearance_stream` | 31 | 31 | 100% | stub |
 | `pypdf.generic._base` | 105 | 105 | 100% | rust |
 | `pypdf.generic._color` | 22 | 22 | 100% | rust |
 | `pypdf.generic._data_structures` | 118 | 118 | 100% | rust |
@@ -69,115 +69,6 @@
 
 ## 未覆盖符号（前 200 个）
 
-- `pypdf._reader.PdfReader._MAX_STARTXREF_RECOVERY_LINES`
-- `pypdf._reader.PdfReader._XREF_STREAM_TRAILER_KEYS`
-- `pypdf._text_extraction.CUSTOM_RTL_MIN`
-- `pypdf._text_extraction.CUSTOM_RTL_MAX`
-- `pypdf._text_extraction.CUSTOM_RTL_SPECIAL_CHARS`
-- `pypdf._text_extraction.LAYOUT_NEW_BT_GROUP_SPACE_WIDTHS`
-- `pypdf._text_extraction.UNICODE_LOWER_LIMIT`
-- `pypdf._text_extraction.UNICODE_UPPER_LIMIT`
-- `pypdf._text_extraction.RTL_CHARACTER_PATTERN`
-- `pypdf._text_extraction._TEXT_OPERATORS`
-- `pypdf._text_extraction._TEXT_OPERATOR_START`
-- `pypdf._text_extraction.OrientationNotFoundError`
-- `pypdf._text_extraction.set_custom_rtl`
-- `pypdf._text_extraction.mult`
-- `pypdf._text_extraction.orient`
-- `pypdf._text_extraction.crlf_space_check`
-- `pypdf._text_extraction.get_text_operands`
-- `pypdf._text_extraction.get_display_str`
-- `pypdf._text_extraction._has_text_operator`
-- `pypdf._text_extraction._get_content_stream_for_text`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.WHITESPACE_LIMIT`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.NEWLINE_LIMIT`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup.tx`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup.ty`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup.font_size`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup.font_height`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup.text`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup.displaced_tx`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.BTGroup.flip_sort`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.set_font_operation`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.resolve_font`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.bt_group`
-- `pypdf._text_extraction._layout_mode._fixed_width_page._show_text_operand`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.recurse_to_target_op`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.y_coordinate_groups`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.text_show_operations`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.fixed_char_width`
-- `pypdf._text_extraction._layout_mode._fixed_width_page.fixed_width_page`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManagerKeyType`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManagerChainMapType`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManagerDictType`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.__init__`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.set_state_param`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.set_font`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.text_state_params`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager._as_float`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.raw_transform`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.new_transform`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.reset_tm`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.reset_trm`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.remove_q`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.add_q`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.add_cm`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager._complete_matrix`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.add_tm`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.add_trm`
-- `pypdf._text_extraction._layout_mode._text_state_manager.TextStateManager.effective_transform`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.value`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.font`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.font_size`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.Tc`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.Tw`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.Tz`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.TL`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.Ts`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.transform`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.tx`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.ty`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.displaced_tx`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.space_tx`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.font_height`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.flip_vertical`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.rotated`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.text`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams._raw_chars`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.__post_init__`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.font_size_matrix`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.displaced_transform`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.render_transform`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.displacement_matrix`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.word_tx`
-- `pypdf._text_extraction._layout_mode._text_state_params.TextStateParams.to_dict`
-- `pypdf._text_extraction._text_extractor._get_number_operand`
-- `pypdf._text_extraction._text_extractor.TextExtraction`
-- `pypdf._text_extraction._text_extractor.TextExtraction.__init__`
-- `pypdf._text_extraction._text_extractor.TextExtraction.initialize_extraction`
-- `pypdf._text_extraction._text_extractor.TextExtraction.compute_str_widths`
-- `pypdf._text_extraction._text_extractor.TextExtraction.process_operation`
-- `pypdf._text_extraction._text_extractor.TextExtraction.process_tj_offset`
-- `pypdf._text_extraction._text_extractor.TextExtraction._post_process_text_operation`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tj`
-- `pypdf._text_extraction._text_extractor.TextExtraction._flush_text`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_bt`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_et`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_save_graphics_state`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_restore_graphics_state`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_cm`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tz`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tc`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tw`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tl`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tf`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_td`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tm`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_t_star`
-- `pypdf._text_extraction._text_extractor.TextExtraction._handle_tj_operation`
 - `pypdf._writer.ALL_DOCUMENT_PERMISSIONS`
 - `pypdf._writer.ObjectDeletionFlag`
 - `pypdf._writer.ObjectDeletionFlag.NONE`
@@ -201,37 +92,6 @@
 - `pypdf._writer.PdfWriter._UNSET`
 - `pypdf._writer.PdfWriter._valid_layouts`
 - `pypdf._writer.PdfWriter._valid_modes`
-- `pypdf.generic._appearance_stream.HAS_RTL_SUPPORT`
-- `pypdf.generic._appearance_stream.HAS_RTL_SUPPORT`
-- `pypdf.generic._appearance_stream.DEFAULT_FONT_SIZE_IN_MULTILINE`
-- `pypdf.generic._appearance_stream.TEXT_SPACE_TO_GLYPH_SPACE_FACTOR`
-- `pypdf.generic._appearance_stream.BaseStreamConfig`
-- `pypdf.generic._appearance_stream.BaseStreamConfig.rectangle`
-- `pypdf.generic._appearance_stream.BaseStreamConfig.border_width`
-- `pypdf.generic._appearance_stream.BaseStreamConfig.border_style`
-- `pypdf.generic._appearance_stream.BaseStreamConfig.border_color`
-- `pypdf.generic._appearance_stream.BaseStreamConfig.background_color`
-- `pypdf.generic._appearance_stream.BaseStreamConfig.rotation`
-- `pypdf.generic._appearance_stream.BaseStreamAppearance`
-- `pypdf.generic._appearance_stream.BaseStreamAppearance._add_matrix`
-- `pypdf.generic._appearance_stream.BaseStreamAppearance.__init__`
-- `pypdf.generic._appearance_stream.TextAlignment`
-- `pypdf.generic._appearance_stream.TextAlignment.LEFT`
-- `pypdf.generic._appearance_stream.TextAlignment.CENTER`
-- `pypdf.generic._appearance_stream.TextAlignment.RIGHT`
-- `pypdf.generic._appearance_stream.WidthWordGlyphs`
-- `pypdf.generic._appearance_stream.WidthWordGlyphs.width`
-- `pypdf.generic._appearance_stream.WidthWordGlyphs.word`
-- `pypdf.generic._appearance_stream.WidthWordGlyphs.glyphs`
-- `pypdf.generic._appearance_stream.TextStreamAppearance`
-- `pypdf.generic._appearance_stream.TextStreamAppearance._scale_text`
-- `pypdf.generic._appearance_stream.TextStreamAppearance._generate_appearance_stream_data`
-- `pypdf.generic._appearance_stream.TextStreamAppearance.__init__`
-- `pypdf.generic._appearance_stream.TextStreamAppearance._find_annotation_font_resource`
-- `pypdf.generic._appearance_stream.TextStreamAppearance._sync_appearance_stream_font_resources`
-- `pypdf.generic._appearance_stream.TextStreamAppearance._parse_default_appearance`
-- `pypdf.generic._appearance_stream.TextStreamAppearance.from_text_annotation`
-- `pypdf.generic._appearance_stream.transform_annotation_appearance`
 - `pypdf.pagerange._INT_RE`
 - `pypdf.pagerange.PAGE_RANGE_RE`
 - `pypdf.pagerange.PageRange`
