@@ -35,7 +35,7 @@
  "dev": {
   "backend": "dev",
   "cases": 150,
-  "file": "/Users/yxy/Desktop/pypdf-rust/validation/results/roundtrip-dev.json",
+  "file": "validation/results/roundtrip-dev.json",
   "pypdf": "7.1.1"
  },
  "diff_count": 0,
@@ -45,7 +45,7 @@
  "oracle": {
   "backend": "oracle",
   "cases": 150,
-  "file": "/Users/yxy/Desktop/pypdf-rust/validation/results/roundtrip-oracle.json",
+  "file": "validation/results/roundtrip-oracle.json",
   "pypdf": "7.1.1"
  },
  "status": "MATCH",
