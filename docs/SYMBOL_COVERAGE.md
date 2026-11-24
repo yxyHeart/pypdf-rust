@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**1582/1934**（81.80%）
+总计：**1725/1934**（89.19%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -28,7 +28,7 @@
 | `pypdf._page` | 108 | 108 | 100% | stub |
 | `pypdf._page_labels` | 36 | 36 | 100% | rust |
 | `pypdf._protocols` | 24 | 24 | 100% | python |
-| `pypdf._reader` | 0 | 50 | 0% | stub |
+| `pypdf._reader` | 48 | 50 | 96% | stub |
 | `pypdf._text_extraction` | 0 | 18 | 0% | stub |
 | `pypdf._text_extraction._layout_mode` | 1 | 1 | 100% | python |
 | `pypdf._text_extraction._layout_mode._fixed_width_page` | 0 | 19 | 0% | stub |
@@ -39,11 +39,11 @@
 | `pypdf._version` | 1 | 1 | 100% | python |
 | `pypdf._writer` | 108 | 131 | 82% | stub |
 | `pypdf.actions` | 1 | 1 | 100% | python |
-| `pypdf.actions._actions` | 13 | 13 | 100% | stub |
+| `pypdf.actions._actions` | 13 | 13 | 100% | rust |
 | `pypdf.annotations` | 1 | 1 | 100% | python |
-| `pypdf.annotations._base` | 5 | 5 | 100% | stub |
-| `pypdf.annotations._markup_annotations` | 20 | 20 | 100% | stub |
-| `pypdf.annotations._non_markup_annotations` | 4 | 4 | 100% | stub |
+| `pypdf.annotations._base` | 5 | 5 | 100% | rust |
+| `pypdf.annotations._markup_annotations` | 20 | 20 | 100% | rust |
+| `pypdf.annotations._non_markup_annotations` | 4 | 4 | 100% | rust |
 | `pypdf.constants` | 379 | 379 | 100% | python |
 | `pypdf.errors` | 15 | 15 | 100% | python |
 | `pypdf.filters` | 56 | 56 | 100% | rust |
@@ -52,11 +52,11 @@
 | `pypdf.generic._base` | 105 | 105 | 100% | rust |
 | `pypdf.generic._color` | 22 | 22 | 100% | rust |
 | `pypdf.generic._data_structures` | 118 | 118 | 100% | rust |
-| `pypdf.generic._files` | 0 | 33 | 0% | stub |
+| `pypdf.generic._files` | 31 | 33 | 94% | stub |
 | `pypdf.generic._fit` | 12 | 12 | 100% | rust |
-| `pypdf.generic._font` | 0 | 61 | 0% | stub |
-| `pypdf.generic._image_inline` | 0 | 15 | 0% | stub |
-| `pypdf.generic._image_xobject` | 0 | 22 | 0% | stub |
+| `pypdf.generic._font` | 61 | 61 | 100% | stub |
+| `pypdf.generic._image_inline` | 1 | 15 | 7% | stub |
+| `pypdf.generic._image_xobject` | 2 | 22 | 9% | stub |
 | `pypdf.generic._link` | 12 | 12 | 100% | rust |
 | `pypdf.generic._outline` | 2 | 2 | 100% | rust |
 | `pypdf.generic._rectangle` | 23 | 23 | 100% | rust |
@@ -65,61 +65,13 @@
 | `pypdf.pagerange` | 6 | 15 | 40% | rust |
 | `pypdf.papersizes` | 15 | 15 | 100% | python |
 | `pypdf.types` | 9 | 9 | 100% | python |
-| `pypdf.xmp` | 94 | 94 | 100% | stub |
+| `pypdf.xmp` | 94 | 94 | 100% | rust |
 
 ## 未覆盖符号（前 200 个）
 
 - `pypdf._codecs.core_font_metrics.CORE_FONT_METRICS`
-- `pypdf._reader.PdfReader`
-- `pypdf._reader.PdfReader.xref`
-- `pypdf._reader.PdfReader.trailer`
-- `pypdf._reader.PdfReader.__init__`
-- `pypdf._reader.PdfReader._initialize_stream`
-- `pypdf._reader.PdfReader._handle_encryption`
-- `pypdf._reader.PdfReader.__enter__`
-- `pypdf._reader.PdfReader.__exit__`
-- `pypdf._reader.PdfReader.close`
-- `pypdf._reader.PdfReader.root_object`
-- `pypdf._reader.PdfReader._info`
-- `pypdf._reader.PdfReader._ID`
-- `pypdf._reader.PdfReader.pdf_header`
-- `pypdf._reader.PdfReader.xmp_metadata`
-- `pypdf._reader.PdfReader._get_page_number_by_indirect`
-- `pypdf._reader.PdfReader._get_object_from_stream`
-- `pypdf._reader.PdfReader.get_object`
-- `pypdf._reader.PdfReader.read_object_header`
-- `pypdf._reader.PdfReader.cache_get_indirect_object`
-- `pypdf._reader.PdfReader.cache_indirect_object`
-- `pypdf._reader.PdfReader._replace_object`
-- `pypdf._reader.PdfReader.read`
-- `pypdf._reader.PdfReader._basic_validation`
-- `pypdf._reader.PdfReader._find_eof_marker`
-- `pypdf._reader.PdfReader._find_startxref_pos`
 - `pypdf._reader.PdfReader._MAX_STARTXREF_RECOVERY_LINES`
-- `pypdf._reader.PdfReader._is_valid_startxref_value`
-- `pypdf._reader.PdfReader._find_previous_startxref_pos`
-- `pypdf._reader.PdfReader._load_recovery_cache`
-- `pypdf._reader.PdfReader._read_standard_xref_table__handle_size`
-- `pypdf._reader.PdfReader._read_standard_xref_table`
-- `pypdf._reader.PdfReader._read_xref_tables_and_trailers`
 - `pypdf._reader.PdfReader._XREF_STREAM_TRAILER_KEYS`
-- `pypdf._reader.PdfReader._process_xref_stream`
-- `pypdf._reader.PdfReader._read_xref`
-- `pypdf._reader.PdfReader._read_xref_other_error`
-- `pypdf._reader.PdfReader._sanitize_pdf15_xref_stream_index_pairs`
-- `pypdf._reader.PdfReader._read_pdf15_xref_stream`
-- `pypdf._reader.PdfReader._get_xref_issues`
-- `pypdf._reader.PdfReader._find_pdf_objects`
-- `pypdf._reader.PdfReader._find_pdf_trailers`
-- `pypdf._reader.PdfReader._rebuild_xref_table`
-- `pypdf._reader.PdfReader._read_xref_subsections`
-- `pypdf._reader.PdfReader._pairs`
-- `pypdf._reader.PdfReader.decrypt`
-- `pypdf._reader.PdfReader.is_encrypted`
-- `pypdf._reader.PdfReader.add_form_topname`
-- `pypdf._reader.PdfReader.rename_form_topname`
-- `pypdf._reader.PdfReader._repr_mimebundle_`
-- `pypdf._reader.PdfReader._get_named_destinations`
 - `pypdf._text_extraction.CUSTOM_RTL_MIN`
 - `pypdf._text_extraction.CUSTOM_RTL_MAX`
 - `pypdf._text_extraction.CUSTOM_RTL_SPECIAL_CHARS`
@@ -269,3 +221,51 @@
 - `pypdf.generic._appearance_stream.TextAlignment.CENTER`
 - `pypdf.generic._appearance_stream.TextAlignment.RIGHT`
 - `pypdf.generic._appearance_stream.WidthWordGlyphs`
+- `pypdf.generic._appearance_stream.WidthWordGlyphs.width`
+- `pypdf.generic._appearance_stream.WidthWordGlyphs.word`
+- `pypdf.generic._appearance_stream.WidthWordGlyphs.glyphs`
+- `pypdf.generic._appearance_stream.TextStreamAppearance`
+- `pypdf.generic._appearance_stream.TextStreamAppearance._scale_text`
+- `pypdf.generic._appearance_stream.TextStreamAppearance._generate_appearance_stream_data`
+- `pypdf.generic._appearance_stream.TextStreamAppearance.__init__`
+- `pypdf.generic._appearance_stream.TextStreamAppearance._find_annotation_font_resource`
+- `pypdf.generic._appearance_stream.TextStreamAppearance._sync_appearance_stream_font_resources`
+- `pypdf.generic._appearance_stream.TextStreamAppearance._parse_default_appearance`
+- `pypdf.generic._appearance_stream.TextStreamAppearance.from_text_annotation`
+- `pypdf.generic._appearance_stream.transform_annotation_appearance`
+- `pypdf.generic._files.EmbeddedFile`
+- `pypdf.generic._files.EmbeddedFile.__init__`
+- `pypdf.generic._image_inline.logger`
+- `pypdf.generic._image_inline._check_end_image_marker`
+- `pypdf.generic._image_inline.extract_inline__ascii_hex_decode`
+- `pypdf.generic._image_inline.extract_inline__ascii85_decode`
+- `pypdf.generic._image_inline.extract_inline__run_length_decode`
+- `pypdf.generic._image_inline.extract_inline__dct_decode`
+- `pypdf.generic._image_inline._is_preceded_by_whitespace`
+- `pypdf.generic._image_inline._is_followed_by_closing_operator`
+- `pypdf.generic._image_inline.extract_inline_default`
+- `pypdf.generic._image_inline.is_followed_by_binary_data`
+- `pypdf.generic._image_inline._read_settings_dictionary`
+- `pypdf.generic._image_inline.extract_inline__not_set`
+- `pypdf.generic._image_inline._handle_filters`
+- `pypdf.generic._image_inline.read_inline_image`
+- `pypdf.generic._image_xobject.ImageMode`
+- `pypdf.generic._image_xobject._get_process_colorant_channels`
+- `pypdf.generic._image_xobject._get_image_mode`
+- `pypdf.generic._image_xobject.bits2byte`
+- `pypdf.generic._image_xobject._expand_low_bit_samples`
+- `pypdf.generic._image_xobject._SINGLE_BAND_BYTES_PER_PIXEL`
+- `pypdf.generic._image_xobject._get_allocated_bytes_per_pixel`
+- `pypdf.generic._image_xobject._validate_image_size`
+- `pypdf.generic._image_xobject._create_image_from_bytes`
+- `pypdf.generic._image_xobject._create_image_from_buffer`
+- `pypdf.generic._image_xobject._convert_image`
+- `pypdf.generic._image_xobject._resize_image`
+- `pypdf.generic._image_xobject._merge_image`
+- `pypdf.generic._image_xobject.__handle_flate__indexed`
+- `pypdf.generic._image_xobject._handle_flate`
+- `pypdf.generic._image_xobject._handle_jpx`
+- `pypdf.generic._image_xobject._apply_decode`
+- `pypdf.generic._image_xobject._get_mode_and_invert_color`
+- `pypdf.generic._image_xobject._apply_alpha`
+- `pypdf.generic._image_xobject._xobj_to_image`

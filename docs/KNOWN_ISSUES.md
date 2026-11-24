@@ -116,6 +116,19 @@
 
 ---
 
+## `pypdf.xmp` / `annotations` / `actions`
+
+| # | 偏差 | 可观测性 | 处置 |
+|---|---|---|---|
+| X1 | `get_element` / `get_nodes_in_namespace` 是在 Rust 物化列表上的真实生成器（`yield from`），上游是惰性 DOM 遍历 | 生成器类型与结果一致；仅"迭代过程中修改 DOM"的语义不同 | 已接受 |
+| X2 | 26 个 `XmpInformation` 属性由本地宏生成（每个宏调用处有 `// @pypdf:` 注解） | 无 | 无偏差 |
+| X3 | `XmpInformation.hash_value_data` 含默认对象 repr（内存地址），与上游一样本身非确定 | 与上游同构（地址不同但同为地址） | 无偏差 |
+| X4 | XMP 序列化经 Python `xml.etree.ElementTree`（PyO3 调用，同一 stdlib 实现） | 字节一致（395 项差分电池验证） | 无偏差 |
+
+差分证据：395 项规范化检查（命名空间/DOM、全部属性 get/set 后的**序列化字节**、packet wrapper、`XmpDocumentError` 各路径、实体/输入/元素上限、全部注释构造器与 `/IRT`/`/RT`/`/NM`、FreeText 字体颜色、Link `/Dest`/`Fit`、Popup 父级告警、Action 链/数组/环/严格错误）→ **IDENTICAL**（除上游自身也随机的地址 repr）。
+
+---
+
 ## 工具链备注
 
 - `tools/fuzz/*` 的语料是对 `resources/` 做确定性结构变异生成；在模块未移植完成前，dev 与 oracle 的差异来自 stub 行为（`TypeError: 'NoneType' ...`），属于"未完成"而非偏差。

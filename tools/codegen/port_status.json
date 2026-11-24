@@ -205,5 +205,30 @@
     "mode": "rust",
     "phase": "P5",
     "module_rs": "cmap_mod.rs"
+  },
+  "pypdf.xmp": {
+    "mode": "rust",
+    "phase": "P9",
+    "module_rs": "xmp_mod.rs"
+  },
+  "pypdf.annotations._base": {
+    "mode": "rust",
+    "phase": "P9",
+    "module_rs": "annotations_mod.rs"
+  },
+  "pypdf.annotations._markup_annotations": {
+    "mode": "rust",
+    "phase": "P9",
+    "module_rs": "annotations_mod.rs"
+  },
+  "pypdf.annotations._non_markup_annotations": {
+    "mode": "rust",
+    "phase": "P9",
+    "module_rs": "annotations_mod.rs"
+  },
+  "pypdf.actions._actions": {
+    "mode": "rust",
+    "phase": "P9",
+    "module_rs": "actions_mod.rs"
   }
 }
