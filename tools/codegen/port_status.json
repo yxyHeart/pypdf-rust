@@ -170,5 +170,30 @@
     "mode": "rust",
     "phase": "P2",
     "module_rs": "genbasic_mod.rs"
+  },
+  "pypdf._crypt_providers._base": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "crypt_providers_mod.rs"
+  },
+  "pypdf._crypt_providers._cryptography": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "crypt_providers_mod.rs"
+  },
+  "pypdf._crypt_providers._fallback": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "crypt_providers_mod.rs"
+  },
+  "pypdf._crypt_providers._pycryptodome": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "crypt_providers_mod.rs"
+  },
+  "pypdf._encryption": {
+    "mode": "rust",
+    "phase": "P3",
+    "module_rs": "encryption_mod.rs"
   }
 }

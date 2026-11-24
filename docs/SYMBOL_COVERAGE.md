@@ -3,7 +3,7 @@
 > 由 `tools/manifest/check.py` 从 `docs/symbols.json` 与 Rust 源码中的
 > `// @pypdf:` / `// @pypdf-module:` 注解自动生成。门禁 A6 要求 100%。
 
-总计：**1452/1934**（75.08%）
+总计：**1466/1934**（75.80%）
 
 | 模块 | 已覆盖 | 总数 | 覆盖 | 实现方式 |
 |---|---:|---:|---:|---|
@@ -19,12 +19,12 @@
 | `pypdf._codecs.zapfding` | 1 | 1 | 100% | python |
 | `pypdf._configuration` | 43 | 43 | 100% | python |
 | `pypdf._crypt_providers` | 1 | 1 | 100% | python |
-| `pypdf._crypt_providers._base` | 4 | 4 | 100% | stub |
-| `pypdf._crypt_providers._cryptography` | 18 | 18 | 100% | stub |
-| `pypdf._crypt_providers._fallback` | 16 | 16 | 100% | stub |
-| `pypdf._crypt_providers._pycryptodome` | 15 | 15 | 100% | stub |
-| `pypdf._doc_common` | 75 | 89 | 84% | stub |
-| `pypdf._encryption` | 58 | 58 | 100% | stub |
+| `pypdf._crypt_providers._base` | 4 | 4 | 100% | rust |
+| `pypdf._crypt_providers._cryptography` | 18 | 18 | 100% | rust |
+| `pypdf._crypt_providers._fallback` | 16 | 16 | 100% | rust |
+| `pypdf._crypt_providers._pycryptodome` | 15 | 15 | 100% | rust |
+| `pypdf._doc_common` | 89 | 89 | 100% | stub |
+| `pypdf._encryption` | 58 | 58 | 100% | rust |
 | `pypdf._page` | 108 | 108 | 100% | stub |
 | `pypdf._page_labels` | 28 | 36 | 78% | stub |
 | `pypdf._protocols` | 24 | 24 | 100% | python |
@@ -70,20 +70,6 @@
 ## 未覆盖符号（前 200 个）
 
 - `pypdf._codecs.core_font_metrics.CORE_FONT_METRICS`
-- `pypdf._doc_common.PdfDocCommon`
-- `pypdf._doc_common.PdfDocCommon.strict`
-- `pypdf._doc_common.PdfDocCommon.flattened_pages`
-- `pypdf._doc_common.PdfDocCommon._encryption`
-- `pypdf._doc_common.PdfDocCommon._readonly`
-- `pypdf._doc_common.PdfDocCommon.root_object`
-- `pypdf._doc_common.PdfDocCommon.pdf_header`
-- `pypdf._doc_common.PdfDocCommon.get_object`
-- `pypdf._doc_common.PdfDocCommon._replace_object`
-- `pypdf._doc_common.PdfDocCommon._info`
-- `pypdf._doc_common.PdfDocCommon.xmp_metadata`
-- `pypdf._doc_common.PdfDocCommon._get_page_number_by_indirect`
-- `pypdf._doc_common.PdfDocCommon.is_encrypted`
-- `pypdf._doc_common.PdfDocCommon._repr_mimebundle_`
 - `pypdf._page_labels._TreeNode.node`
 - `pypdf._page_labels._TreeNode.indexes`
 - `pypdf._page_labels._TreeNode.level`
@@ -269,3 +255,17 @@
 - `pypdf._writer._NamedDestinationIndex.insert`
 - `pypdf._writer._NamedDestinationIndex.record_insertion`
 - `pypdf._writer._NamedDestinationIndex.flush`
+- `pypdf._writer.PdfWriter`
+- `pypdf._writer.PdfWriter.incremental`
+- `pypdf._writer.PdfWriter._objects`
+- `pypdf._writer.PdfWriter._id_translated`
+- `pypdf._writer.PdfWriter._reader`
+- `pypdf._writer.PdfWriter.__init__`
+- `pypdf._writer.PdfWriter.is_encrypted`
+- `pypdf._writer.PdfWriter.root_object`
+- `pypdf._writer.PdfWriter._info`
+- `pypdf._writer.PdfWriter._info`
+- `pypdf._writer.PdfWriter.xmp_metadata`
+- `pypdf._writer.PdfWriter.xmp_metadata`
+- `pypdf._writer.PdfWriter.__enter__`
+- `pypdf._writer.PdfWriter.__exit__`

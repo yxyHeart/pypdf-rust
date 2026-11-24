@@ -86,6 +86,21 @@
 
 ---
 
+## `pypdf._encryption` / `_crypt_providers`
+
+| # | 偏差 | 可观测性 | 处置 |
+|---|---|---|---|
+| E1 | PRNG 统一入口：Rust 在 `PYPDF_RS_PRNG_SEED` 或私有 `pypdf._pypdf.cp_prng_set_seed(seed)` 存在时使用 `SplitMix64`，否则经 PyO3 调 `secrets.token_bytes`（生产用系统熵）。上游调用点与顺序完全保留 | 差分两侧用同一确定性流，字节一致（0 mismatch） | 已接受（唯一入口在 `crypt_providers_mod::token_bytes`） |
+| E2 | provider 函数在调用时从 `pypdf._crypt_providers` 模块命名空间解析（保持 monkeypatch 生效），而非上游"import 时快照" | 只有在 `_encryption` 导入后 monkeypatch `pypdf._crypt_providers.*` 才可观测 | 已接受 |
+| E3 | 纯数据/API（`_PADDING`、`PasswordType`/`EncryptAlgorithm` 成员、`crypt_provider` 等）留在 shim；A6 注解记录在 Rust（同 filters F5 模式） | 无 | 已接受 |
+| E4 | `AlgV4`/`AlgV5` 超长逐算法 docstring 被缩短（仅 `__doc__`） | 无测试观测 | 已接受 |
+| E5 | `_pycryptodome` 驱动 `Crypto` 经 PyO3，但本机未装 pycryptodome，运行时不可验证（provider 选择走 `cryptography`） | 与上游同样在缺库时 ImportError | 已记录 |
+| E6 | 扩展模块新增两个**非 pypdf API** 私有符号：`cp_prng_set_seed`、`CRYPT_DEPENDENCY_ERROR_STR` | 不属于 `pypdf` 公共 API | 已接受 |
+
+差分证据：18 个加密资源读侧（字段/口令探测 136 次/密钥路径 25 条/对象密文 102 条）+ 10 组写侧（RC4-40/RC4-128/AES-128/R5/R6 × owner 两种）+ 114 个畸变 `/Encrypt` 字典的错误/告警路径 → **0 mismatch**。
+
+---
+
 ## 工具链备注
 
 - `tools/fuzz/*` 的语料是对 `resources/` 做确定性结构变异生成；在模块未移植完成前，dev 与 oracle 的差异来自 stub 行为（`TypeError: 'NoneType' ...`），属于"未完成"而非偏差。
