@@ -240,5 +240,20 @@
     "mode": "rust",
     "phase": "P3",
     "module_rs": "doc_common_mod.rs"
+  },
+  "pypdf.generic._files": {
+    "mode": "rust",
+    "phase": "P4",
+    "module_rs": "filesimages_mod.rs"
+  },
+  "pypdf.generic._image_inline": {
+    "mode": "rust",
+    "phase": "P4",
+    "module_rs": "filesimages_mod.rs"
+  },
+  "pypdf.generic._image_xobject": {
+    "mode": "rust",
+    "phase": "P4",
+    "module_rs": "filesimages_mod.rs"
   }
 }
