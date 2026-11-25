@@ -1,0 +1,61 @@
+name: linux
+
+# §17 condition 10: build, install and execute the port on Linux for both
+# supported architectures.  Runs the official test suite (network-independent
+# subset) and the differential oracle audit against pypdf 7.1.1.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build wheel (maturin)
+        run: |
+          python -m pip install --upgrade pip maturin
+          maturin build --release -o dist
+
+      - name: Install wheel
+        run: |
+          python -m pip install dist/*.whl
+          python -c "import pypdf, sys; print('pypdf', pypdf.__version__, 'on', sys.platform, sys.implementation.name)"
+
+      - name: Test dependencies
+        run: |
+          python -m pip install pytest pytest-xdist pytest-socket pytest-timeout cryptography fonttools pillow
+
+      - name: Official test suite (network-independent subset)
+        run: |
+          python -m pytest tests -q -n auto -p no:benchmark -m "not samples and not enable_socket"
+
+      - name: Differential audit against pypdf 7.1.1
+        run: |
+          PYTHONHASHSEED=0 python tools/oracle/audit.py --out .audit/rust --seed 42
+          python -m venv /tmp/oracle
+          /tmp/oracle/bin/python -m pip install -q "pypdf==7.1.1"
+          PYTHONHASHSEED=0 /tmp/oracle/bin/python tools/oracle/audit.py --out .audit/oracle --seed 42
+          PYTHONHASHSEED=0 python tools/oracle/compare.py .audit/oracle .audit/rust
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pypdf-rust-wheel-${{ matrix.arch }}
+          path: dist/*.whl
