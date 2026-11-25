@@ -7,6 +7,7 @@
 
 use pyo3::exceptions::{PyMemoryError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
+use pypdf_rs_core::content_stream as cs;
 use pyo3::types::{PyAny, PyDict, PyTuple};
 
 use super::common::{
@@ -263,11 +264,28 @@ pub fn page_extract_text_inner<'py>(
             fonts,
         ),
     )?;
-    let operations = content.getattr("operations")?;
-    for pair in operations.try_iter()? {
-        let pair = pair?;
-        let operands = pair.get_item(0)?;
-        let operator = pair.get_item(1)?;
+    let fast_items = crate::data_structures_mod::contentstream_items_fast(py, &content)?;
+    let default_dispatch = {
+        let handlers = extractor.getattr("operation_handlers")?;
+        match extractor.getattr("_rs_default_handlers") {
+            Ok(default) => handlers.is(&default) && handlers.len()? == 14,
+            Err(_) => false,
+        }
+    };
+    const NEEDED_OPERATORS: [&[u8]; 19] = [
+        b"BT", b"ET", b"q", b"Q", b"cm", b"Tz", b"Tc", b"Tw", b"TL", b"Tf", b"Td", b"Tm",
+        b"T*", b"Tj", b"'", b"\"", b"TJ", b"TD", b"Do",
+    ];
+    // Shared per-operation processing: visitor hooks plus operator dispatch.
+    // Used by both the Rust-items consumer and the materialized-operations path.
+    macro_rules! handle_text_operation {
+        ($operator_value:expr, $operands_value:expr) => {{
+            let operator = $operator_value.into_any();
+            let operands = $operands_value.into_any();
+            let operator_bytes: &[u8] = match operator.cast::<pyo3::types::PyBytes>() {
+                Ok(bytes) => bytes.as_bytes(),
+                Err(_) => b"",
+            };
         if !visitor_operand_before.is_none() {
             visitor_operand_before.call1((
                 operator.clone(),
@@ -419,6 +437,44 @@ pub fn page_extract_text_inner<'py>(
                 extractor.getattr("cm_matrix")?,
                 extractor.getattr("tm_matrix")?,
             ))?;
+        }
+        }};
+    }
+    match fast_items {
+        Some(items) => {
+            // Rust-items consumer: operands are materialized only for the
+            // operations that a handler (or a visitor) actually inspects.
+            let forced_encoding = content.getattr("forced_encoding")?;
+            let pdf = py.None().into_bound(py);
+            for item in items {
+                if let cs::Item::Operation { operator, operands } = item {
+                    let operator_bytes: &[u8] = &operator;
+                    let materialize = !default_dispatch
+                        || !visitor_operand_before.is_none()
+                        || !visitor_operand_after.is_none()
+                        || NEEDED_OPERATORS.contains(&operator_bytes);
+                    if !materialize {
+                        continue;
+                    }
+                    let operator_obj = common::py_bytes(py, operator_bytes);
+                    let operands_obj = crate::data_structures_mod::cs_materialize_operands(
+                        py,
+                        &operands,
+                        &forced_encoding,
+                        &pdf,
+                    )?;
+                    handle_text_operation!(operator_obj, operands_obj);
+                }
+            }
+        }
+        None => {
+            let operations = content.getattr("operations")?;
+            for pair in operations.try_iter()? {
+                let pair = pair?;
+                let operands = pair.get_item(0)?;
+                let operator = pair.get_item(1)?;
+                handle_text_operation!(operator, operands);
+            }
         }
     }
     // just in case

@@ -4219,6 +4219,103 @@ fn cs_materialize_items(
 /// operations once.  Falls back to the legacy per-token parser for byte patterns
 /// the scanner deliberately does not handle (a `stream` keyword inside a
 /// content-stream dictionary), or when `PYPDF_RS_LEGACY_CONTENT_STREAM` is set.
+/// Parse the stream data of `slf` without materializing Python objects.
+///
+/// Returns `None` when the fast path does not apply (already materialized, no
+/// buffered data, inline images, monkeypatched dispatch or a parse failure):
+/// callers then fall back to the regular `operations` path so the observable
+/// behavior stays identical.
+pub(crate) fn contentstream_items_fast<'py>(
+    py: Python<'py>,
+    slf: &Bound<'py, PyAny>,
+) -> PyResult<Option<Vec<cs::Item>>> {
+    // Tests and user code may monkeypatch `ContentStream._parse_content_stream`
+    // and expect it to be called; only use the Rust consumer while the shim
+    // implementation is in place.
+    let class_parse = slf.get_type().getattr("_parse_content_stream")?;
+    let Ok(class_parse) = class_parse.cast::<pyo3::types::PyFunction>() else {
+        return Ok(None);
+    };
+    let qualname = class_parse
+        .getattr("__qualname__")
+        .ok()
+        .and_then(|value| value.extract::<String>().ok());
+    let module = class_parse
+        .getattr("__module__")
+        .ok()
+        .and_then(|value| value.extract::<String>().ok());
+    if qualname.as_deref() != Some("ContentStream._parse_content_stream")
+        || module.as_deref() != Some("pypdf.generic._data_structures")
+    {
+        return Ok(None);
+    }
+    if let Ok(instance_dict) = slf.getattr("__dict__") {
+        if let Ok(instance_dict) = instance_dict.cast::<PyDict>() {
+            if instance_dict.contains("_parse_content_stream")? {
+                return Ok(None);
+            }
+        }
+    }
+    let Ok(data_value) = slf.getattr("_data") else {
+        return Ok(None);
+    };
+    let Ok(data) = data_value.cast::<PyBytes>() else {
+        return Ok(None);
+    };
+    let bytes = data.as_bytes();
+    if bytes.is_empty() {
+        return Ok(None);
+    }
+    let Ok(operations) = slf.getattr("_operations") else {
+        return Ok(None);
+    };
+    if operations.cast::<PyList>()?.len() != 0 {
+        return Ok(None);
+    }
+    let limits = cs_limits(py)?;
+    let mut items: Vec<cs::Item> = Vec::new();
+    let mut offset = 0usize;
+    let mut budget = limits.budget;
+    loop {
+        match cs::parse_segment(bytes, cs::Limits { budget, ..limits }, offset) {
+            Ok(segment) => {
+                if segment.inline_image_start.is_some() {
+                    return Ok(None);
+                }
+                items.extend(segment.items);
+                offset = segment.next_offset;
+                budget = segment.budget_left;
+            }
+            Err(failure) => {
+                if matches!(failure.error, cs::ScanError::Fallback) {
+                    return Ok(None);
+                }
+                // The materialized path reproduces the upstream error/warnings
+                // exactly, including partially appended operations.
+                return Ok(None);
+            }
+        }
+        if offset >= bytes.len() {
+            break;
+        }
+    }
+    Ok(Some(items))
+}
+
+/// Materialize one operation's operands (used by the Rust-items text consumer).
+pub(crate) fn cs_materialize_operands<'py>(
+    py: Python<'py>,
+    operands: &[cs::Value],
+    forced_encoding: &Bound<'py, PyAny>,
+    pdf: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyList>> {
+    let operand_list = PyList::empty(py);
+    for value in operands {
+        operand_list.append(cs_materialize_value(py, value, forced_encoding, pdf)?)?;
+    }
+    Ok(operand_list)
+}
+
 fn contentstream_parse_fast<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
@@ -4292,6 +4389,8 @@ fn contentstream_parse_fast<'py>(
     }
     Ok(())
 }
+
+
 
 // @pypdf: pypdf.generic._data_structures.ContentStream._parse_content_stream
 #[pyfunction]
