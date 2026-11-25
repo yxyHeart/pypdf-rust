@@ -438,3 +438,31 @@ fallbacks keep the upstream messages.
 Gates: A1 MATCH, differential IDENTICAL, roundtrip PIPELINE PASS, security
 57/57 + fuzz 200/200 IDENTICAL.
 
+## Lock-free module/class caches (lead, 2026-11-25, round 9)
+
+`pyutil::cached_module` and `cached_attr` had a global-mutex + HashMap on every
+lookup; sampling showed `cached_module`/`cached_attr` as 3–4 % of W3/W7.  The
+hottest names now use dedicated `PyOnceLock` cells (no lock, no hashing):
+`builtins`, `pypdf._text_extraction`, `pypdf.generic[.…]`, `pypdf._utils`, the
+PdfObject/NameObject/IndirectObject/NumberObject/FloatObject/BooleanObject/
+TextStringObject/ByteStringObject/NullObject classes, DictionaryObject/
+ArrayObject/StreamObject/ContentStream and builtins int/float/str/bytes/len/dict/
+list/tuple/bool/slice.  `text_extraction_mod::common::is_instance_builtin` and
+`slice_of` got the same treatment.
+
+**Measured (`run_perf.sh --repeat 7`):**
+
+| W | round 8 | round 9 |
+|---|---|---|
+| W1 | 1.17× | **1.19×** |
+| W2 | 1.27× | **1.34×** |
+| W3 | 0.83× | **0.88×** |
+| W4 | 1.91× | **1.96×** |
+| W5 | 0.76× | **0.80×** |
+| W6 | 0.78× | **0.88×** |
+| W7 | 0.75× | **0.77×** |
+| W8 | 1.03× | **1.07×** |
+
+Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
+200/200 IDENTICAL.
+
