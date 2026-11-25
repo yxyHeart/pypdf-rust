@@ -306,13 +306,14 @@ pub fn text_extractor_post_process_text_operation<'py>(
     let text_before = get_attr(slf, "text")?;
     let text_was_empty = text_before.eq(common::py_str_val(py, ""))?;
     let font_size = get_attr(slf, "font_size")?;
-    let mut space_width = font_size.mul(get_attr(slf, "_space_width")?)?;
+    let space_rate = get_attr(slf, "_space_width")?;
+    let mut space_width = font_size.mul(space_rate.clone())?;
     let previous_font_space = get_attr(slf, "_previous_font_space")?;
     if !previous_font_space.is_none() {
         // Native double arithmetic for the common case (both operands floats).
         let fast = (|| -> Option<Bound<'py, PyAny>> {
             let font_size_value = font_size.extract::<f64>().ok()?;
-            let base_value = get_attr(slf, "_space_width").ok()?.extract::<f64>().ok()?;
+            let base_value = space_rate.extract::<f64>().ok()?;
             let previous_value = previous_font_space.extract::<f64>().ok()?;
             let product = font_size_value * base_value;
             Some(common::py_float(py, product.min(previous_value)))
@@ -416,7 +417,7 @@ pub fn text_extractor_post_process_text_operation<'py>(
             set_attr(slf, "cm_prev", values.get_item(2usize)?)?;
             set_attr(slf, "tm_prev", values.get_item(3usize)?)?;
             set_attr(slf, "_line_span", values.get_item(4usize)?)?;
-            if text_was_empty || get_attr(slf, "text")?.eq(common::py_str_val(py, ""))? {
+            if text_was_empty || values.get_item(0usize)?.eq(common::py_str_val(py, ""))? {
                 set_attr(
                     slf,
                     "memo_cm",
