@@ -175,6 +175,66 @@ pub fn cached_attr<'py>(
     module: &'static str,
     name: &'static str,
 ) -> PyResult<Bound<'py, PyAny>> {
+    {
+        use pyo3::sync::PyOnceLock;
+        static PDF_OBJECT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static NAME: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static INDIRECT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static NUMBER: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static FLOAT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static BOOLEAN: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static TEXT_STRING: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static BYTE_STRING: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static NULL: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static DICTIONARY: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static ARRAY: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static STREAM: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static CONTENT_STREAM: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_INT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_FLOAT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_STR: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_BYTES: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_LEN: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_DICT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_LIST: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_TUPLE: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_BOOL: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static B_SLICE: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        let cell = match (module, name) {
+            ("pypdf.generic._base", "PdfObject") => Some(&PDF_OBJECT),
+            ("pypdf.generic._base", "NameObject") => Some(&NAME),
+            ("pypdf.generic._base", "IndirectObject") => Some(&INDIRECT),
+            ("pypdf.generic._base", "NumberObject") => Some(&NUMBER),
+            ("pypdf.generic._base", "FloatObject") => Some(&FLOAT),
+            ("pypdf.generic._base", "BooleanObject") => Some(&BOOLEAN),
+            ("pypdf.generic._base", "TextStringObject") => Some(&TEXT_STRING),
+            ("pypdf.generic._base", "ByteStringObject") => Some(&BYTE_STRING),
+            ("pypdf.generic._base", "NullObject") => Some(&NULL),
+            ("pypdf.generic._data_structures", "DictionaryObject") => Some(&DICTIONARY),
+            ("pypdf.generic._data_structures", "ArrayObject") => Some(&ARRAY),
+            ("pypdf.generic._data_structures", "StreamObject") => Some(&STREAM),
+            ("pypdf.generic._data_structures", "ContentStream") => Some(&CONTENT_STREAM),
+            ("builtins", "int") => Some(&B_INT),
+            ("builtins", "float") => Some(&B_FLOAT),
+            ("builtins", "str") => Some(&B_STR),
+            ("builtins", "bytes") => Some(&B_BYTES),
+            ("builtins", "len") => Some(&B_LEN),
+            ("builtins", "dict") => Some(&B_DICT),
+            ("builtins", "list") => Some(&B_LIST),
+            ("builtins", "tuple") => Some(&B_TUPLE),
+            ("builtins", "bool") => Some(&B_BOOL),
+            ("builtins", "slice") => Some(&B_SLICE),
+            _ => None,
+        };
+        if let Some(cell) = cell {
+            let value = cell.get_or_try_init(py, || {
+                cached_module(py, module)
+                    .and_then(|module| module.getattr(name))
+                    .map(|value| value.unbind())
+            })?;
+            return Ok(value.bind(py).clone());
+        }
+    }
     if let Some(value) = attr_cache()
         .lock()
         .expect("attr cache")
