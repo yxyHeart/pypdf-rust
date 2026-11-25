@@ -4015,9 +4015,16 @@ fn cs_materialize_value<'py>(
         cs::Value::Integer(raw) => base_class(py, "NumberObject")?.call1((py_bytes(py, raw),)),
         cs::Value::Real(raw) => base_class(py, "FloatObject")?.call1((py_bytes(py, raw),)),
         cs::Value::Name(raw) => cs_materialize_name(py, raw),
-        cs::Value::LiteralString(bytes) | cs::Value::HexString(bytes) => generic_utils_module(py)?
-            .getattr("create_string_object")?
-            .call1((py_bytes(py, bytes), forced_encoding.clone())),
+        cs::Value::LiteralString(bytes) | cs::Value::HexString(bytes) => {
+            // Direct Rust call: the shim is a thin wrapper (called once per
+            // string operand while parsing).
+            crate::genutils_mod::genutils_create_string_object(
+                py,
+                &py_bytes(py, bytes),
+                Some(forced_encoding),
+            )
+            .map(|value| value.into_bound(py))
+        }
         cs::Value::Boolean(value) => base_class(py, "BooleanObject")?.call1((*value,)),
         cs::Value::Null => base_class(py, "NullObject")?.call0(),
         cs::Value::Array(values) => {

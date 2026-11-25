@@ -322,7 +322,11 @@ pub fn text_extractor_post_process_text_operation<'py>(
         vec![get_attr(slf, "memo_cm")?, get_attr(slf, "memo_tm")?],
     )?;
     let actual_str_size = get_attr(slf, "_actual_str_size")?;
-    let spacewidth = slf.call_method1("compute_str_widths", (space_width,))?;
+    // `TextExtraction.compute_str_widths` is a thin shim over this Rust
+    // function; call it directly (once per text-positioning operation).
+    let spacewidth = crate::text_extraction_mod::extractor::text_extractor_compute_str_widths(
+        py, slf, &space_width,
+    )?;
     let arguments = PyTuple::new(
         py,
         vec![
@@ -341,7 +345,31 @@ pub fn text_extractor_post_process_text_operation<'py>(
             get_attr(slf, "_line_span")?,
         ],
     )?;
-    let result = common::init_attr(py, "crlf_space_check")?.call1(arguments);
+    let crlf_fn = common::init_attr(py, "crlf_space_check")?;
+    let result = if crate::text_extraction_mod::init_mod::is_default_function(
+        py,
+        "crlf_space_check",
+        &crlf_fn,
+    )? {
+        crate::text_extraction_mod::init_mod::text_extraction_crlf_space_check(
+            py,
+            &arguments.get_item(0)?,
+            &arguments.get_item(1)?,
+            &arguments.get_item(2)?,
+            &arguments.get_item(3)?,
+            &arguments.get_item(4)?,
+            &arguments.get_item(5)?,
+            &arguments.get_item(6)?,
+            &arguments.get_item(7)?,
+            &arguments.get_item(8)?,
+            &arguments.get_item(9)?,
+            &arguments.get_item(10)?,
+            &arguments.get_item(11)?,
+            &arguments.get_item(12)?,
+        )
+    } else {
+        crlf_fn.call1(arguments)
+    };
     match result {
         Ok(values) => {
             set_attr(slf, "text", values.get_item(0usize)?)?;
@@ -589,8 +617,16 @@ pub fn text_extractor_handle_cm(
         for operand in sliced.try_iter()? {
             values.push(common::float_of(py, &operand?)?);
         }
-        common::init_attr(py, "mult")?
-            .call1((common::py_list(py, values)?, get_attr(slf, "cm_matrix")?))
+        let mult_fn = common::init_attr(py, "mult")?;
+        if crate::text_extraction_mod::init_mod::is_default_function(py, "mult", &mult_fn)? {
+            crate::text_extraction_mod::init_mod::text_extraction_mult(
+                py,
+                &common::py_list(py, values)?,
+                &get_attr(slf, "cm_matrix")?,
+            )
+        } else {
+            mult_fn.call1((common::py_list(py, values)?, get_attr(slf, "cm_matrix")?))
+        }
     })();
     match attempt {
         Ok(matrix) => set_attr(slf, "cm_matrix", matrix)?,

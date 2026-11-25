@@ -402,7 +402,7 @@ fn pdfdoc_string_object<'py>(
 // @pypdf: pypdf.generic._utils.create_string_object
 #[pyfunction]
 #[pyo3(signature = (string, forced_encoding=None))]
-fn genutils_create_string_object<'py>(
+pub(crate) fn genutils_create_string_object<'py>(
     py: Python<'py>,
     string: &Bound<'py, PyAny>,
     forced_encoding: Option<&Bound<'py, PyAny>>,

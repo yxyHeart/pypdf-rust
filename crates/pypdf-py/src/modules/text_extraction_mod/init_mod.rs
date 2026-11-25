@@ -16,17 +16,86 @@ use super::common;
 ///
 /// The first object seen for `name` is remembered; a replaced attribute falls
 /// back to the Python call so monkeypatching behaves like upstream.
-fn is_default_function(py: Python<'_>, name: &str, current: &Bound<'_, PyAny>) -> PyResult<bool> {
+pub(crate) fn is_default_function(py: Python<'_>, name: &str, current: &Bound<'_, PyAny>) -> PyResult<bool> {
     use pyo3::sync::PyOnceLock;
     static DEFAULT_MULT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
     static DEFAULT_ORIENT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static DEFAULT_CRLF: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
     let cell = match name {
         "mult" => &DEFAULT_MULT,
         "orient" => &DEFAULT_ORIENT,
+        "crlf_space_check" => &DEFAULT_CRLF,
         _ => return Ok(false),
     };
     let default = cell.get_or_try_init(py, || Ok::<_, PyErr>(current.clone().unbind()))?;
     Ok(default.bind(py).is(current))
+}
+
+/// Whether `font.get_text_width` is still the class implementation (no instance
+/// or class monkeypatching), so the Rust implementation may be called directly.
+fn font_text_width_is_default(py: Python<'_>, font: &Bound<'_, PyAny>) -> PyResult<bool> {
+    use pyo3::sync::PyOnceLock;
+    if let Ok(instance_dict) = font.getattr("__dict__") {
+        if let Ok(dict) = instance_dict.cast::<PyDict>() {
+            if dict.contains("get_text_width")? {
+                return Ok(false);
+            }
+        }
+    }
+    let class = font.get_type();
+    let current = class.getattr("get_text_width")?;
+    static DEFAULT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    let default = DEFAULT.get_or_try_init(py, || Ok::<_, PyErr>(current.clone().unbind()))?;
+    Ok(default.bind(py).is(&current))
+}
+
+/// Sum `font.get_text_width` over `source` with a Rust-side cache.
+///
+/// Returns `None` when a width is not a plain number, so the caller can run the
+/// original Python-level loop (which preserves exotic numeric types).
+fn text_widths_fast(
+    py: Python<'_>,
+    font: &Bound<'_, PyAny>,
+    source: &Bound<'_, PyAny>,
+) -> PyResult<Option<f64>> {
+    let space_char = match font.getattr("space_char").and_then(|value| value.extract::<String>()) {
+        Ok(value) => value,
+        Err(_) => return Ok(None),
+    };
+    let space_width = match font.getattr("space_width").and_then(|value| value.extract::<f64>()) {
+        Ok(value) => value,
+        Err(_) => return Ok(None),
+    };
+    let default_width = font_text_width_is_default(py, font)?;
+    let mut cache: std::collections::HashMap<String, f64> = std::collections::HashMap::new();
+    let mut total = 0.0f64;
+    for character in source.try_iter()? {
+        let character = character?;
+        let Ok(key) = character.extract::<String>() else {
+            return Ok(None);
+        };
+        if key == space_char {
+            total += space_width;
+            continue;
+        }
+        let width = match cache.get(&key) {
+            Some(width) => *width,
+            None => {
+                let value = if default_width {
+                    crate::font_mod::font_get_text_width(py, font, &character)?
+                } else {
+                    font.call_method1("get_text_width", (&character,))?.unbind()
+                };
+                let Ok(width) = value.extract::<f64>(py) else {
+                    return Ok(None);
+                };
+                cache.insert(key, width);
+                width
+            }
+        };
+        total += width;
+    }
+    Ok(Some(total))
 }
 
 // @pypdf: pypdf._text_extraction.set_custom_rtl
@@ -128,9 +197,23 @@ pub fn text_extraction_crlf_space_check<'py>(
     let memo_cm = memo_cmtm.get_item(0usize)?;
     let memo_tm = memo_cmtm.get_item(1usize)?;
 
-    let m_prev = mult_fn.call1((&tm_prev, &cm_prev))?;
-    let m = mult_fn.call1((&tm_matrix, &cm_matrix))?;
-    let orientation = orient_fn.call1((&m,))?;
+    let direct = is_default_function(py, "mult", &mult_fn)?
+        && is_default_function(py, "orient", &orient_fn)?;
+    let m_prev = if direct {
+        text_extraction_mult(py, &tm_prev, &cm_prev)?
+    } else {
+        mult_fn.call1((&tm_prev, &cm_prev))?
+    };
+    let m = if direct {
+        text_extraction_mult(py, &tm_matrix, &cm_matrix)?
+    } else {
+        mult_fn.call1((&tm_matrix, &cm_matrix))?
+    };
+    let orientation = if direct {
+        common::py_int(py, i64::from(text_extraction_orient(py, &m)?))
+    } else {
+        orient_fn.call1((&m,))?
+    };
     let delta_x = m.get_item(4usize)?.sub(m_prev.get_item(4usize)?)?;
     let delta_y = m.get_item(5usize)?.sub(m_prev.get_item(5usize)?)?;
     // Table 108 of the 1.7 reference ("Text positioning operators")
@@ -314,6 +397,11 @@ pub fn text_extraction_get_text_operands<'py>(
         } else {
             text.clone()
         };
+        if let Some(total) = text_widths_fast(py, font, &source)? {
+            widths = common::py_float(py, total);
+            width_cache.clear();
+            return common::py_tuple(py, vec![text, common::py_bool(py, is_str_operands), widths]);
+        }
         let space_char = font.getattr("space_char")?;
         let space_width = font.getattr("space_width")?;
         for char in source.try_iter()? {
