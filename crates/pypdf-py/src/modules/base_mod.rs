@@ -1613,44 +1613,52 @@ pub(crate) fn render_leaf_bytes(py: Python<'_>, value: &Bound<'_, PyAny>) -> PyR
 // @pypdf: pypdf.generic._base.NameObject.renumber
 #[pyfunction]
 fn basemod_name_renumber<'py>(py: Python<'py>, slf: &Bound<'py, PyAny>) -> PyResult<Py<PyAny>> {
-    // Upstream: out = self[0].encode("utf-8")
-    let first = slf.get_item(0)?;
-    let out = first.call_method1("encode", ("utf-8",))?;
-    if !out.eq(py_bytes(py, b"/"))? {
-        let message = PyString::new(
-            py,
-            "Incorrect first char in NameObject, should start with '/': (",
+    // Upstream: `out = self[0].encode("utf-8")`, then per-character escaping with
+    // `renumber_table`.  Doing this on the Rust string avoids a Python slice, an
+    // iterator and several `encode()` calls per name (names are renumbered for
+    // every key written by the writer).
+    let name: String = slf.extract()?;
+    if name.is_empty() {
+        return Err(PyIndexError::new_err("string index out of range"));
+    }
+    if !name.starts_with('/') {
+        let message = format!(
+            "Incorrect first char in NameObject, should start with '/': ({name})"
         );
-        let message = message.call_method1("__add__", (slf,))?;
-        let message = message.call_method1("__add__", (PyString::new(py, ")"),))?;
         return Err(raise_pdf_error_with_py_message(
             py,
             "PdfStreamError",
-            message,
+            PyString::new(py, &message).into_any(),
         ));
     }
-    let mut parts: Vec<u8> = b"/".to_vec();
-    let rest = slf.get_item(pyutil::py_slice(py, Some(&int_obj(py, 1)), None, None)?)?;
-    let table = base_class(py, "NameObject")?.getattr("renumber_table")?;
-    for item in rest.try_iter()? {
-        let character = item?;
-        if character.gt(PyString::new(py, "~"))? {
-            let encoded = character.call_method1("encode", ("utf-8",))?;
-            let bytes = encoded.cast::<PyBytes>()?.as_bytes();
-            let mut escaped = String::with_capacity(bytes.len() * 3);
-            for byte in bytes {
+    let mut parts: Vec<u8> = Vec::with_capacity(name.len() + 8);
+    parts.push(b'/');
+    let mut table: Option<Bound<'py, PyAny>> = None;
+    let mut encoded = [0u8; 4];
+    for character in name[1..].chars() {
+        if character > '~' {
+            let mut escaped = String::with_capacity(3);
+            for byte in character.to_string().as_bytes() {
+                escaped.clear();
                 let _ = write!(escaped, "#{byte:02X}");
+                parts.extend_from_slice(escaped.as_bytes());
             }
-            parts.extend_from_slice(escaped.as_bytes());
         } else {
-            match table.call_method1("__getitem__", (&character,)) {
+            let key = PyString::new(py, character.encode_utf8(&mut encoded));
+            let table_ref = match &table {
+                Some(found) => found,
+                None => {
+                    table = Some(base_class(py, "NameObject")?.getattr("renumber_table")?);
+                    table.as_ref().expect("renumber table")
+                }
+            };
+            match table_ref.call_method1("__getitem__", (&key,)) {
                 Ok(replacement) => {
                     let replacement: Vec<u8> = replacement.extract()?;
                     parts.extend_from_slice(&replacement);
                 }
                 Err(error) if error.is_instance_of::<PyKeyError>(py) => {
-                    let encoded = character.call_method1("encode", ("utf-8",))?;
-                    parts.extend_from_slice(encoded.cast::<PyBytes>()?.as_bytes());
+                    parts.extend_from_slice(character.encode_utf8(&mut encoded).as_bytes());
                 }
                 Err(error) => return Err(error),
             }
