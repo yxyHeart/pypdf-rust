@@ -1,8 +1,8 @@
 # Performance comparison: reference pypdf 7.1.1 vs pypdf-rust port
 
-- Generated: 2026-11-25 11:56:49 (local)
-- Reference run: `reference` – 2026-11-25T11:56:38+0800 – `/Users/yxy/Desktop/pypdf-rust/.venvs/oracle/lib/python3.14/site-packages/pypdf/__init__.py`
-- Port run: `rust` – 2026-11-25T11:56:48+0800 – `/Users/yxy/Desktop/pypdf-rust/python/pypdf/__init__.py`
+- Generated: 2026-11-25 12:07:02 (local)
+- Reference run: `reference` – 2026-11-25T12:06:53+0800 – `/Users/yxy/Desktop/pypdf-rust/.venvs/oracle/lib/python3.14/site-packages/pypdf/__init__.py`
+- Port run: `rust` – 2026-11-25T12:07:02+0800 – `/Users/yxy/Desktop/pypdf-rust/python/pypdf/__init__.py`
 - Repetitions per workload: reference 7 / port 7 (warm-up runs excluded: 1 / 1)
 - Per-repetition timeout: 300.0 s
 - PYTHONHASHSEED: reference '0' / port '0'
@@ -21,12 +21,12 @@
 | rust extension | None | /Users/yxy/Desktop/pypdf-rust/python/pypdf/_pypdf.cpython-314-darwin.so |
 | platform | macOS-27.2.1-arm64-arm-64bit-Mach-O | macOS-27.2.1-arm64-arm-64bit-Mach-O |
 | cpu count | 10 | 10 |
-| loadavg (1/5/15 min) at start | 14.96 14.79 10.76 | 12.14 14.18 10.61 |
-| loadavg (1/5/15 min) at end | 12.14 14.18 10.61 | 11.78 14.04 10.60 |
-| shell uptime before | 11:56  up 12:06, 2 users, load averages: 14.96 14.79 10.76 | 11:56  up 12:06, 2 users, load averages: 12.14 14.18 10.61 |
-| shell uptime after | 11:56  up 12:06, 2 users, load averages: 12.14 14.18 10.61 | 11:56  up 12:06, 2 users, load averages: 11.78 14.04 10.60 |
-| extension sha256[:16] | — | 991446ff4873b3c6 |
-| started (local) | 2026-11-25T11:56:38+0800 | 2026-11-25T11:56:48+0800 |
+| loadavg (1/5/15 min) at start | 3.04 6.77 8.45 | 2.58 6.49 8.32 |
+| loadavg (1/5/15 min) at end | 2.72 6.58 8.36 | 2.54 6.41 8.28 |
+| shell uptime before | 12:06  up 12:16, 2 users, load averages: 3.04 6.77 8.45 | 12:06  up 12:16, 2 users, load averages: 2.72 6.58 8.36 |
+| shell uptime after | 12:06  up 12:16, 2 users, load averages: 2.72 6.58 8.36 | 12:07  up 12:16, 2 users, load averages: 2.54 6.41 8.28 |
+| extension sha256[:16] | — | f8cdcfee9fe9367d |
+| started (local) | 2026-11-25T12:06:53+0800 | 2026-11-25T12:07:02+0800 |
 
 ## Commands
 
@@ -45,11 +45,11 @@
 ## Summary
 
 - Workloads compared: 8
-- Port faster: 2; port slower: 6; no timing data: 0
+- Port faster: 4; port slower: 4; no timing data: 0
 - Output-size mismatches: 0
 - Recorded failures/timeouts: 0
 - File-size separation: small: W1, W5, W6, W7, large: W2, mixed: W3, W4, W8 (workloads with per-file data are additionally split into large/small files below)
-- Machine load at start (1-min, 5-min, 15-min): reference 14.96 14.79 10.76, port 12.14 14.18 10.61 on 10 CPUs; a 1-min load above the CPU count means the machine was oversubscribed and the two runs did not see identical conditions.
+- Machine load at start (1-min, 5-min, 15-min): reference 3.04 6.77 8.45, port 2.58 6.49 8.32 on 10 CPUs; a 1-min load above the CPU count means the machine was oversubscribed and the two runs did not see identical conditions.
 - Measurement conditions: this is a shared macOS workstation with persistent system background load that cannot be quiesced (WindowServer, the DeepSeek Harness renderer, StorageManagement and similar system processes keep the 1-minute load average around 20+ on a 10-CPU machine).  Reference and port ran sequentially in separate processes under the same conditions; no repository builds or test suites were started by the validation team while the final measurement was running.
 
 Metric definitions: `speedup = ref_median / port_median` (higher is better), `latency Δ = (port_median / ref_median - 1) × 100`, `RSS Δ = (port_peak_RSS / ref_peak_RSS - 1) × 100`. Peak RSS is the maximum sampled resident-set size of a counted repetition (sampled every ~1.5 ms while the repetition runs).
@@ -58,40 +58,40 @@ Metric definitions: `speedup = ref_median / port_median` (higher is better), `la
 
 | workload | name | size class | files | ref median | port median | speedup | latency Δ | ref p95 | port p95 | ref peak RSS | port peak RSS | RSS Δ | output bytes ref/port | status |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| W1 | reader_init_20_small | small | 20 | 11.7 ms | 11.8 ms | 0.99× | +1.2% | 18.3 ms | 12.3 ms | 49.9 MB | 55.9 MB | +12.2% | 2.3 KiB / 2.3 KiB | ok |
-| W2 | page_traverse_5_large | large | 5 | 166.9 ms | 135.9 ms | 1.23× | -18.6% | 218.7 ms | 195.4 ms | 192.5 MB | 180.0 MB | -6.5% | 46.1 KiB / 46.1 KiB | ok |
-| W3 | text_extract_12 | mixed | 12 | 175.3 ms | 215.8 ms | 0.81× | +23.1% | 197.6 ms | 245.1 ms | 193.5 MB | 183.7 MB | -5.0% | 34.3 KiB / 34.3 KiB | ok |
-| W4 | image_extract_10 | mixed | 10 | 586.4 ms | 317.0 ms | 1.85× | -45.9% | 608.3 ms | 327.2 ms | 222.1 MB | 239.6 MB | +7.9% | 1.55 MiB / 1.55 MiB | ok |
-| W5 | merge_append_5 | small | 5 | 11.4 ms | 17.1 ms | 0.67× | +50.2% | 13.2 ms | 20.6 ms | 222.3 MB | 240.3 MB | +8.1% | 181.0 KiB / 181.0 KiB | ok |
-| W6 | rotate_crop_merge_write_5 | small | 5 | 14.6 ms | 21.5 ms | 0.68× | +47.7% | 17.9 ms | 24.4 ms | 222.5 MB | 240.7 MB | +8.2% | 240.2 KiB / 240.2 KiB | ok |
-| W7 | clone_write_10 | small | 10 | 19.6 ms | 31.1 ms | 0.63× | +59.0% | 21.5 ms | 46.4 ms | 223.2 MB | 241.4 MB | +8.1% | 291.0 KiB / 291.0 KiB | ok |
-| W8 | end_to_end_mixed_7 | mixed | 7 | 415.1 ms | 465.7 ms | 0.89× | +12.2% | 464.8 ms | 525.4 ms | 298.4 MB | 337.2 MB | +13.0% | 5.91 MiB / 5.91 MiB | ok |
+| W1 | reader_init_20_small | small | 20 | 10.2 ms | 8.7 ms | 1.17× | -14.8% | 10.7 ms | 9.4 ms | 50.3 MB | 55.2 MB | +9.6% | 2.3 KiB / 2.3 KiB | ok |
+| W2 | page_traverse_5_large | large | 5 | 157.3 ms | 123.5 ms | 1.27× | -21.5% | 208.6 ms | 171.4 ms | 191.8 MB | 177.9 MB | -7.2% | 46.1 KiB / 46.1 KiB | ok |
+| W3 | text_extract_12 | mixed | 12 | 161.1 ms | 195.2 ms | 0.83× | +21.2% | 180.1 ms | 217.9 ms | 192.8 MB | 183.8 MB | -4.7% | 34.3 KiB / 34.3 KiB | ok |
+| W4 | image_extract_10 | mixed | 10 | 563.5 ms | 295.8 ms | 1.91× | -47.5% | 578.6 ms | 308.8 ms | 230.6 MB | 218.6 MB | -5.2% | 1.55 MiB / 1.55 MiB | ok |
+| W5 | merge_append_5 | small | 5 | 10.2 ms | 13.4 ms | 0.76× | +31.2% | 11.8 ms | 15.4 ms | 230.9 MB | 219.2 MB | -5.1% | 181.0 KiB / 181.0 KiB | ok |
+| W6 | rotate_crop_merge_write_5 | small | 5 | 13.5 ms | 17.3 ms | 0.78× | +28.0% | 15.5 ms | 19.7 ms | 231.2 MB | 220.1 MB | -4.8% | 240.2 KiB / 240.2 KiB | ok |
+| W7 | clone_write_10 | small | 10 | 17.5 ms | 23.4 ms | 0.75× | +33.7% | 19.3 ms | 37.3 ms | 232.3 MB | 220.8 MB | -4.9% | 291.0 KiB / 291.0 KiB | ok |
+| W8 | end_to_end_mixed_7 | mixed | 7 | 392.7 ms | 381.5 ms | 1.03× | -2.8% | 430.4 ms | 419.3 ms | 306.6 MB | 315.2 MB | +2.8% | 5.91 MiB / 5.91 MiB | ok |
 
 ## Latency distribution (counted repetitions)
 
 | workload | ref min | ref median | ref p95 | ref max | port min | port median | port p95 | port max |
 |---|---|---|---|---|---|---|---|---|
-| W1 | 11.2 ms | 11.7 ms | 18.3 ms | 20.4 ms | 10.9 ms | 11.8 ms | 12.3 ms | 12.4 ms |
-| W2 | 165.8 ms | 166.9 ms | 218.7 ms | 229.0 ms | 133.2 ms | 135.9 ms | 195.4 ms | 206.2 ms |
-| W3 | 172.1 ms | 175.3 ms | 197.6 ms | 201.7 ms | 211.0 ms | 215.8 ms | 245.1 ms | 257.0 ms |
-| W4 | 571.5 ms | 586.4 ms | 608.3 ms | 610.2 ms | 303.7 ms | 317.0 ms | 327.2 ms | 328.4 ms |
-| W5 | 10.9 ms | 11.4 ms | 13.2 ms | 13.9 ms | 16.8 ms | 17.1 ms | 20.6 ms | 21.2 ms |
-| W6 | 14.5 ms | 14.6 ms | 17.9 ms | 18.4 ms | 20.9 ms | 21.5 ms | 24.4 ms | 24.5 ms |
-| W7 | 19.4 ms | 19.6 ms | 21.5 ms | 21.6 ms | 27.5 ms | 31.1 ms | 46.4 ms | 52.3 ms |
-| W8 | 363.2 ms | 415.1 ms | 464.8 ms | 472.3 ms | 405.0 ms | 465.7 ms | 525.4 ms | 533.4 ms |
+| W1 | 10.2 ms | 10.2 ms | 10.7 ms | 10.8 ms | 8.7 ms | 8.7 ms | 9.4 ms | 9.7 ms |
+| W2 | 155.7 ms | 157.3 ms | 208.6 ms | 218.9 ms | 120.5 ms | 123.5 ms | 171.4 ms | 180.1 ms |
+| W3 | 160.6 ms | 161.1 ms | 180.1 ms | 185.8 ms | 193.4 ms | 195.2 ms | 217.9 ms | 227.0 ms |
+| W4 | 553.5 ms | 563.5 ms | 578.6 ms | 582.9 ms | 285.7 ms | 295.8 ms | 308.8 ms | 310.1 ms |
+| W5 | 10.2 ms | 10.2 ms | 11.8 ms | 12.4 ms | 13.3 ms | 13.4 ms | 15.4 ms | 15.9 ms |
+| W6 | 13.5 ms | 13.5 ms | 15.5 ms | 15.6 ms | 16.1 ms | 17.3 ms | 19.7 ms | 19.8 ms |
+| W7 | 17.4 ms | 17.5 ms | 19.3 ms | 19.3 ms | 21.4 ms | 23.4 ms | 37.3 ms | 42.9 ms |
+| W8 | 342.9 ms | 392.7 ms | 430.4 ms | 435.8 ms | 327.3 ms | 381.5 ms | 419.3 ms | 424.6 ms |
 
 ## CPU time and peak memory
 
 | workload | ref CPU median | port CPU median | ref peak RSS (max rep) | port peak RSS (max rep) | RSS Δ | ref working-set growth | port working-set growth | growth Δ | ref ru_maxrss | port ru_maxrss |
 |---|---|---|---|---|---|---|---|---|---|---|
-| W1 | 11.8 ms | 11.9 ms | 49.9 MB | 55.9 MB | +12.2% | 0.2 MB | 0.3 MB | +54.5% | 49.9 MB | 55.9 MB |
-| W2 | 166.9 ms | 135.7 ms | 192.5 MB | 180.0 MB | -6.5% | 28.3 MB | 27.4 MB | -3.0% | 192.5 MB | 180.0 MB |
-| W3 | 175.0 ms | 215.8 ms | 193.5 MB | 183.7 MB | -5.0% | 0.4 MB | 0.4 MB | +8.7% | 193.5 MB | 183.7 MB |
-| W4 | 585.9 ms | 317.4 ms | 222.1 MB | 239.6 MB | +7.9% | 2.8 MB | 21.7 MB | +688.1% | 222.1 MB | 239.6 MB |
-| W5 | 11.5 ms | 17.3 ms | 222.3 MB | 240.3 MB | +8.1% | 0.1 MB | 0.1 MB | -33.3% | 222.4 MB | 240.3 MB |
-| W6 | 14.7 ms | 21.6 ms | 222.5 MB | 240.7 MB | +8.2% | 0.1 MB | 0.1 MB | +80.0% | 222.5 MB | 240.7 MB |
-| W7 | 19.7 ms | 31.2 ms | 223.2 MB | 241.4 MB | +8.1% | 0.2 MB | 0.3 MB | +33.3% | 223.2 MB | 241.4 MB |
-| W8 | 415.1 ms | 465.8 ms | 298.4 MB | 337.2 MB | +13.0% | 15.6 MB | 17.9 MB | +14.4% | 298.4 MB | 337.2 MB |
+| W1 | 10.4 ms | 8.9 ms | 50.3 MB | 55.2 MB | +9.6% | 0.1 MB | 0.0 MB | -71.4% | 50.3 MB | 55.2 MB |
+| W2 | 157.6 ms | 123.9 ms | 191.8 MB | 177.9 MB | -7.2% | 28.7 MB | 25.4 MB | -11.4% | 192.0 MB | 177.9 MB |
+| W3 | 161.5 ms | 195.6 ms | 192.8 MB | 183.8 MB | -4.7% | 0.4 MB | 1.6 MB | +350.0% | 192.8 MB | 183.8 MB |
+| W4 | 564.5 ms | 296.6 ms | 230.6 MB | 218.6 MB | -5.2% | 20.1 MB | 8.5 MB | -57.6% | 230.6 MB | 228.1 MB |
+| W5 | 10.3 ms | 13.5 ms | 230.9 MB | 219.2 MB | -5.1% | 0.1 MB | 0.0 MB | -50.0% | 230.9 MB | 228.1 MB |
+| W6 | 13.6 ms | 17.4 ms | 231.2 MB | 220.1 MB | -4.8% | 0.1 MB | 0.4 MB | +360.0% | 231.2 MB | 228.1 MB |
+| W7 | 17.6 ms | 23.6 ms | 232.3 MB | 220.8 MB | -4.9% | 0.2 MB | 0.2 MB | -7.1% | 232.3 MB | 228.1 MB |
+| W8 | 393.3 ms | 382.1 ms | 306.6 MB | 315.2 MB | +2.8% | 14.9 MB | 17.4 MB | +17.1% | 306.6 MB | 315.2 MB |
 
 Peak RSS is sampled current RSS, so it is *not* a process-lifetime high-water mark. It can still include pages that the allocator retained from earlier workloads; the working-set growth column (peak RSS minus RSS at repetition start) removes that bias. `ru_maxrss` is the process high-water mark and is shown for reference only.
 
@@ -133,114 +133,110 @@ The reader/text/image workloads time each input file separately inside every rep
 
 | file | bytes | class | ref median | port median | speedup |
 |---|---|---|---|---|---|
-| resources/superscript-pdftex.pdf | 33.8 KiB | small | 1.07 ms | 1.00 ms | 1.07× |
-| resources/selenium-pypdf-issue-177.pdf | 33.7 KiB | small | 1.03 ms | 0.30 ms | 3.36× |
-| resources/hello-world.pdf | 28.7 KiB | small | 0.36 ms | 0.34 ms | 1.05× |
-| resources/multilang.pdf | 28.7 KiB | small | 0.32 ms | 0.41 ms | 0.78× |
-| resources/pdflatex-forms.pdf | 27.1 KiB | small | 1.52 ms | 1.59 ms | 0.95× |
-| resources/commented-xmp.pdf | 17.5 KiB | small | 0.30 ms | 0.40 ms | 0.73× |
-| resources/commented.pdf | 13.1 KiB | small | 0.99 ms | 1.18 ms | 0.84× |
-| resources/metadata.pdf | 13.0 KiB | small | 0.74 ms | 0.82 ms | 0.89× |
-| resources/crazyones.pdf | 11.2 KiB | small | 1.24 ms | 0.91 ms | 1.36× |
-| resources/two-different-pages.pdf | 7.5 KiB | small | 0.36 ms | 0.35 ms | 1.03× |
-| resources/box.pdf | 5.3 KiB | small | 0.24 ms | 0.28 ms | 0.86× |
-| resources/AutoCad_Simple.pdf | 2.9 KiB | small | 0.40 ms | 0.49 ms | 0.80× |
-| resources/imagemagick-ASCII85Decode.pdf | 2.8 KiB | small | 0.35 ms | 0.29 ms | 1.22× |
-| resources/imagemagick-lzw.pdf | 2.6 KiB | small | 0.30 ms | 0.30 ms | 1.00× |
-| resources/imagemagick-CCITTFaxDecode.pdf | 1.8 KiB | small | 0.29 ms | 0.27 ms | 1.07× |
-| resources/reportlab-inline-image.pdf | 1.5 KiB | small | 0.26 ms | 0.30 ms | 0.86× |
-| resources/Sample_Td-matrix.pdf | 1.3 KiB | small | 0.19 ms | 0.24 ms | 0.78× |
-| resources/toy.pdf | 1.1 KiB | small | 0.20 ms | 0.37 ms | 0.54× |
-| resources/bytes.pdf | 1.1 KiB | small | 0.52 ms | 0.61 ms | 0.85× |
-| resources/issue-297.pdf | 958 B | small | 0.42 ms | 0.36 ms | 1.17× |
+| resources/superscript-pdftex.pdf | 33.8 KiB | small | 0.96 ms | 0.79 ms | 1.22× |
+| resources/selenium-pypdf-issue-177.pdf | 33.7 KiB | small | 1.00 ms | 0.24 ms | 4.11× |
+| resources/hello-world.pdf | 28.7 KiB | small | 0.30 ms | 0.27 ms | 1.10× |
+| resources/multilang.pdf | 28.7 KiB | small | 0.30 ms | 0.27 ms | 1.12× |
+| resources/pdflatex-forms.pdf | 27.1 KiB | small | 1.35 ms | 1.29 ms | 1.04× |
+| resources/commented-xmp.pdf | 17.5 KiB | small | 0.27 ms | 0.30 ms | 0.91× |
+| resources/commented.pdf | 13.1 KiB | small | 0.99 ms | 0.93 ms | 1.06× |
+| resources/metadata.pdf | 13.0 KiB | small | 0.68 ms | 0.65 ms | 1.05× |
+| resources/crazyones.pdf | 11.2 KiB | small | 1.04 ms | 0.69 ms | 1.51× |
+| resources/two-different-pages.pdf | 7.5 KiB | small | 0.28 ms | 0.26 ms | 1.11× |
+| resources/box.pdf | 5.3 KiB | small | 0.18 ms | 0.20 ms | 0.93× |
+| resources/AutoCad_Simple.pdf | 2.9 KiB | small | 0.29 ms | 0.28 ms | 1.05× |
+| resources/imagemagick-ASCII85Decode.pdf | 2.8 KiB | small | 0.27 ms | 0.23 ms | 1.16× |
+| resources/imagemagick-lzw.pdf | 2.6 KiB | small | 0.25 ms | 0.22 ms | 1.14× |
+| resources/imagemagick-CCITTFaxDecode.pdf | 1.8 KiB | small | 0.25 ms | 0.21 ms | 1.16× |
+| resources/reportlab-inline-image.pdf | 1.5 KiB | small | 0.24 ms | 0.23 ms | 1.06× |
+| resources/Sample_Td-matrix.pdf | 1.3 KiB | small | 0.17 ms | 0.18 ms | 0.91× |
+| resources/toy.pdf | 1.1 KiB | small | 0.16 ms | 0.18 ms | 0.90× |
+| resources/bytes.pdf | 1.1 KiB | small | 0.38 ms | 0.48 ms | 0.80× |
+| resources/issue-297.pdf | 958 B | small | 0.31 ms | 0.28 ms | 1.13× |
 
 | class | files | ref total (sum of medians) | port total | speedup |
 |---|---|---|---|---|
-| small | 20 | 11.07 ms | 10.83 ms | 1.02× |
+| small | 20 | 9.69 ms | 8.19 ms | 1.18× |
 
 ### W2 – page_traverse_5_large
 
 | file | bytes | class | ref median | port median | speedup |
 |---|---|---|---|---|---|
-| resources/issue-604.pdf | 7.62 MiB | large | 63.80 ms | 43.86 ms | 1.45× |
-| sample-files/009-pdflatex-geotopo/GeoTopo.pdf | 5.07 MiB | large | 71.32 ms | 64.93 ms | 1.10× |
-| resources/fontsampler.pdf | 3.17 MiB | large | 0.95 ms | 1.10 ms | 0.87× |
-| sample-files/018-base64-image/base64image.pdf | 2.16 MiB | large | 0.75 ms | 0.77 ms | 0.97× |
-| sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf | 1.71 MiB | large | 29.52 ms | 23.69 ms | 1.25× |
+| resources/issue-604.pdf | 7.62 MiB | large | 61.36 ms | 40.86 ms | 1.50× |
+| sample-files/009-pdflatex-geotopo/GeoTopo.pdf | 5.07 MiB | large | 66.31 ms | 57.51 ms | 1.15× |
+| resources/fontsampler.pdf | 3.17 MiB | large | 0.87 ms | 0.91 ms | 0.96× |
+| sample-files/018-base64-image/base64image.pdf | 2.16 MiB | large | 0.67 ms | 0.70 ms | 0.96× |
+| sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf | 1.71 MiB | large | 28.04 ms | 21.83 ms | 1.28× |
 
 | class | files | ref total (sum of medians) | port total | speedup |
 |---|---|---|---|---|
-| large | 5 | 166.35 ms | 134.34 ms | 1.24× |
+| large | 5 | 157.25 ms | 121.80 ms | 1.29× |
 
 ### W3 – text_extract_12
 
 | file | bytes | class | ref median | port median | speedup |
 |---|---|---|---|---|---|
-| resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf | 351.8 KiB | large | 35.48 ms | 35.08 ms | 1.01× |
-| resources/test Orient.pdf | 276.4 KiB | large | 35.42 ms | 17.25 ms | 2.05× |
-| sample-files/026-latex-multicolumn/multicolumn.pdf | 76.8 KiB | small | 20.27 ms | 31.77 ms | 0.64× |
-| resources/pdflatex-outline.pdf | 47.6 KiB | small | 27.75 ms | 44.55 ms | 0.62× |
-| resources/superscript-pdftex.pdf | 33.8 KiB | small | 2.19 ms | 2.77 ms | 0.79× |
-| resources/selenium-pypdf-issue-177.pdf | 33.7 KiB | small | 2.75 ms | 2.27 ms | 1.21× |
-| resources/hello-world.pdf | 28.7 KiB | small | 2.42 ms | 3.01 ms | 0.80× |
-| resources/multilang.pdf | 28.7 KiB | small | 2.56 ms | 3.11 ms | 0.82× |
-| sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf | 24.0 KiB | small | 39.52 ms | 66.52 ms | 0.59× |
-| resources/crazyones.pdf | 11.2 KiB | small | 3.84 ms | 5.92 ms | 0.65× |
-| resources/Sample_Td-matrix.pdf | 1.3 KiB | small | 0.61 ms | 0.76 ms | 0.81× |
-| resources/toy.pdf | 1.1 KiB | small | 0.76 ms | 1.17 ms | 0.65× |
+| resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf | 351.8 KiB | large | 32.77 ms | 31.76 ms | 1.03× |
+| resources/test Orient.pdf | 276.4 KiB | large | 33.42 ms | 15.65 ms | 2.14× |
+| sample-files/026-latex-multicolumn/multicolumn.pdf | 76.8 KiB | small | 18.29 ms | 28.80 ms | 0.64× |
+| resources/pdflatex-outline.pdf | 47.6 KiB | small | 25.62 ms | 40.59 ms | 0.63× |
+| resources/superscript-pdftex.pdf | 33.8 KiB | small | 1.98 ms | 2.31 ms | 0.86× |
+| resources/selenium-pypdf-issue-177.pdf | 33.7 KiB | small | 2.53 ms | 2.00 ms | 1.26× |
+| resources/hello-world.pdf | 28.7 KiB | small | 2.24 ms | 2.68 ms | 0.83× |
+| resources/multilang.pdf | 28.7 KiB | small | 2.26 ms | 2.68 ms | 0.84× |
+| sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf | 24.0 KiB | small | 37.16 ms | 62.07 ms | 0.60× |
+| resources/crazyones.pdf | 11.2 KiB | small | 3.51 ms | 5.23 ms | 0.67× |
+| resources/Sample_Td-matrix.pdf | 1.3 KiB | small | 0.56 ms | 0.61 ms | 0.92× |
+| resources/toy.pdf | 1.1 KiB | small | 0.65 ms | 0.81 ms | 0.80× |
 
 | class | files | ref total (sum of medians) | port total | speedup |
 |---|---|---|---|---|
-| large | 2 | 70.89 ms | 52.33 ms | 1.35× |
-| small | 10 | 102.67 ms | 161.85 ms | 0.63× |
+| large | 2 | 66.19 ms | 47.42 ms | 1.40× |
+| small | 10 | 94.81 ms | 147.79 ms | 0.64× |
 
 ### W4 – image_extract_10
 
 | file | bytes | class | ref median | port median | speedup |
 |---|---|---|---|---|---|
-| sample-files/023-cmyk-image/cmyk-image.pdf | 433.5 KiB | large | 42.62 ms | 42.31 ms | 1.01× |
-| sample-files/031-png-predictors/png-predictors.pdf | 172.7 KiB | small | 16.99 ms | 5.13 ms | 3.31× |
-| resources/issue-301.pdf | 119.6 KiB | small | 454.54 ms | 195.01 ms | 2.33× |
-| resources/jpeg.pdf | 98.5 KiB | small | 54.43 ms | 54.65 ms | 1.00× |
-| sample-files/019-grayscale-image/grayscale-image.pdf | 39.2 KiB | small | 2.48 ms | 2.50 ms | 0.99× |
-| resources/git.pdf | 35.5 KiB | small | 8.50 ms | 8.80 ms | 0.97× |
-| resources/imagemagick-images.pdf | 15.6 KiB | small | 2.79 ms | 4.05 ms | 0.69× |
-| resources/box.pdf | 5.3 KiB | small | 2.39 ms | 2.85 ms | 0.84× |
-| resources/imagemagick-ASCII85Decode.pdf | 2.8 KiB | small | 0.68 ms | 0.79 ms | 0.85× |
-| sample-files/008-reportlab-inline-image/inline-image.pdf | 1.5 KiB | small | 0.67 ms | 0.72 ms | 0.93× |
+| sample-files/023-cmyk-image/cmyk-image.pdf | 433.5 KiB | large | 41.05 ms | 40.36 ms | 1.02× |
+| sample-files/031-png-predictors/png-predictors.pdf | 172.7 KiB | small | 16.27 ms | 4.74 ms | 3.43× |
+| resources/issue-301.pdf | 119.6 KiB | small | 437.19 ms | 180.72 ms | 2.42× |
+| resources/jpeg.pdf | 98.5 KiB | small | 51.92 ms | 52.50 ms | 0.99× |
+| sample-files/019-grayscale-image/grayscale-image.pdf | 39.2 KiB | small | 2.38 ms | 2.35 ms | 1.01× |
+| resources/git.pdf | 35.5 KiB | small | 8.11 ms | 8.39 ms | 0.97× |
+| resources/imagemagick-images.pdf | 15.6 KiB | small | 2.43 ms | 3.10 ms | 0.78× |
+| resources/box.pdf | 5.3 KiB | small | 2.22 ms | 2.48 ms | 0.89× |
+| resources/imagemagick-ASCII85Decode.pdf | 2.8 KiB | small | 0.49 ms | 0.62 ms | 0.78× |
+| sample-files/008-reportlab-inline-image/inline-image.pdf | 1.5 KiB | small | 0.46 ms | 0.56 ms | 0.82× |
 
 | class | files | ref total (sum of medians) | port total | speedup |
 |---|---|---|---|---|
-| large | 1 | 42.62 ms | 42.31 ms | 1.01× |
-| small | 9 | 543.46 ms | 274.51 ms | 1.98× |
+| large | 1 | 41.05 ms | 40.36 ms | 1.02× |
+| small | 9 | 521.48 ms | 255.48 ms | 2.04× |
 
 ### W8 – end_to_end_mixed_7
 
 | file | bytes | class | ref median | port median | speedup |
 |---|---|---|---|---|---|
-| resources/issue-604.pdf | 7.62 MiB | large | 224.32 ms | 278.27 ms | 0.81× |
-| resources/side-by-side-subfig.pdf | 811.7 KiB | large | 5.55 ms | 8.83 ms | 0.63× |
-| resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf | 351.8 KiB | large | 21.77 ms | 23.75 ms | 0.92× |
-| resources/pdflatex-outline.pdf | 47.6 KiB | small | 14.34 ms | 23.87 ms | 0.60× |
-| resources/multilang.pdf | 28.7 KiB | small | 2.74 ms | 3.52 ms | 0.78× |
-| resources/imagemagick-images.pdf | 15.6 KiB | small | 2.71 ms | 4.47 ms | 0.61× |
-| resources/crazyones.pdf | 11.2 KiB | small | 4.20 ms | 6.65 ms | 0.63× |
+| resources/issue-604.pdf | 7.62 MiB | large | 209.29 ms | 250.39 ms | 0.84× |
+| resources/side-by-side-subfig.pdf | 811.7 KiB | large | 5.20 ms | 7.78 ms | 0.67× |
+| resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf | 351.8 KiB | large | 20.24 ms | 20.77 ms | 0.97× |
+| resources/pdflatex-outline.pdf | 47.6 KiB | small | 13.39 ms | 21.17 ms | 0.63× |
+| resources/multilang.pdf | 28.7 KiB | small | 2.42 ms | 3.11 ms | 0.78× |
+| resources/imagemagick-images.pdf | 15.6 KiB | small | 2.45 ms | 3.67 ms | 0.67× |
+| resources/crazyones.pdf | 11.2 KiB | small | 3.83 ms | 5.90 ms | 0.65× |
 
 | class | files | ref total (sum of medians) | port total | speedup |
 |---|---|---|---|---|
-| large | 3 | 251.64 ms | 310.86 ms | 0.81× |
-| small | 4 | 23.99 ms | 38.52 ms | 0.62× |
+| large | 3 | 234.73 ms | 278.95 ms | 0.84× |
+| small | 4 | 22.09 ms | 33.86 ms | 0.65× |
 
 ## Regressions and anomalies
 
-- **W1** port is slower: speedup 0.99×, latency change +1.2% (11.7 ms → 11.8 ms).
-- **W3** port is slower: speedup 0.81×, latency change +23.1% (175.3 ms → 215.8 ms).
-- **W4** port working-set growth is larger: 2.8 MB → 21.7 MB (+688.1%); absolute peak RSS 222.1 MB → 239.6 MB (+7.9%).
-- **W5** port is slower: speedup 0.67×, latency change +50.2% (11.4 ms → 17.1 ms).
-- **W6** port is slower: speedup 0.68×, latency change +47.7% (14.6 ms → 21.5 ms).
-- **W7** port is slower: speedup 0.63×, latency change +59.0% (19.6 ms → 31.1 ms).
-- **W8** port is slower: speedup 0.89×, latency change +12.2% (415.1 ms → 465.7 ms).
-- **W8** port uses more peak RSS: 298.4 MB → 337.2 MB (+13.0%), working-set growth 15.6 MB → 17.9 MB (+14.4%).
+- **W3** port is slower: speedup 0.83×, latency change +21.2% (161.1 ms → 195.2 ms).
+- **W5** port is slower: speedup 0.76×, latency change +31.2% (10.2 ms → 13.4 ms).
+- **W6** port is slower: speedup 0.78×, latency change +28.0% (13.5 ms → 17.3 ms).
+- **W7** port is slower: speedup 0.75×, latency change +33.7% (17.5 ms → 23.4 ms).
 
 ## Workload definitions
 

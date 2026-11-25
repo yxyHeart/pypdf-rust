@@ -412,3 +412,29 @@ positioning operator) and W5–W7 by the clone Python-frame count pinned by the
 upstream tests; both need structural changes (native typed state / cheaper PyO3
 trampolines), not further micro-optimisation.
 
+## Native NameObject.renumber (lead, 2026-11-25, round 8)
+
+`NameObject.renumber()` was the top writer hot spot (`sample`: 166/400 samples):
+per character it built a Python slice, a PyO3 iterator item, a fresh `"~"`
+string for the `>` comparison and an `encode()` call.  The rewrite extracts the
+name once to a Rust `String`, walks `chars()`, escapes non-ASCII to `#XX`
+natively, and only creates a one-char `str` for the `renumber_table` lookup.
+The `IndexError` (empty name), `PdfStreamError` (missing `/`) and `KeyError`
+fallbacks keep the upstream messages.
+
+**Measured (`run_perf.sh --repeat 7`):**
+
+| W | round 7 | round 8 |
+|---|---|---|
+| W1 | 1.13× | **1.17×** |
+| W2 | 1.23× | **1.27×** |
+| W3 | 0.81× | **0.83×** |
+| W4 | 1.85× | **1.91×** |
+| W5 | 0.67× | **0.76×** |
+| W6 | 0.68× | **0.78×** |
+| W7 | 0.63× | **0.75×** |
+| W8 | 0.89× | **1.03×** |
+
+Gates: A1 MATCH, differential IDENTICAL, roundtrip PIPELINE PASS, security
+57/57 + fuzz 200/200 IDENTICAL.
+

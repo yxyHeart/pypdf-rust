@@ -1348,9 +1348,9 @@
    "page_tree_depth_150"
   ]
  },
- "generated_at": "2026-11-25T03:44:23Z",
+ "generated_at": "2026-11-25T04:07:07Z",
  "generator": "validation/security.py",
- "git_commit": "f69e229",
+ "git_commit": "78de594",
  "heavy": false,
  "limit_as_mb": 1024,
  "totals": {
