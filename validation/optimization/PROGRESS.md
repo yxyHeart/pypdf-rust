@@ -512,3 +512,13 @@ Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
 **Latest `run_perf.sh --repeat 7`:** W1 1.21×, W2 1.32×, W3 0.94×, W4 2.02×,
 W5 0.86×, W6 0.93×, W7 0.87×, W8 1.10× (small workloads vary ±10 % run to run).
 
+## Round 12 (lead, 2026-11-25): Linux cross-compile evidence
+
+- Added `validation/linux_check.sh`: `PYO3_CROSS=1 PYO3_CROSS_PYTHON_VERSION=3.14
+  cargo check -p pypdf-py --target {aarch64,x86_64}-unknown-linux-gnu` — both
+  pass, so the port compiles for the Linux targets.
+- Docker-based Linux wheel build remains blocked: the engine pulls images and
+  can run one trivial container after `docker desktop restart`, but any
+  container with a bind mount (`docker run -d -v …`) hangs indefinitely with no
+  logs (reproduced with a 2 GB and a 119 MB source tree).  Left as NOT_TESTED.
+
