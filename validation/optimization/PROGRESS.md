@@ -358,3 +358,35 @@ Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
 allocator state from W4 (working-set growth per repetition is ≤0.2 MB), not a
 leak.
 
+## Import-cache sweep + dict item access (lead, 2026-11-25, round 7)
+
+- Every inline `py.import("pypdf…")` / `py.import("builtins")` in
+  `crates/pypdf-py/src/modules/**` now goes through `pyutil::cached_module`
+  (36 files, ~160 call sites).
+- `DictionaryObject.__getitem__` / `__setitem__` implementations use the C-level
+  `PyDict` API (the KeyError is rebuilt via `builtins.KeyError(key)` so the
+  message stays identical); `fast_class` gives `PyOnceLock`-cached classes for
+  PdfObject/NameObject/IndirectObject/DictionaryObject/ArrayObject/StreamObject/
+  int/dict/len in per-entry loops.
+- The text extraction loop borrows the operator bytes instead of allocating a new
+  `bytes` object for each of its five comparisons.
+
+**Measured (`run_perf.sh --repeat 7`):**
+
+| W | round 6 | round 7 |
+|---|---|---|
+| W1 | 1.20× | 1.13× |
+| W2 | 1.27× | 1.23× |
+| W3 | 0.77× | 0.78× |
+| W4 | 1.90× | 1.85× |
+| W5 | 0.66× | 0.66× |
+| W6 | 0.73× | 0.73× |
+| W7 | 0.66× | 0.66× |
+| W8 | 0.89× | 0.88× |
+
+(W1/W2/W4/W8 swing ±8 % with machine load; the single-workload runs showed
+W8 at 387 ms vs 417 ms reference in one pass.)
+
+Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
+200/200 IDENTICAL.
+
