@@ -9,26 +9,26 @@
    "intent": "Two annotations reference each other through /Popup and /Parent.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1259,
+    "cpu_s": 0.1082,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46317568,
+    "max_rss_bytes": 45367296,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1488
+    "wall_s": 0.1252
    },
    "port": {
-    "cpu_s": 0.1836,
+    "cpu_s": 0.174,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 48709632,
+    "max_rss_bytes": 49135616,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2253
+    "wall_s": 0.198
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -44,26 +44,26 @@
    "intent": "Single embedded-file name string is 1 MB long.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.2157,
+    "cpu_s": 0.2006,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 69894144,
+    "max_rss_bytes": 68403200,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.238
+    "wall_s": 0.2187
    },
    "port": {
-    "cpu_s": 0.1958,
+    "cpu_s": 0.1738,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 59490304,
+    "max_rss_bytes": 58359808,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2194
+    "wall_s": 0.1939
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -79,30 +79,30 @@
    "intent": "EmbeddedFiles /Names array holds 100002 elements (array limit is 100000).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.3032,
+    "cpu_s": 0.2841,
     "exception_classes": {
      "attachments": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 63094784,
+    "max_rss_bytes": 63356928,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.3254
+    "wall_s": 0.303
    },
    "port": {
-    "cpu_s": 0.8384,
+    "cpu_s": 0.7302,
     "exception_classes": {
      "attachments": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 78331904,
+    "max_rss_bytes": 73383936,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.8651
+    "wall_s": 0.7504
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -118,26 +118,26 @@
    "intent": "Flate stream inflates to 1 MiB from a few KiB (bounded, within limits).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1237,
+    "cpu_s": 0.1113,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 47235072,
+    "max_rss_bytes": 46579712,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1479
+    "wall_s": 0.1285
    },
    "port": {
-    "cpu_s": 0.1779,
+    "cpu_s": 0.1593,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 50839552,
+    "max_rss_bytes": 50528256,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2007
+    "wall_s": 0.1791
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -153,30 +153,30 @@
    "intent": "ToUnicode bfchar uses a 34-hex-digit source code (limit is 16).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1209,
+    "cpu_s": 0.1135,
     "exception_classes": {
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 46759936,
+    "max_rss_bytes": 47136768,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1426
+    "wall_s": 0.1321
    },
    "port": {
-    "cpu_s": 0.1765,
+    "cpu_s": 0.1565,
     "exception_classes": {
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 50315264,
+    "max_rss_bytes": 48840704,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2006
+    "wall_s": 0.1758
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -192,30 +192,30 @@
    "intent": "ToUnicode CMap defines 100500 bfchar mappings (limit is 100000).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.4302,
+    "cpu_s": 0.3948,
     "exception_classes": {
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 87293952,
+    "max_rss_bytes": 84672512,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.4527
+    "wall_s": 0.4137
    },
    "port": {
-    "cpu_s": 0.5681,
+    "cpu_s": 0.5037,
     "exception_classes": {
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 84557824,
+    "max_rss_bytes": 81264640,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.5935
+    "wall_s": 0.5243
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -231,26 +231,26 @@
    "intent": "Indirect object /Cycle resolves to a dictionary whose /Next points at itself.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1194,
+    "cpu_s": 0.1121,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46071808,
+    "max_rss_bytes": 45318144,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1389
+    "wall_s": 0.1291
    },
    "port": {
-    "cpu_s": 0.1778,
+    "cpu_s": 0.156,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49102848,
+    "max_rss_bytes": 48267264,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1996
+    "wall_s": 0.1774
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -266,26 +266,26 @@
    "intent": "Two indirect objects reference each other through /Next (A->B->A).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1252,
+    "cpu_s": 0.1097,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46301184,
+    "max_rss_bytes": 45301760,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1485
+    "wall_s": 0.1265
    },
    "port": {
-    "cpu_s": 0.1754,
+    "cpu_s": 0.1554,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49627136,
+    "max_rss_bytes": 48316416,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1991
+    "wall_s": 0.1742
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -301,35 +301,35 @@
    "intent": "Stream declares /Length 6 0 R where object 6 is the stream itself.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1227,
+    "cpu_s": 0.113,
     "exception_classes": {
      "resolve": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 47169536,
+    "max_rss_bytes": 45907968,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1419
+    "wall_s": 0.1302
    },
    "port": {
-    "cpu_s": 0.1745,
+    "cpu_s": 0.1557,
     "exception_classes": {
      "resolve": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 49446912,
+    "max_rss_bytes": 48660480,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2002
+    "wall_s": 0.1746
    },
    "raw_message_differences": [
     {
-     "oracle": "Detected loop with self reference for IndirectObject(6, 0, 4498514880).",
-     "port": "Detected loop with self reference for IndirectObject(6, 0, 4469518224).",
+     "oracle": "Detected loop with self reference for IndirectObject(6, 0, 4423902144).",
+     "port": "Detected loop with self reference for IndirectObject(6, 0, 4479315856).",
      "step": "resolve"
     }
    ],
@@ -346,26 +346,26 @@
    "intent": "Object 5 is defined twice; the xref points at a duplicate copy after %%EOF.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1196,
+    "cpu_s": 0.1104,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45694976,
+    "max_rss_bytes": 45465600,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1415
+    "wall_s": 0.1282
    },
    "port": {
-    "cpu_s": 0.1922,
+    "cpu_s": 0.1565,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 48955392,
+    "max_rss_bytes": 48332800,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2318
+    "wall_s": 0.1756
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -381,26 +381,26 @@
    "intent": "Content stream declares exactly 16 nested /FlateDecode filters (at the limit).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1271,
+    "cpu_s": 0.1093,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45793280,
+    "max_rss_bytes": 45268992,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1523
+    "wall_s": 0.1274
    },
    "port": {
-    "cpu_s": 0.174,
+    "cpu_s": 0.1567,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49184768,
+    "max_rss_bytes": 48431104,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1977
+    "wall_s": 0.1767
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -416,32 +416,32 @@
    "intent": "Content stream declares a 50-entry /FlateDecode filter chain (limit is 16).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1306,
+    "cpu_s": 0.1098,
     "exception_classes": {
      "resolve": "LimitReachedError",
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 46956544,
+    "max_rss_bytes": 46120960,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1566
+    "wall_s": 0.128
    },
    "port": {
-    "cpu_s": 0.1821,
+    "cpu_s": 0.1587,
     "exception_classes": {
      "resolve": "LimitReachedError",
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 50135040,
+    "max_rss_bytes": 49037312,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2075
+    "wall_s": 0.1782
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -457,30 +457,30 @@
    "intent": "Stream uses an unknown filter /FooBar.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1257,
+    "cpu_s": 0.1088,
     "exception_classes": {
      "resolve": "NotImplementedError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46448640,
+    "max_rss_bytes": 45678592,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1484
+    "wall_s": 0.1254
    },
    "port": {
-    "cpu_s": 0.1826,
+    "cpu_s": 0.1567,
     "exception_classes": {
      "resolve": "NotImplementedError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49430528,
+    "max_rss_bytes": 48709632,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2062
+    "wall_s": 0.1755
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -496,26 +496,26 @@
    "intent": "AcroForm field lists itself in /Kids.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1223,
+    "cpu_s": 0.1081,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46252032,
+    "max_rss_bytes": 45285376,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1433
+    "wall_s": 0.1245
    },
    "port": {
-    "cpu_s": 0.1794,
+    "cpu_s": 0.1737,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49119232,
+    "max_rss_bytes": 48447488,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2127
+    "wall_s": 0.1953
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -531,26 +531,26 @@
    "intent": "Indirect reference uses object number 2**32, beyond 32-bit and not in the xref.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1192,
+    "cpu_s": 0.1092,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45678592,
+    "max_rss_bytes": 45285376,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1411
+    "wall_s": 0.1258
    },
    "port": {
-    "cpu_s": 0.1802,
+    "cpu_s": 0.1563,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 48955392,
+    "max_rss_bytes": 48218112,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2041
+    "wall_s": 0.1754
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -566,30 +566,30 @@
    "intent": "Inline image declares 100000x100000 pixels (sample buffer > 75 MB limit).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1248,
+    "cpu_s": 0.1093,
     "exception_classes": {
      "operations": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 46317568,
+    "max_rss_bytes": 45711360,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1457
+    "wall_s": 0.127
    },
    "port": {
-    "cpu_s": 0.1832,
+    "cpu_s": 0.1577,
     "exception_classes": {
      "operations": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 49709056,
+    "max_rss_bytes": 48775168,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2095
+    "wall_s": 0.1782
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -605,30 +605,30 @@
    "intent": "Inline image data ends abruptly without the EI operator.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1213,
+    "cpu_s": 0.1091,
     "exception_classes": {
      "operations": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46612480,
+    "max_rss_bytes": 45645824,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1432
+    "wall_s": 0.1257
    },
    "port": {
-    "cpu_s": 0.1784,
+    "cpu_s": 0.1616,
     "exception_classes": {
      "operations": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49020928,
+    "max_rss_bytes": 49119232,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2018
+    "wall_s": 0.1812
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -644,26 +644,26 @@
    "intent": "Deeply nested inline array (depth 10) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1245,
+    "cpu_s": 0.1222,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46415872,
+    "max_rss_bytes": 45334528,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1487
+    "wall_s": 0.1805
    },
    "port": {
-    "cpu_s": 0.176,
+    "cpu_s": 0.161,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49020928,
+    "max_rss_bytes": 48250880,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.199
+    "wall_s": 0.1965
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -679,26 +679,26 @@
    "intent": "Deeply nested inline array (depth 100) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1209,
+    "cpu_s": 0.1104,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46006272,
+    "max_rss_bytes": 45318144,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1414
+    "wall_s": 0.1292
    },
    "port": {
-    "cpu_s": 0.1757,
+    "cpu_s": 0.1558,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49152000,
+    "max_rss_bytes": 48218112,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1986
+    "wall_s": 0.1746
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -714,44 +714,44 @@
    "intent": "Deeply nested inline array (depth 1000) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1274,
+    "cpu_s": 0.1215,
     "exception_classes": {
      "depth": "LimitReachedError",
      "pages": "LimitReachedError",
      "parse": "PdfReadError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 47529984,
+    "max_rss_bytes": 46891008,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1512
+    "wall_s": 0.1404
    },
    "port": {
-    "cpu_s": 0.1776,
+    "cpu_s": 0.1573,
     "exception_classes": {
      "depth": "LimitReachedError",
      "pages": "LimitReachedError",
      "parse": "PdfReadError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 50118656,
+    "max_rss_bytes": 48840704,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.203
+    "wall_s": 0.1763
    },
    "raw_message_differences": [
     {
-     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4419576768).",
-     "port": "Detected loop with self reference for IndirectObject(1, 0, 4416171920).",
+     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4417708992).",
+     "port": "Detected loop with self reference for IndirectObject(1, 0, 4474449808).",
      "step": "pages"
     },
     {
-     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4419576768).",
-     "port": "Detected loop with self reference for IndirectObject(1, 0, 4416171920).",
+     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4417708992).",
+     "port": "Detected loop with self reference for IndirectObject(1, 0, 4474449808).",
      "step": "depth"
     }
    ],
@@ -768,44 +768,44 @@
    "intent": "Deeply nested inline array (depth 10000) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1248,
+    "cpu_s": 0.1158,
     "exception_classes": {
      "depth": "LimitReachedError",
      "pages": "LimitReachedError",
      "parse": "PdfReadError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 47038464,
+    "max_rss_bytes": 46481408,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.145
+    "wall_s": 0.1333
    },
    "port": {
-    "cpu_s": 0.1762,
+    "cpu_s": 0.1567,
     "exception_classes": {
      "depth": "LimitReachedError",
      "pages": "LimitReachedError",
      "parse": "PdfReadError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 49348608,
+    "max_rss_bytes": 48857088,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1997
+    "wall_s": 0.1761
    },
    "raw_message_differences": [
     {
-     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4456014784).",
-     "port": "Detected loop with self reference for IndirectObject(1, 0, 4450627472).",
+     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4493665216).",
+     "port": "Detected loop with self reference for IndirectObject(1, 0, 4410093456).",
      "step": "pages"
     },
     {
-     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4456014784).",
-     "port": "Detected loop with self reference for IndirectObject(1, 0, 4450627472).",
+     "oracle": "Detected loop with self reference for IndirectObject(1, 0, 4493665216).",
+     "port": "Detected loop with self reference for IndirectObject(1, 0, 4410093456).",
      "step": "depth"
     }
    ],
@@ -822,26 +822,26 @@
    "intent": "Deeply nested inline dictionaries (depth 10) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1251,
+    "cpu_s": 0.1087,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46366720,
+    "max_rss_bytes": 45334528,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1467
+    "wall_s": 0.1253
    },
    "port": {
-    "cpu_s": 0.1738,
+    "cpu_s": 0.1601,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49610752,
+    "max_rss_bytes": 48365568,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1991
+    "wall_s": 0.1797
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -857,26 +857,26 @@
    "intent": "Deeply nested inline dictionaries (depth 100) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1228,
+    "cpu_s": 0.1079,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45596672,
+    "max_rss_bytes": 45416448,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1464
+    "wall_s": 0.1246
    },
    "port": {
-    "cpu_s": 0.175,
+    "cpu_s": 0.156,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49659904,
+    "max_rss_bytes": 48365568,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.198
+    "wall_s": 0.175
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -905,26 +905,26 @@
    "intent": "Deeply nested inline dictionaries (depth 1000) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1269,
+    "cpu_s": 0.113,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46268416,
+    "max_rss_bytes": 45776896,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1487
+    "wall_s": 0.1302
    },
    "port": {
-    "cpu_s": 0.1762,
+    "cpu_s": 0.1597,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49233920,
+    "max_rss_bytes": 48758784,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1997
+    "wall_s": 0.1798
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -953,26 +953,26 @@
    "intent": "Deeply nested inline dictionaries (depth 10000) reached through /Nest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1757,
+    "cpu_s": 0.1633,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46055424,
+    "max_rss_bytes": 45809664,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1974
+    "wall_s": 0.1831
    },
    "port": {
-    "cpu_s": 0.219,
+    "cpu_s": 0.1935,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 50282496,
+    "max_rss_bytes": 49692672,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2504
+    "wall_s": 0.2152
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -988,26 +988,26 @@
    "intent": "Outline items chain to themselves via /Next and /Prev.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1241,
+    "cpu_s": 0.1077,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46055424,
+    "max_rss_bytes": 45268992,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1448
+    "wall_s": 0.126
    },
    "port": {
-    "cpu_s": 0.1763,
+    "cpu_s": 0.1558,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 48594944,
+    "max_rss_bytes": 48316416,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1999
+    "wall_s": 0.1758
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1023,30 +1023,30 @@
    "intent": "Outline nested 170 levels deep (limit is 100).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1288,
+    "cpu_s": 0.1144,
     "exception_classes": {
      "outline": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 46940160,
+    "max_rss_bytes": 46399488,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1507
+    "wall_s": 0.1314
    },
    "port": {
-    "cpu_s": 0.1802,
+    "cpu_s": 0.1769,
     "exception_classes": {
      "outline": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 50446336,
+    "max_rss_bytes": 49840128,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.204
+    "wall_s": 0.1995
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1062,26 +1062,26 @@
    "intent": "Outline item is its own /Parent and points at itself in /Dest.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.125,
+    "cpu_s": 0.1092,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45842432,
+    "max_rss_bytes": 45334528,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1454
+    "wall_s": 0.126
    },
    "port": {
-    "cpu_s": 0.1773,
+    "cpu_s": 0.1647,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49004544,
+    "max_rss_bytes": 48381952,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2052
+    "wall_s": 0.1858
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1097,26 +1097,26 @@
    "intent": "Page label prefix string is 1 MB long.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.2412,
+    "cpu_s": 0.2349,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 68665344,
+    "max_rss_bytes": 68485120,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2663
+    "wall_s": 0.256
    },
    "port": {
-    "cpu_s": 0.217,
+    "cpu_s": 0.1996,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 59162624,
+    "max_rss_bytes": 58179584,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2438
+    "wall_s": 0.222
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1132,30 +1132,30 @@
    "intent": "/PageLabels /Nums holds 100002 array elements (array limit is 100000).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.4108,
+    "cpu_s": 0.3931,
     "exception_classes": {
      "labels": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 79265792,
+    "max_rss_bytes": 78790656,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.4339
+    "wall_s": 0.4134
    },
    "port": {
-    "cpu_s": 0.5588,
+    "cpu_s": 0.4925,
     "exception_classes": {
      "labels": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 106151936,
+    "max_rss_bytes": 104808448,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.5902
+    "wall_s": 0.5149
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1171,32 +1171,32 @@
    "intent": "/Pages node lists itself in /Kids.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1221,
+    "cpu_s": 0.1096,
     "exception_classes": {
      "pages": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46432256,
+    "max_rss_bytes": 45907968,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1434
+    "wall_s": 0.1264
    },
    "port": {
-    "cpu_s": 0.177,
+    "cpu_s": 0.157,
     "exception_classes": {
      "pages": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49872896,
+    "max_rss_bytes": 48529408,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2005
+    "wall_s": 0.1762
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1212,32 +1212,32 @@
    "intent": "Two /Pages nodes reference each other in /Kids (A->B->A).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1261,
+    "cpu_s": 0.1097,
     "exception_classes": {
      "pages": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46366720,
+    "max_rss_bytes": 45907968,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1481
+    "wall_s": 0.1285
    },
    "port": {
-    "cpu_s": 0.1782,
+    "cpu_s": 0.1576,
     "exception_classes": {
      "pages": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 50216960,
+    "max_rss_bytes": 48496640,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2014
+    "wall_s": 0.1767
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1253,30 +1253,30 @@
    "intent": "Page tree nested 150 levels deep (limit is 100).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1258,
+    "cpu_s": 0.1126,
     "exception_classes": {
      "pages": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 46776320,
+    "max_rss_bytes": 46153728,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.148
+    "wall_s": 0.1313
    },
    "port": {
-    "cpu_s": 0.1796,
+    "cpu_s": 0.1588,
     "exception_classes": {
      "pages": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 50626560,
+    "max_rss_bytes": 48742400,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2034
+    "wall_s": 0.178
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1292,37 +1292,37 @@
    "intent": "Content stream declares /Length 999999999 (limit is 75 MB).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1267,
+    "cpu_s": 0.1099,
     "exception_classes": {
      "resolve": "LimitReachedError",
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 47235072,
+    "max_rss_bytes": 46415872,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1507
+    "wall_s": 0.13
    },
    "port": {
-    "cpu_s": 0.1797,
+    "cpu_s": 0.1627,
     "exception_classes": {
      "resolve": "LimitReachedError",
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 50888704,
+    "max_rss_bytes": 49086464,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2042
+    "wall_s": 0.1827
    },
    "raw_message_differences": [
     {
-     "oracle": "Detected loop with self reference for IndirectObject(5, 0, 4421116864).",
-     "port": "Detected loop with self reference for IndirectObject(5, 0, 4442238864).",
+     "oracle": "Detected loop with self reference for IndirectObject(5, 0, 4454392768).",
+     "port": "Detected loop with self reference for IndirectObject(5, 0, 4441370512).",
      "step": "text"
     }
    ],
@@ -1339,30 +1339,30 @@
    "intent": "Stream /Length is an indirect reference to the number 999999999.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1252,
+    "cpu_s": 0.1101,
     "exception_classes": {
      "resolve": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 46661632,
+    "max_rss_bytes": 45924352,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1477
+    "wall_s": 0.1285
    },
    "port": {
-    "cpu_s": 0.1856,
+    "cpu_s": 0.1573,
     "exception_classes": {
      "resolve": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 48988160,
+    "max_rss_bytes": 48709632,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2162
+    "wall_s": 0.1765
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1378,26 +1378,26 @@
    "intent": "Stream declares /Length -1; data must be found by scanning for endstream.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1329,
+    "cpu_s": 0.106,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46465024,
+    "max_rss_bytes": 45268992,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1573
+    "wall_s": 0.1231
    },
    "port": {
-    "cpu_s": 0.1751,
+    "cpu_s": 0.1585,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 48775168,
+    "max_rss_bytes": 48332800,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1984
+    "wall_s": 0.1776
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1413,30 +1413,30 @@
    "intent": "Stream is terminated by endobj instead of endstream.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1218,
+    "cpu_s": 0.1098,
     "exception_classes": {
      "resolve": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46923776,
+    "max_rss_bytes": 46088192,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1434
+    "wall_s": 0.127
    },
    "port": {
-    "cpu_s": 0.1805,
+    "cpu_s": 0.1616,
     "exception_classes": {
      "resolve": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49037312,
+    "max_rss_bytes": 48971776,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2047
+    "wall_s": 0.1815
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1452,34 +1452,34 @@
    "intent": "Stream declares 5000 bytes but the file ends after 5 bytes; no endstream.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.122,
+    "cpu_s": 0.112,
     "exception_classes": {
      "pages": "PdfStreamError",
      "parse": "PdfStreamError",
      "resolve": "PdfStreamError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 45940736,
+    "max_rss_bytes": 45694976,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1424
+    "wall_s": 0.1296
    },
    "port": {
-    "cpu_s": 0.1764,
+    "cpu_s": 0.159,
     "exception_classes": {
      "pages": "PdfStreamError",
      "parse": "PdfStreamError",
      "resolve": "PdfStreamError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49627136,
+    "max_rss_bytes": 48087040,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1993
+    "wall_s": 0.1785
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1495,32 +1495,32 @@
    "intent": "Catalog dictionary has no /Pages entry.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1359,
+    "cpu_s": 0.1093,
     "exception_classes": {
      "pages": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46219264,
+    "max_rss_bytes": 45973504,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1615
+    "wall_s": 0.1261
    },
    "port": {
-    "cpu_s": 0.1757,
+    "cpu_s": 0.1571,
     "exception_classes": {
      "pages": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49315840,
+    "max_rss_bytes": 48496640,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1999
+    "wall_s": 0.1762
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1536,32 +1536,32 @@
    "intent": "Zero-byte input file.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1247,
+    "cpu_s": 0.1095,
     "exception_classes": {
      "pages": "EmptyFileError",
      "parse": "EmptyFileError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46366720,
+    "max_rss_bytes": 45629440,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1447
+    "wall_s": 0.1282
    },
    "port": {
-    "cpu_s": 0.1729,
+    "cpu_s": 0.1571,
     "exception_classes": {
      "pages": "EmptyFileError",
      "parse": "EmptyFileError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49086464,
+    "max_rss_bytes": 47841280,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2001
+    "wall_s": 0.1764
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1577,26 +1577,26 @@
    "intent": "Bytes follow the %%EOF marker (incremental-update leftovers).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1248,
+    "cpu_s": 0.1111,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45613056,
+    "max_rss_bytes": 45268992,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1471
+    "wall_s": 0.13
    },
    "port": {
-    "cpu_s": 0.1761,
+    "cpu_s": 0.1565,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49414144,
+    "max_rss_bytes": 48594944,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1993
+    "wall_s": 0.1754
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1612,34 +1612,34 @@
    "intent": "File contains only a %PDF- header and an %%EOF marker.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1207,
+    "cpu_s": 0.1106,
     "exception_classes": {
      "pages": "PdfReadError",
      "parse": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46022656,
+    "max_rss_bytes": 45531136,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1408
+    "wall_s": 0.1279
    },
    "port": {
-    "cpu_s": 0.1787,
+    "cpu_s": 0.1587,
     "exception_classes": {
      "pages": "PdfReadError",
      "parse": "PdfReadError",
      "text": "PdfReadError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 48709632,
+    "max_rss_bytes": 48021504,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2023
+    "wall_s": 0.1783
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1655,34 +1655,34 @@
    "intent": "File has no %%EOF marker at all.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1295,
+    "cpu_s": 0.11,
     "exception_classes": {
      "pages": "PdfStreamError",
      "parse": "PdfStreamError",
      "text": "PdfStreamError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 46661632,
+    "max_rss_bytes": 45645824,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1511
+    "wall_s": 0.128
    },
    "port": {
-    "cpu_s": 0.1758,
+    "cpu_s": 0.1572,
     "exception_classes": {
      "pages": "PdfStreamError",
      "parse": "PdfStreamError",
      "text": "PdfStreamError"
     },
     "limit_reached": false,
-    "max_rss_bytes": 49364992,
+    "max_rss_bytes": 48054272,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2
+    "wall_s": 0.1764
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1698,26 +1698,26 @@
    "intent": "File does not start with a %PDF- header.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1253,
+    "cpu_s": 0.1102,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45826048,
+    "max_rss_bytes": 45318144,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1476
+    "wall_s": 0.127
    },
    "port": {
-    "cpu_s": 0.1774,
+    "cpu_s": 0.1621,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49823744,
+    "max_rss_bytes": 48939008,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1996
+    "wall_s": 0.1819
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1733,26 +1733,26 @@
    "intent": "/Pages /Count claims 999999 pages but only one kid exists.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1265,
+    "cpu_s": 0.1083,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45694976,
+    "max_rss_bytes": 45367296,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1497
+    "wall_s": 0.1252
    },
    "port": {
-    "cpu_s": 0.1736,
+    "cpu_s": 0.1566,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49479680,
+    "max_rss_bytes": 48726016,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1971
+    "wall_s": 0.1754
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1768,26 +1768,26 @@
    "intent": "/Root points at the number 42 instead of a catalog dictionary.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1213,
+    "cpu_s": 0.1087,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45957120,
+    "max_rss_bytes": 45285376,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1413
+    "wall_s": 0.1254
    },
    "port": {
-    "cpu_s": 0.1778,
+    "cpu_s": 0.1602,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49954816,
+    "max_rss_bytes": 48431104,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2022
+    "wall_s": 0.18
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1803,26 +1803,26 @@
    "intent": "Trailer has no /Root entry.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.122,
+    "cpu_s": 0.1069,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46039040,
+    "max_rss_bytes": 45301760,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1436
+    "wall_s": 0.125
    },
    "port": {
-    "cpu_s": 0.1764,
+    "cpu_s": 0.1569,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 48857088,
+    "max_rss_bytes": 48267264,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1994
+    "wall_s": 0.1759
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1838,40 +1838,40 @@
    "intent": "Page's /Parent points at the page itself; writer round-trip must not leave a broken file.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1243,
+    "cpu_s": 0.1069,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46170112,
+    "max_rss_bytes": 45350912,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1442
+    "wall_s": 0.1237
    },
    "partial_output": {
     "oracle": {
      "bytes": 745,
      "exists": true,
-     "path": "/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-sec-corpus-yo3chfa1/out/oracle/writer_page_parent_cycle.oracle.out.pdf",
+     "path": "/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-sec-corpus-3brpn6r4/out/oracle/writer_page_parent_cycle.oracle.out.pdf",
      "step_ok": true
     },
     "port": {
      "bytes": 745,
      "exists": true,
-     "path": "/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-sec-corpus-yo3chfa1/out/port/writer_page_parent_cycle.port.out.pdf",
+     "path": "/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-sec-corpus-3brpn6r4/out/port/writer_page_parent_cycle.port.out.pdf",
      "step_ok": true
     }
    },
    "port": {
-    "cpu_s": 0.1774,
+    "cpu_s": 0.1564,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 50511872,
+    "max_rss_bytes": 48889856,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2012
+    "wall_s": 0.1755
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1887,26 +1887,26 @@
    "intent": "xref defines object 5 twice (main subsection plus an extra 5 1 subsection).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1223,
+    "cpu_s": 0.1068,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46006272,
+    "max_rss_bytes": 45285376,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1422
+    "wall_s": 0.1245
    },
    "port": {
-    "cpu_s": 0.1811,
+    "cpu_s": 0.1596,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49020928,
+    "max_rss_bytes": 48332800,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2086
+    "wall_s": 0.1788
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1922,32 +1922,32 @@
    "intent": "Classic xref declares 200000 entries in a file of a few hundred bytes.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.122,
+    "cpu_s": 0.1092,
     "exception_classes": {
      "pages": "LimitReachedError",
      "parse": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 45940736,
+    "max_rss_bytes": 45596672,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1423
+    "wall_s": 0.126
    },
    "port": {
-    "cpu_s": 0.191,
+    "cpu_s": 0.1696,
     "exception_classes": {
      "pages": "LimitReachedError",
      "parse": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 48889856,
+    "max_rss_bytes": 48316416,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2308
+    "wall_s": 0.189
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1963,26 +1963,26 @@
    "intent": "xref entry for object 5 points past the end of the file.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.121,
+    "cpu_s": 0.1152,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45924352,
+    "max_rss_bytes": 45793280,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1395
+    "wall_s": 0.1336
    },
    "port": {
-    "cpu_s": 0.1949,
+    "cpu_s": 0.1566,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49725440,
+    "max_rss_bytes": 48627712,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2331
+    "wall_s": 0.1756
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -1998,34 +1998,34 @@
    "intent": "Classic xref subsection declares a negative entry count (0 -3); the parser desynchronises and reads an entry line as the next subsection size, which the declared-size guard then rejects.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1274,
+    "cpu_s": 0.1122,
     "exception_classes": {
      "pages": "LimitReachedError",
      "parse": "LimitReachedError",
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 46350336,
+    "max_rss_bytes": 45727744,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1481
+    "wall_s": 0.1321
    },
    "port": {
-    "cpu_s": 0.193,
+    "cpu_s": 0.1577,
     "exception_classes": {
      "pages": "LimitReachedError",
      "parse": "LimitReachedError",
      "text": "LimitReachedError"
     },
     "limit_reached": true,
-    "max_rss_bytes": 50003968,
+    "max_rss_bytes": 48136192,
     "ok": false,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2396
+    "wall_s": 0.1766
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -2041,26 +2041,26 @@
    "intent": "Object bodies are stored out of order, so xref offsets are non-monotonic.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1263,
+    "cpu_s": 0.1077,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46350336,
+    "max_rss_bytes": 45367296,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1482
+    "wall_s": 0.1246
    },
    "port": {
-    "cpu_s": 0.1912,
+    "cpu_s": 0.1576,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49496064,
+    "max_rss_bytes": 48660480,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2298
+    "wall_s": 0.1765
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -2076,26 +2076,26 @@
    "intent": "Every classic-xref object offset is 1000 bytes too large.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1249,
+    "cpu_s": 0.1091,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46088192,
+    "max_rss_bytes": 45334528,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1489
+    "wall_s": 0.1267
    },
    "port": {
-    "cpu_s": 0.1907,
+    "cpu_s": 0.1794,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49561600,
+    "max_rss_bytes": 48627712,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2279
+    "wall_s": 0.1992
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -2111,26 +2111,26 @@
    "intent": "startxref points at a non-existent offset (999999999).",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.123,
+    "cpu_s": 0.109,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 46186496,
+    "max_rss_bytes": 45400064,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1457
+    "wall_s": 0.1257
    },
    "port": {
-    "cpu_s": 0.1925,
+    "cpu_s": 0.1708,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 50577408,
+    "max_rss_bytes": 48660480,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2313
+    "wall_s": 0.1922
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -2146,26 +2146,26 @@
    "intent": "File is cut inside the classic xref table; no trailer/startxref.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1279,
+    "cpu_s": 0.1074,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45891584,
+    "max_rss_bytes": 45400064,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1504
+    "wall_s": 0.1255
    },
    "port": {
-    "cpu_s": 0.1909,
+    "cpu_s": 0.1658,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49332224,
+    "max_rss_bytes": 48611328,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2237
+    "wall_s": 0.1864
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -2181,26 +2181,26 @@
    "intent": "Trailer /Size is 3 while objects up to 5 exist.",
    "message_differences": [],
    "oracle": {
-    "cpu_s": 0.1376,
+    "cpu_s": 0.1082,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 45875200,
+    "max_rss_bytes": 45301760,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.1626
+    "wall_s": 0.1263
    },
    "port": {
-    "cpu_s": 0.1911,
+    "cpu_s": 0.159,
     "exception_classes": {},
     "limit_reached": false,
-    "max_rss_bytes": 49594368,
+    "max_rss_bytes": 48545792,
     "ok": true,
     "panic_suspected": false,
     "probe_status": "ok",
     "stderr_tail": "",
-    "wall_s": 0.2276
+    "wall_s": 0.1782
    },
    "raw_message_differences": [],
    "reasons": [],
@@ -2214,10 +2214,10 @@
   "manifest": "/Users/yxy/Desktop/pypdf-rust/validation/results/security-corpus-manifest.json",
   "skipped_heavy": 2,
   "total_bytes": 5265428,
-  "work_dir": "/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-sec-corpus-yo3chfa1"
+  "work_dir": "/var/folders/l1/29gl0tr57s1fvhb0j566k5h00000gn/T/pypdf-sec-corpus-3brpn6r4"
  },
- "generated_at": "2026-11-25T03:08:53Z",
- "git_commit": "22fb0f5",
+ "generated_at": "2026-11-25T03:21:10Z",
+ "git_commit": "e5bb619",
  "heavy": false,
  "oracle": {
   "pypdf": {
@@ -2232,12 +2232,12 @@
    "environment_errors": 0,
    "errors": 25,
    "limit_reached": 15,
-   "max_rss_bytes": 87293952,
+   "max_rss_bytes": 84672512,
    "ok": 32,
    "panics": 0,
    "timeouts": 0,
-   "total_cpu_s": 8.146,
-   "total_wall_s": 9.404,
+   "total_cpu_s": 7.299,
+   "total_wall_s": 8.354,
    "unavailable": 0
   }
  },
@@ -2255,12 +2255,12 @@
    "environment_errors": 0,
    "errors": 25,
    "limit_reached": 15,
-   "max_rss_bytes": 106151936,
+   "max_rss_bytes": 104808448,
    "ok": 32,
    "panics": 0,
    "timeouts": 0,
-   "total_cpu_s": 11.79,
-   "total_wall_s": 13.347,
+   "total_cpu_s": 10.459,
+   "total_wall_s": 11.607,
    "unavailable": 0
   }
  },

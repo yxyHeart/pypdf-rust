@@ -325,3 +325,36 @@ the list is empty, and check `PdfObject` instead of `hasattr("clone")` per entry
 Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
 200/200 IDENTICAL.
 
+## Builtins/module caching sweep + native matrix mult (lead, 2026-11-25, round 6)
+
+- `py.import("builtins")` in every module-level `builtins()` helper is now a
+  cached lookup (base, cmap, data_structures, doc_common, encryption, filters,
+  font, genutils, reader, writer, text extraction).  This removed the largest
+  remaining chunk of per-call C work in object cloning, text handlers and
+  filters.
+- `common::mult` uses a native `[f64; 6]` product when both operands are lists of
+  floats (generic Python-arithmetic path kept for ints/other types).
+- `process_operation` borrows the operator bytes instead of allocating a `Vec`
+  per operation, and the fast dispatch no longer re-checks `contains` when the
+  handler table is the default one.
+- `_post_process_text_operation` computes the effective space width natively when
+  `font_size`/`_space_width`/`_previous_font_space` are floats.
+
+**Measured (`run_perf.sh --repeat 7`):**
+
+| W | round 5 | round 6 |
+|---|---|---|
+| W1 | 0.95× | **1.20×** |
+| W2 | 1.16× | **1.27×** |
+| W3 | 0.66× | **0.77×** |
+| W4 | 1.69× | **1.90×** |
+| W5 | 0.47× | 0.66× |
+| W6 | 0.58× | 0.73× |
+| W7 | 0.55× | 0.66× |
+| W8 | 0.76× | **0.89×** |
+
+Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
+200/200 IDENTICAL.  Note: the reported +38 % RSS on W5–W7 is carried-over
+allocator state from W4 (working-set growth per repetition is ≤0.2 MB), not a
+leak.
+
