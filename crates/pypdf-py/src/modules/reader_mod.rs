@@ -55,7 +55,7 @@ fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf._reader")
+    pyutil::cached_module(py, "pypdf._reader")
 }
 
 /// Fetch a module-level name from the `pypdf._reader` shim (upstream globals).
@@ -64,11 +64,11 @@ fn shim_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 }
 
 fn generic_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 fn utils_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._utils")?.getattr(name)
+    pyutil::cached_module(py, "pypdf._utils")?.getattr(name)
 }
 
 fn int_class<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {

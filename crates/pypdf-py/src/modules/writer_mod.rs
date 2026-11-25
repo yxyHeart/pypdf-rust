@@ -168,7 +168,7 @@ fn truthy(obj: &Bound<'_, PyAny>) -> PyResult<bool> {
 }
 
 fn generic<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic")
+    pyutil::cached_module(py, "pypdf.generic")
 }
 
 fn gclass<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
@@ -387,7 +387,9 @@ fn py_id<'py>(py: Python<'py>, obj: &Bound<'py, PyAny>) -> PyResult<Bound<'py, P
 
 /// Fetch a constant, e.g. `("PageAttributes", "CONTENTS")` from `pypdf.constants`.
 fn const_str<'py>(py: Python<'py>, class: &str, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.constants")?.getattr(class)?.getattr(name)
+    pyutil::cached_module(py, "pypdf.constants")?
+        .getattr(class)?
+        .getattr(name)
 }
 
 fn del_item<'py>(obj: &Bound<'py, PyAny>, key: &Bound<'py, PyAny>) -> PyResult<()> {
@@ -705,7 +707,7 @@ fn writermod_pdfwriter_init<'py>(
                 .getattr("PdfReader")?
                 .call1((fileobj,))?;
         }
-        if !is_instance_of(&fileobj, &py.import("pypdf._reader")?.getattr("PdfReader")?)? {
+        if !is_instance_of(&fileobj, &pyutil::cached_attr(py, "pypdf._reader", "PdfReader")?)? {
             return Err(errors::raise_msg(
                 py,
                 "PyPdfError",
@@ -759,7 +761,7 @@ fn writermod_pdfwriter_init<'py>(
 
     if !is_none(&clone_from) {
         let mut clone_from = clone_from;
-        let reader_class = py.import("pypdf._reader")?.getattr("PdfReader")?;
+        let reader_class = pyutil::cached_attr(py, "pypdf._reader", "PdfReader")?;
         if !is_instance_of(&clone_from, &reader_class)? {
             clone_from = reader_class.call1((clone_from,))?;
         }
@@ -1356,7 +1358,7 @@ fn writermod_pdfwriter_add_blank_page<'py>(
     let slf = arg(args, 0)?;
     let width = arg(args, 1)?;
     let height = arg(args, 2)?;
-    let page_class = py.import("pypdf._page")?.getattr("PageObject")?;
+    let page_class = pyutil::cached_attr(py, "pypdf._page", "PageObject")?;
     let page = page_class
         .getattr("create_blank_page")?
         .call1((slf.clone(), width, height))?;
@@ -1393,7 +1395,7 @@ fn writermod_pdfwriter_insert_blank_page<'py>(
             height = get(&mediabox, "height")?;
         }
     }
-    let page_class = py.import("pypdf._page")?.getattr("PageObject")?;
+    let page_class = pyutil::cached_attr(py, "pypdf._page", "PageObject")?;
     let page = page_class
         .getattr("create_blank_page")?
         .call1((slf.clone(), width, height))?;
@@ -1463,7 +1465,7 @@ fn writermod_pdfwriter_add_js<'py>(
     args: &Bound<'py, PyTuple>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let _javascript = arg(args, 1)?;
-    py.import("pypdf._utils")?
+    pyutil::cached_module(py, "pypdf._utils")?
         .getattr("deprecation_with_replacement")?
         .call1(("add_js", "add_open_action", "7.0.0"))?;
     Ok(none(py))
@@ -3503,7 +3505,7 @@ fn writermod_pdfwriter_remove_objects_from_page<'py>(
     }
     if !is_page_object(py, &page)? {
         let reference = get(&page, "indirect_reference")?;
-        let page_class = py.import("pypdf._page")?.getattr("PageObject")?;
+        let page_class = pyutil::cached_attr(py, "pypdf._page", "PageObject")?;
         page = page_class.call1((slf.clone(), reference))?;
     }
     let contents_key = py_str(py, "/Contents");
@@ -3561,7 +3563,7 @@ fn writermod_pdfwriter_remove_images<'py>(
     let slf = arg(args, 0)?;
     let mut to_delete = arg(args, 1)?;
     if is_inst_builtin(&to_delete, "bool")? {
-        py.import("pypdf._utils")?
+        pyutil::cached_module(py, "pypdf._utils")?
             .getattr("deprecate_with_replacement")?
             .call1((
                 "Passing a boolean to remove_images",
@@ -4500,7 +4502,7 @@ fn writermod_pdfwriter_merge<'py>(
         fileobj.clone()
     } else {
         let stream = call1(&slf, "_create_stream", fileobj.clone())?;
-        let reader_class = py.import("pypdf._reader")?.getattr("PdfReader")?;
+        let reader_class = pyutil::cached_attr(py, "pypdf._reader", "PdfReader")?;
         let kwargs = PyDict::new(py);
         kwargs.set_item("strict", false)?;
         reader_class.call((stream,), Some(&kwargs))?
@@ -4547,7 +4549,7 @@ fn writermod_pdfwriter_merge<'py>(
     excluded_list_items.push(py_str(py, "/B"));
     excluded_list_items.push(py_int(py, 1));
     excluded_list_items.push(py_str(py, "/Annots"));
-    let page_class = py.import("pypdf._page")?.getattr("PageObject")?;
+    let page_class = pyutil::cached_attr(py, "pypdf._page", "PageObject")?;
     for page in items(&pages)? {
         let pg = if is_instance_of(&page, &page_class)? {
             page.clone()

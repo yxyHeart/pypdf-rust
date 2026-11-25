@@ -61,7 +61,7 @@ fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic._data_structures")
+    pyutil::cached_module(py, "pypdf.generic._data_structures")
 }
 
 /// Fetch a name from this module's shim (upstream references these by global name).
@@ -74,25 +74,28 @@ fn shim_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
     shim_attr(py, name)
 }
 
-fn base_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic._base")?.getattr(name)
+fn base_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, PyAny>> {
+    pyutil::cached_attr(py, "pypdf.generic._base", name)
 }
 
 fn utils_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf._utils")
+    pyutil::cached_module(py, "pypdf._utils")
 }
 
 fn generic_utils_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic._utils")
+    pyutil::cached_module(py, "pypdf.generic._utils")
 }
 
-fn constants_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.constants")?.getattr(name)
+fn constants_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, PyAny>> {
+    pyutil::cached_attr(py, "pypdf.constants", name)
 }
 
 /// `from .._configuration import get_configuration` (the public `pypdf.get_configuration`).
 fn configuration<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf")?.call_method0("get_configuration")
+    // `pypdf.get_configuration()` is `CURRENT_CONFIGURATION.get()`.
+    pyutil::cached_module(py, "pypdf._configuration")?
+        .getattr("CURRENT_CONFIGURATION")?
+        .call_method0("get")
 }
 
 fn config_item<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
@@ -240,7 +243,7 @@ fn eq_bytes(obj: &Bound<'_, PyAny>, py: Python<'_>, data: &[u8]) -> PyResult<boo
 
 /// `value in _SCALAR_TYPES` where `value` is `type(instance)`.
 fn is_scalar_type(py: Python<'_>, value: &Bound<'_, PyAny>) -> PyResult<bool> {
-    let scalar_types = shim_attr(py, "_SCALAR_TYPES")?;
+    let scalar_types = pyutil::cached_attr(py, "pypdf.generic._data_structures", "_SCALAR_TYPES")?;
     scalar_types.contains(value.get_type())
 }
 
@@ -376,13 +379,13 @@ fn datastructures_arrayobject_clone<'py>(
     if clone_shortcut(py, slf, pdf_dest, force_duplicate)? {
         return Ok(slf.clone().unbind());
     }
-    let array_class = shim_class(py, "ArrayObject")?;
+    let array_class = pyutil::cached_attr(py, "pypdf.generic._data_structures", "ArrayObject")?;
     let arr = slf.call_method1(
         "_reference_clone",
         (array_class.call0()?, pdf_dest, true),
     )?;
-    let stream_class = shim_class(py, "StreamObject")?;
-    let indirect_class = base_class(py, "IndirectObject")?;
+    let stream_class = pyutil::cached_attr(py, "pypdf.generic._data_structures", "StreamObject")?;
+    let indirect_class = pyutil::cached_attr(py, "pypdf.generic._base", "IndirectObject")?;
     for data in slf.try_iter()? {
         let data = data?;
         if value_is_scalar(py, &data)? {
@@ -936,11 +939,13 @@ fn datastructures_dictionaryobject_clone_inner<'py>(
     if ignore_fields.is_none() {
         return Err(assertion(py, None));
     }
-    let dictionary_class = shim_class(py, "DictionaryObject")?;
-    let name_class = base_class(py, "NameObject")?;
-    let indirect_class = base_class(py, "IndirectObject")?;
-    let stream_class = shim_class(py, "StreamObject")?;
-    let int_type = builtins(py)?.getattr("int")?;
+    let dictionary_class =
+        pyutil::cached_attr(py, "pypdf.generic._data_structures", "DictionaryObject")?;
+    let name_class = pyutil::cached_attr(py, "pypdf.generic._base", "NameObject")?;
+    let indirect_class = pyutil::cached_attr(py, "pypdf.generic._base", "IndirectObject")?;
+    let stream_class = pyutil::cached_attr(py, "pypdf.generic._data_structures", "StreamObject")?;
+    let int_type = pyutil::cached_attr(py, "builtins", "int")?;
+    let pdf_object_class = pyutil::cached_attr(py, "pypdf.generic._base", "PdfObject")?;
 
     // First remove the ignore_fields that are only for a limited number of levels.
     let ignore = builtins_list(py, ignore_fields)?;
@@ -1087,11 +1092,12 @@ fn datastructures_dictionaryobject_clone_inner<'py>(
     }
 
     let items = src.call_method0("items")?;
+    let ignore_is_empty = ignore.len()? == 0;
     for item in items.try_iter()? {
         let item = item?;
         let key = item.get_item(0)?;
         let value = item.get_item(1)?;
-        if ignore.contains(&key)? {
+        if !ignore_is_empty && ignore.contains(&key)? {
             continue;
         }
         let is_scalar = value_is_scalar(py, &value)?;
@@ -1110,7 +1116,9 @@ fn datastructures_dictionaryobject_clone_inner<'py>(
             let cloned_key = key.call_method1("clone", (pdf_dest,))?;
             slf.set_item(cloned_key, reference)?;
         } else if !slf.contains(&key)? {
-            let new_value = if value.hasattr("clone")? {
+            // Every PdfObject provides `clone`; checking the type is cheaper
+            // than an attribute lookup per entry.
+            let new_value = if value.is_instance(&pdf_object_class)? {
                 value.call_method1("clone", (pdf_dest, force_duplicate, &ignore))?
             } else {
                 value

@@ -56,16 +56,16 @@ fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
 }
 
 fn base_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic._base")
+    pyutil::cached_module(py, "pypdf.generic._base")
 }
 
 /// Fetch a class from the shim module (upstream references these by global name).
-fn base_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    base_module(py)?.getattr(name)
+fn base_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, PyAny>> {
+    pyutil::cached_attr(py, "pypdf.generic._base", name)
 }
 
 fn utils_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf._utils")
+    pyutil::cached_module(py, "pypdf._utils")
 }
 
 fn py_bytes<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, PyAny> {
