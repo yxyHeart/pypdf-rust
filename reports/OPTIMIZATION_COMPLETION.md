@@ -16,7 +16,7 @@
 | 7 | W1–W8 使用同一规范重新测量、结果可复现 | **满足** | `validation/perf/run_perf.sh --repeat 7` → `validation/results/perf-report.md`；输出字节与 sha256 全部一致；小负载（W5–W7，参考 11–20 ms）在共享机器上波动 ±25%，已在报告中标注。 |
 | 8 | 性能提升来自真实计算路径优化，而非减少步骤/跳过数据/改变输出 | **满足** | 每个阶段跑 A1 + 差分 + roundtrip；W1–W8 输出字节/sha256 与参考完全一致（`perf-report.md`）；无跳过解析、无缓存结果复用（除进程内模块/类查找缓存与字符映射缓存）。 |
 | 9 | 对仍未超过原版的工作负载有明确归因、剩余工作与优先级 | **满足** | `validation/optimization/PROGRESS.md`、`BASELINE_DIAGNOSIS.md`、`diag_reader.md`、`diag_writer.md`；本文件 §3。 |
-| 10 | 目标 aarch64/生产部署环境可构建、安装、执行 | **部分满足** | macOS arm64 (aarch64) 已构建 wheel `pypdf-7.1.1-cp314-cp314-macosx_11_0_arm64.whl` 并在干净 venv 离线安装 + 冒烟通过（`validation/wheel.sh`）。Linux aarch64 / x86_64 目标环境 **NOT_TESTED**（本机仅有 macOS arm64）。 |
+| 10 | 目标 aarch64/生产部署环境可构建、安装、执行 | **部分满足** | macOS arm64 (aarch64) 已构建 wheel `pypdf-7.1.1-cp314-cp314-macosx_11_0_arm64.whl` 并在干净 venv 离线安装 + 冒烟通过（`validation/wheel.sh`）。Linux aarch64 侧已尝试：本机 Docker Desktop 引擎可拉取 `python:3.14-slim` / `ghcr.io/pyo3/maturin` 镜像，但**无法启动任何容器**（`docker start` 报 unix socket connect 失败），因此 Linux 构建/安装/测试仍为 **NOT_TESTED**。 |
 
 ## 2. 当前性能（`run_perf.sh --repeat 7`，中位数）
 

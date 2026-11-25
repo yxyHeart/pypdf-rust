@@ -496,3 +496,19 @@ dict), inline images, any parse failure, or an already materialized
 Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
 200/200 IDENTICAL.
 
+## Round 11 (lead, 2026-11-25): text trim + Linux deployment attempt
+
+- `_post_process_text_operation` reuses the `_space_width` lookup (was fetched
+  twice) and reads the new text from the returned tuple instead of re-fetching
+  the attribute after writing it.
+- Deployment (§17 condition 10): Docker Desktop on this host can pull images
+  (`python:3.14-slim`, `ghcr.io/pyo3/maturin`) but the engine cannot start any
+  container (`docker start` fails with a unix-socket connect error), so the
+  Linux aarch64 wheel build/install/test could not be executed.  Recorded as
+  NOT_TESTED with the exact failure.
+- Full gate re-run: `scripts/gate.sh` → BUILD/A1/A2A3A4/A5/A6/A7 all PASS
+  (`validation/results/logs/gate-opt15.log`).
+
+**Latest `run_perf.sh --repeat 7`:** W1 1.21×, W2 1.32×, W3 0.94×, W4 2.02×,
+W5 0.86×, W6 0.93×, W7 0.87×, W8 1.10× (small workloads vary ±10 % run to run).
+
