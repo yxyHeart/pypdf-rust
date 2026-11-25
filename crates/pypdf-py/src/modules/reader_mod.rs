@@ -51,7 +51,7 @@ const WHITESPACES_AS_BYTES: [u8; 6] = [0x00, b'\t', b'\n', 0x0c, b'\r', b' '];
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {

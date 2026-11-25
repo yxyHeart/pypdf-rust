@@ -54,7 +54,7 @@ const MAX_CMAP_STRING_BYTES_LIMIT: i64 = 1024;
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {

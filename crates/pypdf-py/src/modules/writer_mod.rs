@@ -368,7 +368,7 @@ fn index_error(py: Python<'_>, message: &str) -> PyErr {
 }
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn builtin_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {

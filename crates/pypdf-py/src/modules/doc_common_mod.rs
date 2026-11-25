@@ -71,7 +71,7 @@ const SOURCE: &str = "pypdf._doc_common";
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {

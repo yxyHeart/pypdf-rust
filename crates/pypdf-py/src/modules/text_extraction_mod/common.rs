@@ -24,12 +24,12 @@ pub const SOURCE_MANAGER: &str = "pypdf._text_extraction._layout_mode._text_stat
 pub const SOURCE_PARAMS: &str = "pypdf._text_extraction._layout_mode._text_state_params";
 
 pub fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 /// The `pypdf._text_extraction` shim module; its globals drive RTL handling.
 pub fn init_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf._text_extraction")
+    crate::pyutil::cached_module(py, "pypdf._text_extraction")
 }
 
 /// `pypdf._text_extraction.<name>` resolved at call time, like upstream's
@@ -305,6 +305,42 @@ pub fn mult<'py>(
     m: &Bound<'py, PyAny>,
     n: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    // Matrices produced by the text extractor are lists of floats; doing the
+    // 2x3 affine product on doubles avoids ~30 C-API arithmetic calls.
+    if let (Ok(m_values), Ok(n_values)) = (m.extract::<Vec<f64>>(), n.extract::<Vec<f64>>()) {
+        let float_type = crate::pyutil::cached_attr(py, "builtins", "float")?;
+        let floats = |matrix: &Bound<'py, PyAny>| -> PyResult<bool> {
+            for index in 0..6usize {
+                if !matrix.get_item(index)?.is_instance(&float_type)? {
+                    return Ok(false);
+                }
+            }
+            Ok(true)
+        };
+        if m_values.len() == 6
+            && n_values.len() == 6
+            && floats(m)?
+            && floats(n)?
+        {
+            let r0 = m_values[0] * n_values[0] + m_values[1] * n_values[2];
+            let r1 = m_values[0] * n_values[1] + m_values[1] * n_values[3];
+            let r2 = m_values[2] * n_values[0] + m_values[3] * n_values[2];
+            let r3 = m_values[2] * n_values[1] + m_values[3] * n_values[3];
+            let r4 = m_values[4] * n_values[0] + m_values[5] * n_values[2] + n_values[4];
+            let r5 = m_values[4] * n_values[1] + m_values[5] * n_values[3] + n_values[5];
+            return py_list(
+                py,
+                vec![
+                    py_float(py, r0),
+                    py_float(py, r1),
+                    py_float(py, r2),
+                    py_float(py, r3),
+                    py_float(py, r4),
+                    py_float(py, r5),
+                ],
+            );
+        }
+    }
     let m0 = m.get_item(0usize)?;
     let m1 = m.get_item(1usize)?;
     let m2 = m.get_item(2usize)?;

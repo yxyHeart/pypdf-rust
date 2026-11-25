@@ -58,7 +58,7 @@ fn enc_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 }
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn py_bytes<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, PyAny> {

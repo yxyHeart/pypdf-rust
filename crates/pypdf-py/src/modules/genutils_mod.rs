@@ -28,7 +28,7 @@ const SOURCE: &str = "pypdf.generic._utils";
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 /// The `pypdf.generic._utils` module; upstream reads/writes these globals.

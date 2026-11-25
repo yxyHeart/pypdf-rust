@@ -70,7 +70,7 @@ const CMAP_MAX_ENTRIES_PER_GROUP: usize = 100;
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn font_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {

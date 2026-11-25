@@ -204,12 +204,14 @@ pub fn text_extractor_process_operation<'py>(
     // extraction loop calls this once per content-stream operation).
     let default_handlers = get_attr(slf, "_rs_default_handlers").ok();
     let fast = match &default_handlers {
-        Some(default) => handlers.is(default) && handlers.len()? == 14 && handlers.contains(operator)?,
+        Some(default) => handlers.is(default) && handlers.len()? == 14,
         None => false,
     };
     if fast {
-        let operator_bytes = operator.extract::<Vec<u8>>()?;
-        let widths: Option<Bound<'py, PyAny>> = match operator_bytes.as_slice() {
+        // `operator` is always `bytes`; borrow instead of allocating a Vec per
+        // content-stream operation.
+        let operator_bytes: &[u8] = operator.cast::<pyo3::types::PyBytes>()?.as_bytes();
+        let widths: Option<Bound<'py, PyAny>> = match operator_bytes {
             b"BT" => { text_extractor_handle_bt(py, slf, operands)?; None }
             b"ET" => { text_extractor_handle_et(py, slf, operands)?; None }
             b"q" => { text_extractor_handle_save_graphics_state(py, slf, operands)?; None }
@@ -226,7 +228,7 @@ pub fn text_extractor_process_operation<'py>(
             b"Tj" => Some(text_extractor_handle_tj_operation(py, slf, operands)?),
             _ => None,
         };
-        if matches!(operator_bytes.as_slice(), b"Td" | b"Tm" | b"T*" | b"Tj") {
+        if matches!(operator_bytes, b"Td" | b"Tm" | b"T*" | b"Tj") {
             let value = match widths {
                 Some(widths) if widths.is_truthy()? => widths,
                 _ => common::py_float(py, 0.0),
@@ -307,7 +309,18 @@ pub fn text_extractor_post_process_text_operation<'py>(
     let mut space_width = font_size.mul(get_attr(slf, "_space_width")?)?;
     let previous_font_space = get_attr(slf, "_previous_font_space")?;
     if !previous_font_space.is_none() {
-        space_width = common::min_of(py, &space_width, &previous_font_space)?;
+        // Native double arithmetic for the common case (both operands floats).
+        let fast = (|| -> Option<Bound<'py, PyAny>> {
+            let font_size_value = font_size.extract::<f64>().ok()?;
+            let base_value = get_attr(slf, "_space_width").ok()?.extract::<f64>().ok()?;
+            let previous_value = previous_font_space.extract::<f64>().ok()?;
+            let product = font_size_value * base_value;
+            Some(common::py_float(py, product.min(previous_value)))
+        })();
+        space_width = match fast {
+            Some(value) => value,
+            None => common::min_of(py, &space_width, &previous_font_space)?,
+        };
     }
     let cm_prev = get_attr(slf, "cm_prev")?;
     let tm_prev = get_attr(slf, "tm_prev")?;

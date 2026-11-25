@@ -52,7 +52,7 @@ pub const MAXIMUM_PART_LENGTH: usize = 64;
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn base_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
