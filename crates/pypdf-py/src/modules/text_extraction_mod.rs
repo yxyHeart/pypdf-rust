@@ -39,7 +39,7 @@ pub mod common;
 #[path = "text_extraction_mod/extractor.rs"]
 pub(crate) mod extractor;
 #[path = "text_extraction_mod/init_mod.rs"]
-mod init_mod;
+pub(crate) mod init_mod;
 #[path = "text_extraction_mod/layout_page.rs"]
 mod layout_page;
 #[path = "text_extraction_mod/layout_state.rs"]

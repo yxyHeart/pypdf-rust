@@ -390,13 +390,14 @@ pub fn text_extractor_handle_tj<'py>(
     visitor_text: &Bound<'py, PyAny>,
     actual_str_size: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let operands_result = common::init_attr(py, "get_text_operands")?.call1((
+    let operands_result = crate::text_extraction_mod::init_mod::text_extraction_get_text_operands(
+        py,
         operands,
         cm_matrix,
         tm_matrix,
         font,
         orientations,
-    ))?;
+    )?;
     let text_operands = operands_result.get_item(0usize)?;
     let is_str_operands = operands_result.get_item(1usize)?;
     let font_widths = operands_result.get_item(2usize)?;
@@ -405,7 +406,8 @@ pub fn text_extractor_handle_tj<'py>(
     if is_str_operands.extract::<bool>()? {
         new_text = common::concat(&new_text, &text_operands)?;
     } else {
-        let display_result = common::init_attr(py, "get_display_str")?.call1((
+        let display_result = crate::text_extraction_mod::init_mod::text_extraction_get_display_str(
+            py,
             &new_text,
             cm_matrix,
             tm_matrix,
@@ -415,7 +417,7 @@ pub fn text_extractor_handle_tj<'py>(
             font_size,
             &new_rtl_dir,
             visitor_text,
-        ))?;
+        )?;
         new_text = display_result.get_item(0usize)?;
         new_rtl_dir = display_result.get_item(1usize)?;
         let completed = display_result.get_item(2usize)?;
@@ -868,21 +870,20 @@ pub fn text_extractor_handle_tj_operation<'py>(
         return Ok(zero);
     }
     set_attr(slf, "_previous_font_space", common::none(py))?;
-    let result = slf.call_method1(
-        "_handle_tj",
-        (
-            get_attr(slf, "text")?,
-            operands,
-            get_attr(slf, "cm_matrix")?,
-            get_attr(slf, "tm_matrix")?,
-            get_attr(slf, "font_resource")?,
-            get_attr(slf, "font")?,
-            get_attr(slf, "orientations")?,
-            get_attr(slf, "font_size")?,
-            get_attr(slf, "rtl_dir")?,
-            get_attr(slf, "visitor_text")?,
-            get_attr(slf, "_actual_str_size")?,
-        ),
+    let result = text_extractor_handle_tj(
+        py,
+        slf,
+        &get_attr(slf, "text")?,
+        operands,
+        &get_attr(slf, "cm_matrix")?,
+        &get_attr(slf, "tm_matrix")?,
+        &get_attr(slf, "font_resource")?,
+        &get_attr(slf, "font")?,
+        &get_attr(slf, "orientations")?,
+        &get_attr(slf, "font_size")?,
+        &get_attr(slf, "rtl_dir")?,
+        &get_attr(slf, "visitor_text")?,
+        &get_attr(slf, "_actual_str_size")?,
     )?;
     set_attr(slf, "text", result.get_item(0usize)?)?;
     set_attr(slf, "rtl_dir", result.get_item(1usize)?)?;

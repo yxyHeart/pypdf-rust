@@ -60,6 +60,9 @@ pub enum ScanError {
     Read(String),
     /// `ValueError`: negative seek on a BytesIO (upstream leaks this).
     NegativeSeek(i64),
+    /// Too many nesting levels: upstream would exhaust CPython's recursion limit
+    /// (the surrounding dictionary handler converts this to the same PdfReadError).
+    RecursionExhausted,
     /// `AssertionError` (BI with pending operands, or an indirect reference
     /// parsed where upstream's `assert pdf is not None` fires).
     Assert,
@@ -174,6 +177,11 @@ pub struct Segment {
     pub token_count: u64,
     pub budget_left: i64,
 }
+
+/// Nesting depth at which the byte parser hands the object back to the legacy
+/// Python parser: upstream exhausts CPython's recursion limit at ~490 levels, so
+/// failing here (still far beyond real PDFs) reproduces its errors exactly.
+const MAX_PARSE_DEPTH: usize = 400;
 
 struct Parser<'a> {
     data: &'a [u8],
@@ -354,7 +362,10 @@ impl<'a> Parser<'a> {
     }
 
     /// Parse one object value (`read_object` semantics for content streams).
-    fn parse_value(&mut self) -> Result<Value, ScanError> {
+    fn parse_value(&mut self, depth: usize) -> Result<Value, ScanError> {
+        if depth > MAX_PARSE_DEPTH {
+            return Err(ScanError::RecursionExhausted);
+        }
         self.token_count += 1;
         let byte = match self.read_non_whitespace() {
             Some(byte) => byte,
@@ -370,7 +381,7 @@ impl<'a> Parser<'a> {
             b'%' => {
                 self.skip_over_comments(Some(1000))?;
                 // Upstream re-reads the next character after comments.
-                self.parse_value()
+                self.parse_value(depth)
             }
             b'/' => {
                 self.pos += 1;
@@ -379,12 +390,12 @@ impl<'a> Parser<'a> {
             }
             b'<' => {
                 if self.remaining().starts_with(b"<<") {
-                    self.parse_dictionary()
+                    self.parse_dictionary(depth)
                 } else {
                     self.parse_hex_string()
                 }
             }
-            b'[' => self.parse_array(),
+            b'[' => self.parse_array(depth),
             b't' | b'f' => self.parse_boolean(),
             b'(' => self.parse_literal_string(),
             b'n' => {
@@ -598,7 +609,7 @@ impl<'a> Parser<'a> {
         Ok(Value::HexString(out))
     }
 
-    fn parse_array(&mut self) -> Result<Value, ScanError> {
+    fn parse_array(&mut self, depth: usize) -> Result<Value, ScanError> {
         // `ArrayObject.read_from_stream`.
         self.pos += 1; // '['
         let mut remaining = self.limits.array_max;
@@ -627,12 +638,12 @@ impl<'a> Parser<'a> {
                 values.push(Value::Null);
                 continue;
             }
-            values.push(self.parse_value()?);
+            values.push(self.parse_value(depth + 1)?);
         }
         Ok(Value::Array(values))
     }
 
-    fn parse_dictionary(&mut self) -> Result<Value, ScanError> {
+    fn parse_dictionary(&mut self, depth: usize) -> Result<Value, ScanError> {
         // `DictionaryObject.read_from_stream` (pdf=None, non-strict).
         self.pos += 2; // '<<'
         let mut remaining = self.limits.dictionary_max;
@@ -666,7 +677,7 @@ impl<'a> Parser<'a> {
                 ));
             }
             self.decrement_budget(2, false)?;
-            let key = match self.parse_value() {
+            let key = match self.parse_value(depth + 1) {
                 Ok(Value::Null) => break,
                 Ok(value @ Value::Name(_)) => value,
                 Ok(other) => {
@@ -680,12 +691,16 @@ impl<'a> Parser<'a> {
                 Err(error) => return Err(error),
             };
             self.skip_whitespace();
-            let value = match self.parse_value() {
+            let value = match self.parse_value(depth + 1) {
                 Ok(value) => value,
                 Err(error @ ScanError::Limit(_)) => return Err(error),
                 // A partial buffer must be retried by the caller, not treated as
                 // a malformed dictionary (upstream never sees truncation here).
                 Err(ScanError::Truncated) => return Err(ScanError::Truncated),
+                // Upstream wraps RecursionError raised by a dictionary read.
+                Err(ScanError::RecursionExhausted) => {
+                    return Err(ScanError::Read("Error reading PDF file.".to_string()))
+                }
                 Err(error) => {
                     // Upstream logs the exception and returns the partial dict.
                     self.warnings
@@ -718,7 +733,7 @@ impl<'a> Parser<'a> {
 
     /// Parse one segment: operations up to EOF or the next inline image.
     fn parse_object_inner(&mut self) -> Result<(Value, usize), ScanError> {
-        let value = self.parse_value()?;
+        let value = self.parse_value(0)?;
         // A dictionary followed by `stream` is a stream object: the reader's
         // fast path hands those back to the legacy parser.
         if matches!(value, Value::Dictionary(_)) {
@@ -774,7 +789,7 @@ impl<'a> Parser<'a> {
                 self.check_comment()?;
             } else {
                 self.decrement_budget(1, true)?;
-                operands.push(self.parse_value()?);
+                operands.push(self.parse_value(0)?);
             }
         }
         Ok(Segment {
@@ -1171,6 +1186,26 @@ mod tests {
         // With the complete buffer the same prefix reports the upstream error.
         let error = parse_object(b"(abc", Limits::default(), true, true).unwrap_err();
         assert!(matches!(error.error, ScanError::Stream(_)));
+    }
+
+    #[test]
+    fn very_deep_nesting_falls_back() {
+        // Upstream hits CPython's recursion limit at ~490 levels; the byte parser
+        // hands such input back to the legacy parser at MAX_PARSE_DEPTH.
+        let mut data = vec![b'['; 600];
+        data.extend_from_slice(b"1");
+        data.extend(std::iter::repeat_n(b']', 600));
+        let error = parse_object(&data, Limits::default(), true, true).unwrap_err();
+        assert_eq!(error.error, ScanError::RecursionExhausted);
+        // Inside a dictionary upstream converts RecursionError to this error.
+        let mut nested = b"<< /Nest ".to_vec();
+        nested.extend_from_slice(&data);
+        nested.extend_from_slice(b" >>");
+        let error = parse_object(&nested, Limits::default(), true, true).unwrap_err();
+        assert_eq!(
+            error.error,
+            ScanError::Read("Error reading PDF file.".to_string())
+        );
     }
 
     #[test]

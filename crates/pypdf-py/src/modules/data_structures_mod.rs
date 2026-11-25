@@ -3801,6 +3801,11 @@ fn read_object_fast<'py>(
                     chunk = (chunk * 8).max(2048);
                     continue;
                 }
+                // Deep nesting is a definitive upstream error (RecursionError
+                // wrapped by the dictionary reader), not a parser limitation.
+                if matches!(&failure.error, cs::ScanError::Read(message) if message == "Error reading PDF file.") {
+                    return Err(cs_error(py, failure.error));
+                }
                 seek(stream, start, 0)?;
                 return Ok(None);
             }
@@ -3859,6 +3864,9 @@ fn cs_error(py: Python<'_>, error: cs::ScanError) -> PyErr {
             pyo3::exceptions::PyValueError::new_err(format!("negative seek value {value}"))
         }
         cs::ScanError::Assert => pyo3::exceptions::PyAssertionError::new_err(""),
+        cs::ScanError::RecursionExhausted => {
+            pyo3::exceptions::PyRecursionError::new_err("maximum recursion depth exceeded")
+        }
         // Only produced for partial buffers; mapped to a read error if raised.
         cs::ScanError::Truncated => errors::pdf_read_error(py, "Stream has ended unexpectedly"),
         cs::ScanError::Fallback => pyo3::exceptions::PyRuntimeError::new_err("fallback"),
