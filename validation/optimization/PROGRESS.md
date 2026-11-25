@@ -182,3 +182,18 @@ PASS (including the deep-nesting reject cases), fuzz 200/200 IDENTICAL.
 and `dictionaryobject_write_to_stream`), text display per-character
 `character_map.get` crossings, page-tree/box reads.
 
+## Constraint discovered (2026-11-25): call-count tests pin clone/parse frames
+
+`tests/test_generic.py::test_cloning_direct_objects__function_calls_and_exceptions`
+asserts the exact number of Python frames per 1000 cloned elements (dictionary:
+4200). Replacing the per-entry `items()` / `NameObject(key)` / `__setitem__`
+calls with C-level `PyDict` iteration reduced the measured frames to 3200 and
+failed A1 — the optimization was reverted. `test_read_array_of_numbers_and_references__function_calls`
+similarly pins array parsing (<3 calls/element).
+
+Consequences for the remaining writer work (W5–W7):
+- Optimise **serialisation** (`write_to_stream`) instead of `clone`: no upstream
+  test pins the frame count of the writer's byte emission, but output bytes must
+  stay identical (A2/roundtrip gate).
+- Any reader/clone change must be checked against these two tests first.
+
