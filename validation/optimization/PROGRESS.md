@@ -269,3 +269,29 @@ native consumer (a Rust `[f64; 6]`-based extraction core fed by the Rust-parsed
 operations), not more micro-optimisations. XObject handling is the next cheapest
 target: cache the form's content stream + font resources per form id.
 
+## W3 step change (lead, 2026-11-25, round 4)
+
+Native `crlf_space_check` (`crlf_space_check_native`) for the default
+`mult`/`orient`: the per-positioning-operator pipeline now keeps the affine
+matrices as `[f64; 6]`, does the matrix products/orientation/scale/distance math
+in Rust with the same IEEE operation order, and builds Python values only for the
+five returned items (text, output, cm/tm copies, line span). The object-based
+implementation stays as the fallback (monkeypatched `crlf_space_check`, non-float
+matrices, exotic numeric types) behind `PYPDF_RS_LEGACY_CRLF=1` for rollback.
+
+`text_widths_fast` now iterates code points of the operand `str` natively and only
+creates a Python character on a cache miss for `font.get_text_width`.
+`character_map.get` uses the C-level dict API.
+
+W3: 384 ms → 311–348 ms (0.56×, repeated runs); reference 176–179 ms.
+
+**Bug caught by A1:** the first version used `?` when calling the native
+function, so `OrientationNotFoundError` bypassed the `try/except` that upstream
+has inside `_post_process_text_operation`; `test_orientations` failed. The native
+error must be routed through the same `match result { Err(...) }` handler as the
+object-based call.
+
+**Measurement noise:** the repeat-7 harness runs on a loaded machine; small
+workloads (W5–W7, ~12–20 ms reference) swing by ±25 % between runs. W3/W4 are the
+stable ones (±3 %).
+
