@@ -241,3 +241,31 @@ frame counts. Optimisations must check these three tests first.
 lookups + `_handle_tj` dispatch), W1 (small-file reader overhead), W5–W7 (clone
 dominates and its frame count is pinned; focus on `_add_page`/`_add_object`).
 
+## Text path analysis (lead, 2026-11-25, round 3)
+
+Removed the remaining shim round-trips in the text path: `compute_str_widths`,
+`crlf_space_check`, `mult`, `orient` are called as Rust functions (identity
+checks keep monkeypatching working), string operands use
+`genutils_create_string_object` directly, and width accumulation runs in Rust
+(`text_widths_fast`, per-character cache + f64 sum, falling back to the Python
+loop for exotic numeric types). W3: 391 ms → 384 ms (0.46×).
+
+**Where W3's remaining 2.2× lives** (measured with `sample` on the extraction
+loop, no-XObject variant, 13 534 operations / 33 977 Tj characters / 38 pages):
+
+- XObject forms: 19 `Do` forms account for ~320 ms of the 810 ms portable run
+  (reference ~135 ms of 343 ms) because every form re-runs
+  `_get_content_stream_for_text` + `Font.from_font_resource`.
+- Plain text ops without forms: port 490 ms vs reference 205 ms, and parse is
+  134 ms vs 112 ms — i.e. **interpretation is ~3.8× slower**, and no single
+  function dominates: `post_process_text_operation`/`crlf_space_check` (93/2011
+  samples each), `common::mult` 66, `common::init_attr` 43, `sqrt_of` 23,
+  `is_instance_builtin` 17, `slice_of` 12.
+
+The text state machine is driven by Python lists/tuples/objects: every matrix
+element, character and attribute access is a PyO3 call, while CPython executes
+the reference implementation in bytecode. A step change needs the planned P3
+native consumer (a Rust `[f64; 6]`-based extraction core fed by the Rust-parsed
+operations), not more micro-optimisations. XObject handling is the next cheapest
+target: cache the form's content stream + font resources per form id.
+
