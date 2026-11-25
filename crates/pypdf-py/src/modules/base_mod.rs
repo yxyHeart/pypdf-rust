@@ -170,7 +170,7 @@ fn raise_unconvertible_float(py: Python<'_>, value: f64) -> PyErr {
 }
 
 /// `FloatObject.myrepr()` (with the module-global `FLOAT_WRITE_PRECISION`).
-fn float_myrepr_with_precision(py: Python<'_>, value: f64, precision: i32) -> PyResult<String> {
+pub(crate) fn float_myrepr_with_precision(py: Python<'_>, value: f64, precision: i32) -> PyResult<String> {
     if value == 0.0 {
         return Ok("0.0".to_string());
     }
@@ -1513,6 +1513,101 @@ fn basemod_name_write_to_stream<'py>(
     let rendered = slf.call_method0("renumber")?;
     stream.call_method1("write", (rendered,))?;
     Ok(())
+}
+
+
+// ---------------------------------------------------------------------------
+// Byte-level writer fast path (P6): render an object tree to bytes, then write
+// once per top-level object.  Deep-immutable objects are rendered from their
+// exact classes; anything else (subclasses, stream objects, big integers)
+// reports `None` so the caller falls back to the per-entry writer.
+// ---------------------------------------------------------------------------
+
+struct LeafClasses {
+    name: Py<PyAny>,
+    number: Py<PyAny>,
+    float: Py<PyAny>,
+    boolean: Py<PyAny>,
+    null: Py<PyAny>,
+    indirect: Py<PyAny>,
+    bytestring: Py<PyAny>,
+    textstring: Py<PyAny>,
+}
+
+fn leaf_classes(py: Python<'_>) -> PyResult<&'static LeafClasses> {
+    static CLASSES: pyo3::sync::PyOnceLock<LeafClasses> = pyo3::sync::PyOnceLock::new();
+    CLASSES.get_or_try_init(py, || {
+        let base = py.import("pypdf.generic._base")?;
+        Ok(LeafClasses {
+            name: base.getattr("NameObject")?.unbind(),
+            number: base.getattr("NumberObject")?.unbind(),
+            float: base.getattr("FloatObject")?.unbind(),
+            boolean: base.getattr("BooleanObject")?.unbind(),
+            null: base.getattr("NullObject")?.unbind(),
+            indirect: base.getattr("IndirectObject")?.unbind(),
+            bytestring: base.getattr("ByteStringObject")?.unbind(),
+            textstring: base.getattr("TextStringObject")?.unbind(),
+        })
+    })
+}
+
+/// Render one leaf object exactly like its `write_to_stream`; `None` when the
+/// object is not a supported exact class.
+pub(crate) fn render_leaf_bytes(py: Python<'_>, value: &Bound<'_, PyAny>) -> PyResult<Option<Vec<u8>>> {
+    let classes = leaf_classes(py)?;
+    if value.is_exact_instance(&classes.name.bind(py)) {
+        let rendered: Vec<u8> = basemod_name_renumber(py, value)?.extract(py)?;
+        return Ok(Some(rendered));
+    }
+    if value.is_exact_instance(&classes.number.bind(py)) {
+        return Ok(value.extract::<i64>().ok().map(|number| number.to_string().into_bytes()));
+    }
+    if value.is_exact_instance(&classes.float.bind(py)) {
+        let precision: i32 = py
+            .import("pypdf.generic._base")?
+            .getattr("FLOAT_WRITE_PRECISION")?
+            .extract()?;
+        let value: f64 = value.extract()?;
+        let rendered = float_myrepr_with_precision(py, value, precision)?;
+        return Ok(Some(rendered.into_bytes()));
+    }
+    if value.is_exact_instance(&classes.boolean.bind(py)) {
+        let truthy = value.getattr("value")?.is_truthy()?;
+        return Ok(Some(if truthy { b"true".to_vec() } else { b"false".to_vec() }));
+    }
+    if value.is_exact_instance(&classes.null.bind(py)) {
+        return Ok(Some(b"null".to_vec()));
+    }
+    if value.is_exact_instance(&classes.indirect.bind(py)) {
+        let idnum: i64 = value.getattr("idnum")?.extract()?;
+        let generation: i64 = value.getattr("generation")?.extract()?;
+        return Ok(Some(format!("{idnum} {generation} R").into_bytes()));
+    }
+    if value.is_exact_instance(&classes.bytestring.bind(py)) {
+        let raw: Vec<u8> = value.extract()?;
+        let mut out = Vec::with_capacity(raw.len() * 2 + 2);
+        out.push(b'<');
+        for byte in &raw {
+            out.extend_from_slice(format!("{byte:02x}").as_bytes());
+        }
+        out.push(b'>');
+        return Ok(Some(out));
+    }
+    if value.is_exact_instance(&classes.textstring.bind(py)) {
+        let data: Vec<u8> = basemod_textstring_get_encoded_bytes(py, value)?.extract(py)?;
+        let mut out = Vec::with_capacity(data.len() + 2);
+        out.push(b'(');
+        for byte in data {
+            if byte.is_ascii_alphanumeric() || byte == b' ' {
+                out.push(byte);
+            } else {
+                out.extend_from_slice(format!("\\{byte:03o}").as_bytes());
+            }
+        }
+        out.push(b')');
+        return Ok(Some(out));
+    }
+    Ok(None)
 }
 
 // @pypdf: pypdf.generic._base.NameObject.renumber

@@ -12,6 +12,23 @@ use pyo3::types::{PyAny, PyDict};
 
 use super::common;
 
+/// Whether a module-level text-extraction helper is still the default one.
+///
+/// The first object seen for `name` is remembered; a replaced attribute falls
+/// back to the Python call so monkeypatching behaves like upstream.
+fn is_default_function(py: Python<'_>, name: &str, current: &Bound<'_, PyAny>) -> PyResult<bool> {
+    use pyo3::sync::PyOnceLock;
+    static DEFAULT_MULT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static DEFAULT_ORIENT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    let cell = match name {
+        "mult" => &DEFAULT_MULT,
+        "orient" => &DEFAULT_ORIENT,
+        _ => return Ok(false),
+    };
+    let default = cell.get_or_try_init(py, || Ok::<_, PyErr>(current.clone().unbind()))?;
+    Ok(default.bind(py).is(current))
+}
+
 // @pypdf: pypdf._text_extraction.set_custom_rtl
 #[pyfunction]
 pub fn text_extraction_set_custom_rtl<'py>(
@@ -237,10 +254,20 @@ pub fn text_extraction_get_text_operands<'py>(
     font: &Bound<'py, PyAny>,
     orientations: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    // Direct Rust calls unless the module-level functions were replaced by a
+    // user (monkeypatching must keep working).
     let mult_fn = common::init_attr(py, "mult")?;
+    let m = if is_default_function(py, "mult", &mult_fn)? {
+        text_extraction_mult(py, tm_matrix, cm_matrix)?
+    } else {
+        mult_fn.call1((tm_matrix, cm_matrix))?
+    };
     let orient_fn = common::init_attr(py, "orient")?;
-    let m = mult_fn.call1((tm_matrix, cm_matrix))?;
-    let orientation = orient_fn.call1((&m,))?;
+    let orientation = if is_default_function(py, "orient", &orient_fn)? {
+        common::py_int(py, i64::from(text_extraction_orient(py, &m)?))
+    } else {
+        orient_fn.call1((&m,))?
+    };
 
     let mut text = common::py_str_val(py, "");
     let mut is_str_operands = false;
@@ -295,10 +322,12 @@ pub fn text_extraction_get_text_operands<'py>(
                 widths = widths.add(&space_width)?;
             } else {
                 if !width_cache.contains(&char)? {
+                    // `font.get_text_width` is looked up on the object so that
+                    // instance-level monkeypatching keeps working (upstream test).
                     let width = font.call_method1("get_text_width", (&char,))?;
                     width_cache.set_item(&char, width)?;
                 }
-                widths = widths.add(common::dict_get(&width_cache, &char)?)?;
+                widths = widths.add(width_cache.get_item(&char)?.expect("width cached"))?;
             }
         }
     }

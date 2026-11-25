@@ -2101,7 +2101,7 @@ fn font_add_to_writer<'py>(
 
 // @pypdf: pypdf.generic._font.Font.get_text_width
 #[pyfunction]
-fn font_get_text_width<'py>(
+pub(crate) fn font_get_text_width<'py>(
     py: Python<'py>,
     self_: &Bound<'py, PyAny>,
     text: &Bound<'py, PyAny>,

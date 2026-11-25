@@ -1233,6 +1233,274 @@ fn reader_get_object<'py>(
     Ok(retval)
 }
 
+
+#[inline]
+fn header_is_whitespace(byte: u8) -> bool {
+    // Python `bytes.isspace() or byte in WHITESPACES` (adds \x0b and \x00).
+    matches!(byte, 0 | b'\t' | b'\n' | 0x0b | 0x0c | b'\r' | b' ')
+}
+
+enum HeaderToken {
+    Done(Vec<u8>, usize),
+    Limit(Vec<u8>, usize),
+    NeedMore,
+}
+
+fn header_read_token(
+    data: &[u8],
+    mut pos: usize,
+    max_bytes: usize,
+    eof: bool,
+) -> HeaderToken {
+    let mut out: Vec<u8> = Vec::new();
+    loop {
+        if pos >= data.len() {
+            if eof {
+                return HeaderToken::Done(out, pos);
+            }
+            return HeaderToken::NeedMore;
+        }
+        let byte = data[pos];
+        pos += 1;
+        if header_is_whitespace(byte) {
+            return HeaderToken::Done(out, pos);
+        }
+        if out.len() >= max_bytes {
+            return HeaderToken::Limit(out, pos);
+        }
+        out.push(byte);
+    }
+}
+
+fn header_skip_whitespace(data: &[u8], mut pos: usize, eof: bool) -> Option<(bool, usize)> {
+    if pos >= data.len() {
+        return if eof { Some((false, pos)) } else { None };
+    }
+    let mut skipped = false;
+    while pos < data.len() && header_is_whitespace(data[pos]) {
+        skipped = true;
+        pos += 1;
+    }
+    if pos >= data.len() {
+        return if eof { Some((skipped, pos)) } else { None };
+    }
+    // `skip_over_whitespace` consumes the first non-whitespace byte too.
+    Some((skipped, pos + 1))
+}
+
+fn header_read_non_whitespace(data: &[u8], mut pos: usize, eof: bool) -> Option<usize> {
+    while pos < data.len() && header_is_whitespace(data[pos]) {
+        pos += 1;
+    }
+    if pos >= data.len() {
+        return if eof { Some(pos) } else { None };
+    }
+    Some(pos + 1)
+}
+
+/// `int(bytes)` with upstream's `ValueError` message and cause.
+fn header_int_tuple<'py>(
+    py: Python<'py>,
+    idnum: &Bound<'py, PyAny>,
+    generation: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let int = int_class(py)?;
+    match (int.call1((idnum,)), int.call1((generation,))) {
+        (Ok(idnum_value), Ok(generation_value)) => Ok(py_tuple(py, vec![idnum_value, generation_value])?),
+        (idnum_result, generation_result) => {
+            let error = idnum_result
+                .err()
+                .or_else(|| generation_result.err())
+                .unwrap_or_else(|| PyValueError::new_err("invalid"));
+            let message = format!(
+                "Invalid indirect object reference ({} {} R): {}",
+                raw_repr(py, idnum)?,
+                raw_repr(py, generation)?,
+                str_of(error.value(py).as_any())?
+            );
+            Err(raise_with_cause(py, PyValueError::new_err(message), error))
+        }
+    }
+}
+
+/// Buffered `read_object_header`: parse the header from one chunk instead of
+/// ~18 Python-level stream operations.  `None` when the buffer cannot decide
+/// (comment/token longer than the chunk), so the caller runs the legacy path.
+fn read_object_header_buffered<'py>(
+    py: Python<'py>,
+    slf: &Bound<'py, PyAny>,
+    stream: &Bound<'py, PyAny>,
+) -> PyResult<Option<Bound<'py, PyAny>>> {
+    let start = stream.call_method0("tell")?.extract::<i64>()?;
+    let strict = slf.getattr("strict")?.is_truthy()?;
+    let indirect_class = generic_attr(py, "IndirectObject")?;
+    let max_bytes: usize = indirect_class.getattr("_MAXIMUM_PART_LENGTH")?.extract()?;
+    let mut chunk = 512usize;
+    loop {
+        let data: Vec<u8> = stream.call_method1("read", (chunk,))?.extract()?;
+        let eof = data.len() < chunk;
+        match parse_header_chunk(py, &data, eof, max_bytes, strict) {
+            Ok(Some((consumed, idnum, generation, extra))) => {
+                stream.call_method1("seek", (start + consumed as i64, 0i64))?;
+                let idnum = PyBytes::new(py, &idnum);
+                let generation = PyBytes::new(py, &generation);
+                if extra && strict {
+                    warn_values(
+                        py,
+                        "Superfluous whitespace found in object header %(idnum)r %(generation)r",
+                        vec![("idnum", idnum.clone().into_any()), ("generation", generation.clone().into_any())],
+                    )?;
+                }
+                return Ok(Some(header_int_tuple(py, &idnum.into_any(), &generation.into_any())?));
+            }
+            Ok(None) if !eof && chunk < 65536 => {
+                chunk *= 8;
+                stream.call_method1("seek", (start, 0i64))?;
+                continue;
+            }
+            _ => {
+                stream.call_method1("seek", (start, 0i64))?;
+                return Ok(None);
+            }
+        }
+    }
+}
+
+fn parse_header_chunk(
+    py: Python<'_>,
+    data: &[u8],
+    eof: bool,
+    max_bytes: usize,
+    strict: bool,
+) -> PyResult<Option<(usize, Vec<u8>, Vec<u8>, bool)>> {
+    let len = data.len();
+    let mut pos = 0usize;
+
+    // skip_over_comment
+    if pos < len && data[pos] == b'%' {
+        pos += 1;
+        loop {
+            if pos >= len {
+                if eof {
+                    return Err(errors::pdf_stream_error(py, "File ended unexpectedly."));
+                }
+                return Ok(None);
+            }
+            let byte = data[pos];
+            pos += 1;
+            if byte == b'\n' || byte == b'\r' {
+                break;
+            }
+        }
+    }
+
+    // extra = skip_over_whitespace(stream); stream.seek(-1, 1)
+    let Some((mut extra, next)) = header_skip_whitespace(data, pos, eof) else {
+        return Ok(None);
+    };
+    pos = next;
+    if pos > 0 {
+        pos -= 1;
+    }
+
+    // idnum = read_until_whitespace(...)
+    let idnum = match header_read_token(data, pos, max_bytes, eof) {
+        HeaderToken::Done(token, next) => {
+            pos = next;
+            token
+        }
+        HeaderToken::Limit(token, next) => {
+            pos = next;
+            if strict {
+                return Err(errors::limit_reached_error(
+                    py,
+                    &format!("Token exceeds maximum length of {max_bytes} bytes."),
+                ));
+            }
+            let values = PyDict::new(py);
+            values.set_item("max_bytes", max_bytes as i64)?;
+            pyutil::logger_warning(
+                py,
+                "pypdf._utils",
+                "Token exceeds maximum length of %(max_bytes)d bytes.",
+                Some(&values),
+            )?;
+            token
+        }
+        HeaderToken::NeedMore => return Ok(None),
+    };
+
+    // extra |= skip_over_whitespace(stream); stream.seek(-1, 1)
+    let Some((skipped, next)) = header_skip_whitespace(data, pos, eof) else {
+        return Ok(None);
+    };
+    extra |= skipped;
+    pos = next;
+    if pos > 0 {
+        pos -= 1;
+    }
+
+    // generation
+    let generation = match header_read_token(data, pos, max_bytes, eof) {
+        HeaderToken::Done(token, next) => {
+            pos = next;
+            token
+        }
+        HeaderToken::Limit(token, next) => {
+            pos = next;
+            if strict {
+                return Err(errors::limit_reached_error(
+                    py,
+                    &format!("Token exceeds maximum length of {max_bytes} bytes."),
+                ));
+            }
+            let values = PyDict::new(py);
+            values.set_item("max_bytes", max_bytes as i64)?;
+            pyutil::logger_warning(
+                py,
+                "pypdf._utils",
+                "Token exceeds maximum length of %(max_bytes)d bytes.",
+                Some(&values),
+            )?;
+            token
+        }
+        HeaderToken::NeedMore => return Ok(None),
+    };
+
+    // extra |= skip_over_whitespace(stream); stream.seek(-1, 1)
+    let Some((skipped, next)) = header_skip_whitespace(data, pos, eof) else {
+        return Ok(None);
+    };
+    extra |= skipped;
+    pos = next;
+    if pos > 0 {
+        pos -= 1;
+    }
+
+    // _obj = stream.read(3)
+    let remaining = len.saturating_sub(pos);
+    if remaining < 3 {
+        if eof {
+            pos = len;
+        } else {
+            return Ok(None);
+        }
+    } else {
+        pos += 3;
+    }
+
+    // read_non_whitespace(stream); stream.seek(-1, 1)
+    let Some(next) = header_read_non_whitespace(data, pos, eof) else {
+        return Ok(None);
+    };
+    pos = next;
+    if pos > 0 {
+        pos -= 1;
+    }
+
+    Ok(Some((pos, idnum, generation, extra)))
+}
+
 // @pypdf: pypdf._reader.PdfReader.read_object_header
 #[pyfunction]
 fn reader_read_object_header<'py>(
@@ -1240,6 +1508,11 @@ fn reader_read_object_header<'py>(
     slf: &Bound<'py, PyAny>,
     stream: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    if std::env::var_os("PYPDF_RS_LEGACY_OBJECT_HEADER").is_none() {
+        if let Some(header) = read_object_header_buffered(py, slf, stream)? {
+            return Ok(header);
+        }
+    }
     // Should never be necessary to read out whitespace, since the
     // cross-reference table should put us in the right spot to read the
     // object header. In reality some files have stupid cross-reference

@@ -558,6 +558,11 @@ fn datastructures_arrayobject_write_to_stream<'py>(
     slf: &Bound<'py, PyAny>,
     stream: &Bound<'py, PyAny>,
 ) -> PyResult<()> {
+    let mut buffer = Vec::new();
+    if render_pdf_object(py, slf, &mut buffer, 0)? {
+        stream.call_method1("write", (py_bytes(py, &buffer),))?;
+        return Ok(());
+    }
     stream.call_method1("write", (py_bytes(py, b"["),))?;
     for data in slf.try_iter()? {
         let data = data?;
@@ -1279,6 +1284,11 @@ fn datastructures_dictionaryobject_write_to_stream<'py>(
     slf: &Bound<'py, PyAny>,
     stream: &Bound<'py, PyAny>,
 ) -> PyResult<()> {
+    let mut buffer = Vec::new();
+    if render_pdf_object(py, slf, &mut buffer, 0)? {
+        stream.call_method1("write", (py_bytes(py, &buffer),))?;
+        return Ok(());
+    }
     stream.call_method1("write", (py_bytes(py, b"<<\n"),))?;
     let items = slf.call_method0("items")?;
     let percent = py_str(py, "%");
@@ -3811,6 +3821,83 @@ fn read_object_fast<'py>(
             }
         }
     }
+}
+
+
+// ---------------------------------------------------------------------------
+// Byte-level writer fast path (P6)
+// ---------------------------------------------------------------------------
+
+struct ContainerClasses {
+    array: Py<PyAny>,
+    dictionary: Py<PyAny>,
+}
+
+fn container_classes(py: Python<'_>) -> PyResult<&'static ContainerClasses> {
+    static CLASSES: pyo3::sync::PyOnceLock<ContainerClasses> = pyo3::sync::PyOnceLock::new();
+    CLASSES.get_or_try_init(py, || {
+        let shim = py.import("pypdf.generic._data_structures")?;
+        Ok(ContainerClasses {
+            array: shim.getattr("ArrayObject")?.unbind(),
+            dictionary: shim.getattr("DictionaryObject")?.unbind(),
+        })
+    })
+}
+
+/// Render `value` exactly like `write_to_stream` into `out`.
+///
+/// Returns `false` when the tree contains anything but plain
+/// `ArrayObject`/`DictionaryObject` containers and the immutable leaf types, in
+/// which case the caller falls back to the per-entry writer.
+fn render_pdf_object(
+    py: Python<'_>,
+    value: &Bound<'_, PyAny>,
+    out: &mut Vec<u8>,
+    depth: usize,
+) -> PyResult<bool> {
+    if depth > 200 {
+        return Ok(false);
+    }
+    let classes = container_classes(py)?;
+    if value.is_exact_instance(&classes.array.bind(py)) {
+        out.push(b'[');
+        for item in value.cast::<PyList>()?.iter() {
+            out.push(b' ');
+            if !render_pdf_object(py, &item, out, depth + 1)? {
+                return Ok(false);
+            }
+        }
+        out.extend_from_slice(b" ]");
+        return Ok(true);
+    }
+    if value.is_exact_instance(&classes.dictionary.bind(py)) {
+        out.extend_from_slice(b"<<\n");
+        for (key, item) in value.cast::<PyDict>()?.iter() {
+            let key_text: String = key.extract()?;
+            let character_count = key_text.chars().count();
+            if character_count > 2
+                && key_text.chars().nth(1) == Some('%')
+                && key_text.ends_with('%')
+            {
+                continue;
+            }
+            if !render_pdf_object(py, &key, out, depth + 1)? {
+                return Ok(false);
+            }
+            out.push(b' ');
+            if !render_pdf_object(py, &item, out, depth + 1)? {
+                return Ok(false);
+            }
+            out.push(b'\n');
+        }
+        out.extend_from_slice(b">>");
+        return Ok(true);
+    }
+    if let Some(bytes) = crate::base_mod::render_leaf_bytes(py, value)? {
+        out.extend_from_slice(&bytes);
+        return Ok(true);
+    }
+    Ok(false)
 }
 
 // ---------------------------------------------------------------------------
