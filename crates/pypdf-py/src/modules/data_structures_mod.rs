@@ -3092,6 +3092,13 @@ fn datastructures_read_object<'py>(
     forced_encoding: Option<&Bound<'py, PyAny>>,
     parsing_budget: Option<&Bound<'py, PyAny>>,
 ) -> PyResult<Py<PyAny>> {
+    // Fast path: parse the object from a single Rust-side buffer and materialise
+    // it once.  Any uncertainty falls back to the legacy per-token parser.
+    if read_object_fast_enabled() {
+        if let Some(value) = read_object_fast(py, stream, pdf, forced_encoding, parsing_budget)? {
+            return Ok(value);
+        }
+    }
     let utils = utils_module(py)?;
     let generic_utils = generic_utils_module(py)?;
     let mut tok = read_n(stream, 1)?;
@@ -3725,6 +3732,83 @@ fn datastructures_destination_outline_count<'py>(
 
 
 // ---------------------------------------------------------------------------
+// Fast `read_object` (P4): one Python read per object instead of per token
+// ---------------------------------------------------------------------------
+
+/// `PYPDF_RS_LEGACY_READ_OBJECT=1` disables the fast object parser.
+fn read_object_fast_enabled() -> bool {
+    static ENABLED: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ENABLED.get_or_init(|| std::env::var_os("PYPDF_RS_LEGACY_READ_OBJECT").is_none())
+}
+
+/// Try to parse one object with the byte-level parser.
+///
+/// Returns `Ok(None)` when the legacy parser must be used: strict readers,
+/// stream objects (dictionary followed by `stream`), indirect references in a
+/// context without a `pdf`, or any parse error (so upstream's exact exception
+/// and stream position are reproduced by the legacy path).
+fn read_object_fast<'py>(
+    py: Python<'py>,
+    stream: &Bound<'py, PyAny>,
+    pdf: &Bound<'py, PyAny>,
+    forced_encoding: Option<&Bound<'py, PyAny>>,
+    parsing_budget: Option<&Bound<'py, PyAny>>,
+) -> PyResult<Option<Py<PyAny>>> {
+    let has_pdf = !pdf.is_none();
+    if has_pdf && pdf.getattr("strict").and_then(|value| value.extract::<bool>()).unwrap_or(false) {
+        return Ok(None);
+    }
+    let start = stream.call_method0("tell")?.extract::<i64>()?;
+    let limits = cs_limits(py)?;
+    let budget = match parsing_budget {
+        Some(budget) => budget.getattr("remaining_budget")?.extract::<i64>()?,
+        // No parsing budget: effectively unbounded, matching upstream where the
+        // per-token budget checks are skipped.
+        None => i64::MAX / 4,
+    };
+    let forced_encoding_any = match forced_encoding {
+        Some(encoding) => encoding.clone(),
+        None => py.None().into_bound(py),
+    };
+    let mut chunk = 256usize;
+    let mut data: Vec<u8> = Vec::new();
+    let mut complete = false;
+    loop {
+        let part: Vec<u8> = stream.call_method1("read", (chunk,))?.extract()?;
+        data.extend_from_slice(&part);
+        if part.len() < chunk {
+            // Confirm EOF: file objects may return short reads before EOF.
+            let extra: Vec<u8> = stream.call_method1("read", (1usize,))?.extract()?;
+            if extra.is_empty() {
+                complete = true;
+            } else {
+                data.extend_from_slice(&extra);
+            }
+        }
+        let parse_limits = cs::Limits { budget, ..limits };
+        match cs::parse_object(&data, parse_limits, complete, has_pdf) {
+            Ok(parsed) => {
+                seek(stream, start + parsed.consumed as i64, 0)?;
+                if let Some(budget) = parsing_budget {
+                    budget.setattr("remaining_budget", parsed.budget_left)?;
+                }
+                cs_emit_warnings(py, &parsed.warnings, start)?;
+                let value = cs_materialize_value(py, &parsed.value, &forced_encoding_any, pdf)?;
+                return Ok(Some(value.unbind()));
+            }
+            Err(failure) => {
+                if matches!(failure.error, cs::ScanError::Truncated) && !complete {
+                    chunk = (chunk * 8).max(2048);
+                    continue;
+                }
+                seek(stream, start, 0)?;
+                return Ok(None);
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Fast content-stream parsing (P1)
 //
 // One PyO3 call per stream: the byte-level scanner in `pypdf_rs_core` parses the
@@ -3738,8 +3822,18 @@ use pypdf_rs_core::content_stream as cs;
 
 const LEGACY_SWITCH: &str = "PYPDF_RS_LEGACY_CONTENT_STREAM";
 
+/// `get_configuration()` is `CURRENT_CONFIGURATION.get()`; reading the
+/// `ContextVar` directly returns the same object as `apply_configuration`
+/// publishes (and avoids a Python frame per call, which the upstream
+/// function-call-counting tests measure).
+fn current_configuration<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+    py.import("pypdf._configuration")?
+        .getattr("CURRENT_CONFIGURATION")?
+        .call_method0("get")
+}
+
 fn cs_limits(py: Python<'_>) -> PyResult<cs::Limits> {
-    let configuration = configuration(py)?;
+    let configuration = current_configuration(py)?;
     Ok(cs::Limits {
         budget: configuration
             .getattr("stream_parsing_work_maximum_count")?
@@ -3765,6 +3859,8 @@ fn cs_error(py: Python<'_>, error: cs::ScanError) -> PyErr {
             pyo3::exceptions::PyValueError::new_err(format!("negative seek value {value}"))
         }
         cs::ScanError::Assert => pyo3::exceptions::PyAssertionError::new_err(""),
+        // Only produced for partial buffers; mapped to a read error if raised.
+        cs::ScanError::Truncated => errors::pdf_read_error(py, "Stream has ended unexpectedly"),
         cs::ScanError::Fallback => pyo3::exceptions::PyRuntimeError::new_err("fallback"),
     }
 }
@@ -3818,6 +3914,7 @@ fn cs_materialize_value<'py>(
     py: Python<'py>,
     value: &cs::Value,
     forced_encoding: &Bound<'py, PyAny>,
+    pdf: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     match value {
         cs::Value::Integer(raw) => base_class(py, "NumberObject")?.call1((py_bytes(py, raw),)),
@@ -3831,21 +3928,21 @@ fn cs_materialize_value<'py>(
         cs::Value::Array(values) => {
             let items = PyList::empty(py);
             for value in values {
-                items.append(cs_materialize_value(py, value, forced_encoding)?)?;
+                items.append(cs_materialize_value(py, value, forced_encoding, pdf)?)?;
             }
             shim_class(py, "ArrayObject")?.call1((items,))
         }
         cs::Value::Dictionary(entries) => {
             let mapping = PyDict::new(py);
             for (key, value) in entries {
-                let key = cs_materialize_value(py, key, forced_encoding)?;
-                let value = cs_materialize_value(py, value, forced_encoding)?;
+                let key = cs_materialize_value(py, key, forced_encoding, pdf)?;
+                let value = cs_materialize_value(py, value, forced_encoding, pdf)?;
                 mapping.set_item(key, value)?;
             }
             shim_class(py, "DictionaryObject")?.call1((mapping,))
         }
         cs::Value::Indirect { idnum, generation } => {
-            base_class(py, "IndirectObject")?.call1((*idnum, *generation, py.None()))
+            base_class(py, "IndirectObject")?.call1((*idnum, *generation, pdf.clone()))
         }
     }
 }
@@ -3861,7 +3958,7 @@ fn cs_repr_truncated(py: Python<'_>, error: PyErr) -> PyResult<String> {
     Ok(text.chars().take(500).collect())
 }
 
-fn cs_emit_warnings(py: Python<'_>, warnings: &[cs::WarningEvent]) -> PyResult<()> {
+fn cs_emit_warnings(py: Python<'_>, warnings: &[cs::WarningEvent], base: i64) -> PyResult<()> {
     for warning in warnings {
         match warning {
             cs::WarningEvent::UnexpectedEscape(byte) => {
@@ -3882,7 +3979,7 @@ fn cs_emit_warnings(py: Python<'_>, warnings: &[cs::WarningEvent]) -> PyResult<(
             }
             cs::WarningEvent::MultipleDefinition { position, key } => {
                 let values = PyDict::new(py);
-                values.set_item("position", format!("0x{position:x}"))?;
+                values.set_item("position", format!("0x{:x}", base + *position as i64))?;
                 values.set_item("key", cs_materialize_name(py, key)?)?;
                 pyutil::logger_warning(
                     py,
@@ -3892,7 +3989,8 @@ fn cs_emit_warnings(py: Python<'_>, warnings: &[cs::WarningEvent]) -> PyResult<(
                 )?;
             }
             cs::WarningEvent::NonNameKeyValue(value) => {
-                let key = cs_materialize_value(py, value, &py.None().into_bound(py))?;
+                let none = py.None().into_bound(py);
+                let key = cs_materialize_value(py, value, &none, &none)?;
                 let repr = py.import("builtins")?.getattr("repr")?.call1((key,))?;
                 let message = format!(
                     "Expecting a NameObject for key but found {}",
@@ -3940,13 +4038,14 @@ fn cs_materialize_items(
     operations: &Bound<'_, PyList>,
     items: &[cs::Item],
     forced_encoding: &Bound<'_, PyAny>,
+    pdf: &Bound<'_, PyAny>,
 ) -> PyResult<()> {
     for item in items {
         match item {
             cs::Item::Operation { operands, operator } => {
                 let operand_list = PyList::empty(py);
                 for value in operands {
-                    operand_list.append(cs_materialize_value(py, value, forced_encoding)?)?;
+                    operand_list.append(cs_materialize_value(py, value, forced_encoding, pdf)?)?;
                 }
                 let pair = py_tuple(py, vec![operand_list.into_any(), py_bytes(py, operator)])?;
                 operations.append(pair)?;
@@ -3985,13 +4084,15 @@ fn contentstream_parse_fast<'py>(
                 }
                 // Upstream appends operations while parsing, so an aborted
                 // stream still exposes everything parsed before the failure.
-                cs_emit_warnings(py, &failure.warnings)?;
-                cs_materialize_items(py, &operations, &failure.items, &forced_encoding)?;
+                cs_emit_warnings(py, &failure.warnings, 0)?;
+                let none_pdf = py.None().into_bound(py);
+                cs_materialize_items(py, &operations, &failure.items, &forced_encoding, &none_pdf)?;
                 return Err(cs_error(py, failure.error));
             }
         };
-        cs_emit_warnings(py, &segment.warnings)?;
-        cs_materialize_items(py, &operations, &segment.items, &forced_encoding)?;
+        cs_emit_warnings(py, &segment.warnings, 0)?;
+        let none_pdf = py.None().into_bound(py);
+        cs_materialize_items(py, &operations, &segment.items, &forced_encoding, &none_pdf)?;
         budget = segment.budget_left;
         let Some(start) = segment.inline_image_start else {
             break;

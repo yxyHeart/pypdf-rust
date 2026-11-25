@@ -60,8 +60,12 @@ pub enum ScanError {
     Read(String),
     /// `ValueError`: negative seek on a BytesIO (upstream leaks this).
     NegativeSeek(i64),
-    /// `AssertionError` (BI with pending operands).
+    /// `AssertionError` (BI with pending operands, or an indirect reference
+    /// parsed where upstream's `assert pdf is not None` fires).
     Assert,
+    /// The buffer ended in the middle of a token and the caller may supply more
+    /// bytes (only produced when `complete == false`).
+    Truncated,
     /// Not representable with the byte scanner: use the legacy Python path.
     Fallback,
 }
@@ -179,10 +183,14 @@ struct Parser<'a> {
     warnings: Vec<WarningEvent>,
     items: Vec<Item>,
     token_count: u64,
+    /// `false` when the caller supplied only a prefix of the stream.
+    complete: bool,
+    /// `read_object` was called with a `pdf` argument (lenient dict semantics).
+    has_pdf: bool,
 }
 
 impl<'a> Parser<'a> {
-    fn new(data: &'a [u8], limits: Limits, start: usize) -> Self {
+    fn new(data: &'a [u8], limits: Limits, start: usize, complete: bool, has_pdf: bool) -> Self {
         Self {
             data,
             pos: start,
@@ -191,6 +199,8 @@ impl<'a> Parser<'a> {
             warnings: Vec::new(),
             items: Vec::new(),
             token_count: 0,
+            complete,
+            has_pdf,
         }
     }
 
@@ -251,6 +261,9 @@ impl<'a> Parser<'a> {
             let available = self.data.len().saturating_sub(self.pos);
             let take = chunk_size.min(available);
             if take == 0 {
+                if !self.complete {
+                    return Err(ScanError::Truncated);
+                }
                 return Ok(self.data[start..].to_vec());
             }
             let current_length = total + take;
@@ -301,6 +314,9 @@ impl<'a> Parser<'a> {
                 return Ok(());
             }
         }
+        if !self.complete {
+            return Err(ScanError::Truncated);
+        }
         Err(ScanError::Stream("File ended unexpectedly.".to_string()))
     }
 
@@ -340,9 +356,15 @@ impl<'a> Parser<'a> {
     /// Parse one object value (`read_object` semantics for content streams).
     fn parse_value(&mut self) -> Result<Value, ScanError> {
         self.token_count += 1;
-        let byte = self.read_non_whitespace().ok_or_else(|| {
-            ScanError::Read("Invalid Elementary Object starting with b''".to_string())
-        })?;
+        let byte = match self.read_non_whitespace() {
+            Some(byte) => byte,
+            None if !self.complete => return Err(ScanError::Truncated),
+            None => {
+                return Err(ScanError::Read(
+                    "Invalid Elementary Object starting with b''".to_string(),
+                ))
+            }
+        };
         self.pos -= 1;
         match byte {
             b'%' => {
@@ -370,6 +392,8 @@ impl<'a> Parser<'a> {
                 if self.remaining().starts_with(b"null") {
                     self.pos += 4;
                     Ok(Value::Null)
+                } else if !self.complete && self.remaining().len() < 4 {
+                    Err(ScanError::Truncated)
                 } else {
                     Err(ScanError::Read("Could not read Null object".to_string()))
                 }
@@ -379,6 +403,8 @@ impl<'a> Parser<'a> {
                 if self.remaining().starts_with(b"endobj") {
                     self.pos += 6;
                     Ok(Value::Null)
+                } else if !self.complete && self.remaining().len() < 6 {
+                    Err(ScanError::Truncated)
                 } else {
                     self.invalid_object(byte)
                 }
@@ -411,6 +437,9 @@ impl<'a> Parser<'a> {
             self.pos += 5;
             return Ok(Value::Boolean(false));
         }
+        if !self.complete && rest.len() < 5 {
+            return Err(ScanError::Truncated);
+        }
         Err(ScanError::Read("Could not read Boolean object".to_string()))
     }
 
@@ -419,8 +448,17 @@ impl<'a> Parser<'a> {
             return self.invalid_object(first);
         }
         let peek_len = (self.data.len() - self.pos).min(20);
+        // With a partial buffer a number/indirect token that reaches the end of
+        // the buffer may continue in the next chunk.
+        if !self.complete && peek_len < 20 {
+            return Err(ScanError::Truncated);
+        }
         let peek = &self.data[self.pos..self.pos + peek_len];
         if let Some((end, idnum, generation)) = match_indirect(peek) {
+            if !self.has_pdf {
+                // Upstream: `assert pdf is not None, "mypy"`.
+                return Err(ScanError::Assert);
+            }
             // `IndirectObject` case: the stream advances to just after the "R".
             self.pos += end - 1;
             return Ok(Value::Indirect { idnum, generation });
@@ -444,6 +482,7 @@ impl<'a> Parser<'a> {
         loop {
             let byte = match self.peek() {
                 Some(byte) => byte,
+                None if !self.complete => return Err(ScanError::Truncated),
                 None => {
                     return Err(ScanError::Stream(
                         "Stream has ended unexpectedly".to_string(),
@@ -466,6 +505,7 @@ impl<'a> Parser<'a> {
                 b'\\' => {
                     let escaped = match self.peek() {
                         Some(value) => value,
+                        None if !self.complete => return Err(ScanError::Truncated),
                         None => {
                             return Err(ScanError::Stream(
                                 "Stream has ended unexpectedly".to_string(),
@@ -527,9 +567,15 @@ impl<'a> Parser<'a> {
         let mut out: Vec<u8> = Vec::new();
         let mut nibble: Vec<u8> = Vec::new();
         loop {
-            let byte = self.read_non_whitespace().ok_or_else(|| {
-                ScanError::Stream("Stream has ended unexpectedly".to_string())
-            })?;
+            let byte = match self.read_non_whitespace() {
+                Some(byte) => byte,
+                None if !self.complete => return Err(ScanError::Truncated),
+                None => {
+                    return Err(ScanError::Stream(
+                        "Stream has ended unexpectedly".to_string(),
+                    ))
+                }
+            };
             if byte == b'>' {
                 break;
             }
@@ -593,6 +639,9 @@ impl<'a> Parser<'a> {
         let mut entries: Vec<(Value, Value)> = Vec::new();
         loop {
             let Some(byte) = self.read_non_whitespace() else {
+                if !self.complete {
+                    return Err(ScanError::Truncated);
+                }
                 return Err(ScanError::Stream(
                     "Stream has ended unexpectedly".to_string(),
                 ));
@@ -603,7 +652,10 @@ impl<'a> Parser<'a> {
                 continue;
             }
             if byte == b'>' {
-                self.pos += 1;
+                // `stream.read(1)` for the second '>' returns b"" at EOF.
+                if self.pos < self.data.len() {
+                    self.pos += 1;
+                }
                 break;
             }
             self.pos -= 1;
@@ -630,9 +682,10 @@ impl<'a> Parser<'a> {
             self.skip_whitespace();
             let value = match self.parse_value() {
                 Ok(value) => value,
-                Err(ScanError::Limit(_)) => return Err(ScanError::Limit(
-                    "Reached maximum number of tokens.".to_string(),
-                )),
+                Err(error @ ScanError::Limit(_)) => return Err(error),
+                // A partial buffer must be retried by the caller, not treated as
+                // a malformed dictionary (upstream never sees truncation here).
+                Err(ScanError::Truncated) => return Err(ScanError::Truncated),
                 Err(error) => {
                     // Upstream logs the exception and returns the partial dict.
                     self.warnings
@@ -656,7 +709,7 @@ impl<'a> Parser<'a> {
         while probe < self.data.len() && is_whitespace(self.data[probe]) {
             probe += 1;
         }
-        if self.data[probe..].starts_with(b"stream") {
+        if self.data.get(probe..).is_some_and(|rest| rest.starts_with(b"stream")) {
             self.pos = save;
             return Err(ScanError::Fallback);
         }
@@ -664,6 +717,28 @@ impl<'a> Parser<'a> {
     }
 
     /// Parse one segment: operations up to EOF or the next inline image.
+    fn parse_object_inner(&mut self) -> Result<(Value, usize), ScanError> {
+        let value = self.parse_value()?;
+        // A dictionary followed by `stream` is a stream object: the reader's
+        // fast path hands those back to the legacy parser.
+        if matches!(value, Value::Dictionary(_)) {
+            let mut probe = self.pos;
+            while probe < self.data.len() && is_whitespace(self.data[probe]) {
+                probe += 1;
+            }
+            if self.data.get(probe..).is_some_and(|rest| rest.starts_with(b"stream")) {
+                return Err(ScanError::Fallback);
+            }
+            // A buffer that ends before the next non-whitespace byte cannot rule
+            // out a following `stream` keyword: ask for more bytes instead of
+            // returning the dictionary as a plain object.
+            if !self.complete && probe == self.data.len() {
+                return Err(ScanError::Truncated);
+            }
+        }
+        Ok((value, self.pos))
+    }
+
     fn parse_segment_inner(&mut self) -> Result<Segment, ScanError> {
         let mut operands: Vec<Value> = Vec::new();
         loop {
@@ -846,9 +921,48 @@ pub fn python_bytes_repr(bytes: &[u8]) -> String {
     out
 }
 
+/// One parsed object plus the number of bytes it consumed.
+#[derive(Debug, Clone)]
+pub struct ParsedObject {
+    pub value: Value,
+    pub consumed: usize,
+    pub warnings: Vec<WarningEvent>,
+    pub budget_left: i64,
+}
+
+/// Parse exactly one PDF object (`read_object` semantics) from `data`.
+///
+/// `complete` is `false` when `data` is only a prefix of the stream: in that
+/// case an object/token that reaches the end of the buffer reports
+/// [`ScanError::Truncated`] and the caller should retry with more bytes.
+/// `has_pdf` mirrors upstream's `pdf is not None` (indirect references then
+/// parse instead of tripping upstream's assertion).
+pub fn parse_object(
+    data: &[u8],
+    limits: Limits,
+    complete: bool,
+    has_pdf: bool,
+) -> Result<ParsedObject, Failure> {
+    let mut parser = Parser::new(data, limits, 0, complete, has_pdf);
+    match parser.parse_object_inner() {
+        Ok((value, consumed)) => Ok(ParsedObject {
+            value,
+            consumed,
+            warnings: std::mem::take(&mut parser.warnings),
+            budget_left: parser.budget,
+        }),
+        Err(error) => Err(Failure {
+            error,
+            items: std::mem::take(&mut parser.items),
+            warnings: std::mem::take(&mut parser.warnings),
+            budget_left: parser.budget,
+        }),
+    }
+}
+
 /// Result of parsing a whole content stream (no inline images supported).
 pub fn parse(data: &[u8], limits: Limits) -> Result<(Vec<Item>, Vec<WarningEvent>), Failure> {
-    let mut parser = Parser::new(data, limits, 0);
+    let mut parser = Parser::new(data, limits, 0, true, false);
     let segment = parser.parse_segment()?;
     if segment.inline_image_start.is_some() {
         return Err(Failure {
@@ -865,7 +979,7 @@ pub fn parse(data: &[u8], limits: Limits) -> Result<(Vec<Item>, Vec<WarningEvent
 /// caller must handle the inline image and call again with `next_offset` set to
 /// the position after the image data.
 pub fn parse_segment(data: &[u8], limits: Limits, offset: usize) -> Result<Segment, Failure> {
-    let mut parser = Parser::new(data, limits, offset);
+    let mut parser = Parser::new(data, limits, offset, true, false);
     parser.parse_segment()
 }
 
@@ -1027,21 +1141,43 @@ mod tests {
             }
             other => panic!("{other:?}"),
         }
-        // Indirect reference as an operand (with a trailing delimiter).
-        let items = ops(b"1 0 R Do");
-        match &items[0] {
-            Item::Operation { operands, operator } => {
-                assert_eq!(operator, b"Do");
-                assert_eq!(
-                    operands[0],
-                    Value::Indirect {
-                        idnum: 1,
-                        generation: 0
-                    }
-                );
+        // Upstream's `read_object` asserts `pdf is not None` for indirect
+        // references; content-stream parsing passes `pdf=None`.
+        let failure = parse(b"1 0 R Do", Limits::default()).unwrap_err();
+        assert_eq!(failure.error, ScanError::Assert);
+
+        // The reader parses the same bytes with a `pdf` (has_pdf = true).
+        let parsed = parse_object(b"1 0 R Do", Limits::default(), true, true).unwrap();
+        assert_eq!(
+            parsed.value,
+            Value::Indirect {
+                idnum: 1,
+                generation: 0
             }
-            other => panic!("{other:?}"),
-        }
+        );
+        assert_eq!(parsed.consumed, 5);
+    }
+
+    #[test]
+    fn partial_buffers_are_truncated() {
+        // A prefix that ends inside a token reports Truncated so the caller can
+        // retry with more bytes.
+        let error = parse_object(b"12", Limits::default(), false, true).unwrap_err();
+        assert_eq!(error.error, ScanError::Truncated);
+        let error = parse_object(b"(abc", Limits::default(), false, true).unwrap_err();
+        assert_eq!(error.error, ScanError::Truncated);
+        let error = parse_object(b"<< /A 1", Limits::default(), false, true).unwrap_err();
+        assert_eq!(error.error, ScanError::Truncated);
+        // With the complete buffer the same prefix reports the upstream error.
+        let error = parse_object(b"(abc", Limits::default(), true, true).unwrap_err();
+        assert!(matches!(error.error, ScanError::Stream(_)));
+    }
+
+    #[test]
+    fn dictionary_followed_by_stream_falls_back() {
+        let error = parse_object(b"<< /Length 1 >> stream\nx\nendstream", Limits::default(), true, true)
+            .unwrap_err();
+        assert_eq!(error.error, ScanError::Fallback);
     }
 
     #[test]
