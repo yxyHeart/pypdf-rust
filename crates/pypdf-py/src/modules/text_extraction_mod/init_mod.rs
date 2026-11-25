@@ -222,18 +222,15 @@ fn extract_matrix(value: &Bound<'_, PyAny>) -> Option<[f64; 6]> {
 /// back to the object-based implementation.
 pub(crate) fn crlf_space_check_native<'py>(
     py: Python<'py>,
+    slf: &Bound<'py, PyAny>,
     text: &Bound<'py, PyAny>,
     cm_prev: &Bound<'py, PyAny>,
     tm_prev: &Bound<'py, PyAny>,
     cm_matrix: &Bound<'py, PyAny>,
     tm_matrix: &Bound<'py, PyAny>,
-    memo_cm: &Bound<'py, PyAny>,
-    memo_tm: &Bound<'py, PyAny>,
-    font_resource: &Bound<'py, PyAny>,
     orientations: &Bound<'py, PyAny>,
     output: &Bound<'py, PyAny>,
     font_size: &Bound<'py, PyAny>,
-    visitor_text: &Bound<'py, PyAny>,
     str_widths: &Bound<'py, PyAny>,
     spacewidth: &Bound<'py, PyAny>,
     str_height: &Bound<'py, PyAny>,
@@ -329,8 +326,16 @@ pub(crate) fn crlf_space_check_native<'py>(
         if !(last_is_empty || last_is_newline) {
             let piece = common::concat(&text, &newline)?;
             output = common::concat(&output, &piece)?;
+            // Visitor inputs are resolved only when a visitor is installed.
+            let visitor_text = slf.getattr("visitor_text")?;
             if !visitor_text.is_none() {
-                visitor_text.call1((&piece, memo_cm, memo_tm, font_resource, font_size))?;
+                visitor_text.call1((
+                    &piece,
+                    slf.getattr("memo_cm")?,
+                    slf.getattr("memo_tm")?,
+                    slf.getattr("font_resource")?,
+                    font_size,
+                ))?;
             }
             text = empty.clone();
         }

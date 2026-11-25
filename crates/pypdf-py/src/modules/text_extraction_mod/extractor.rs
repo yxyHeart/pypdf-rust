@@ -326,8 +326,6 @@ pub fn text_extractor_post_process_text_operation<'py>(
     let tm_prev = get_attr(slf, "tm_prev")?;
     let cm_matrix = get_attr(slf, "cm_matrix")?;
     let tm_matrix = get_attr(slf, "tm_matrix")?;
-    let memo_cm = get_attr(slf, "memo_cm")?;
-    let memo_tm = get_attr(slf, "memo_tm")?;
     let actual_str_size = get_attr(slf, "_actual_str_size")?;
     // `TextExtraction.compute_str_widths` is a thin shim over this Rust
     // function; call it directly (once per text-positioning operation).
@@ -347,7 +345,10 @@ pub fn text_extractor_post_process_text_operation<'py>(
                 text_before.clone(),
                 common::py_tuple(py, vec![cm_prev.clone(), tm_prev.clone()])?,
                 common::py_tuple(py, vec![cm_matrix.clone(), tm_matrix.clone()])?,
-                common::py_tuple(py, vec![memo_cm.clone(), memo_tm.clone()])?,
+                common::py_tuple(
+                    py,
+                    vec![get_attr(slf, "memo_cm")?, get_attr(slf, "memo_tm")?],
+                )?,
                 get_attr(slf, "font_resource")?,
                 get_attr(slf, "orientations")?,
                 get_attr(slf, "output")?,
@@ -385,18 +386,15 @@ pub fn text_extractor_post_process_text_operation<'py>(
         // built (this runs for every text-positioning operator).
         match crate::text_extraction_mod::init_mod::crlf_space_check_native(
             py,
+            slf,
             &text_before,
             &cm_prev,
             &tm_prev,
             &cm_matrix,
             &tm_matrix,
-            &memo_cm,
-            &memo_tm,
-            &get_attr(slf, "font_resource")?,
             &get_attr(slf, "orientations")?,
             &get_attr(slf, "output")?,
             &font_size,
-            &get_attr(slf, "visitor_text")?,
             &str_widths,
             &spacewidth,
             &actual_str_size.get_item("str_height")?,
