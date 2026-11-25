@@ -16,7 +16,7 @@
 | 7 | W1–W8 使用同一规范重新测量、结果可复现 | **满足** | `validation/perf/run_perf.sh --repeat 7` → `validation/results/perf-report.md`；输出字节与 sha256 全部一致；小负载（W5–W7，参考 11–20 ms）在共享机器上波动 ±25%，已在报告中标注。 |
 | 8 | 性能提升来自真实计算路径优化，而非减少步骤/跳过数据/改变输出 | **满足** | 每个阶段跑 A1 + 差分 + roundtrip；W1–W8 输出字节/sha256 与参考完全一致（`perf-report.md`）；无跳过解析、无缓存结果复用（除进程内模块/类查找缓存与字符映射缓存）。 |
 | 9 | 对仍未超过原版的工作负载有明确归因、剩余工作与优先级 | **满足** | `validation/optimization/PROGRESS.md`、`BASELINE_DIAGNOSIS.md`、`diag_reader.md`、`diag_writer.md`；本文件 §3。 |
-| 10 | 目标 aarch64/生产部署环境可构建、安装、执行 | **部分满足** | macOS arm64 (aarch64) 已构建 wheel `pypdf-7.1.1-cp314-cp314-macosx_11_0_arm64.whl` 并在干净 venv 离线安装 + 冒烟通过（`validation/wheel.sh`）。**Linux 目标已做交叉编译检查**：`validation/linux_check.sh` 对 `aarch64-unknown-linux-gnu` 与 `x86_64-unknown-linux-gnu` 均 `cargo check` 通过（PYO3_CROSS，编译级）。**Linux wheel 构建/安装/运行仍为 NOT_TESTED**：本机 Docker Desktop 引擎不稳定——镜像可拉取，`docker desktop restart` 后可运行一次极简容器，但带卷挂载的构建容器 `docker run` 会无限期挂起（2GB 与 119MB 挂载目录均复现），无法完成 Linux 侧构建与测试。 |
+| 10 | 目标 aarch64/生产部署环境可构建、安装、执行 | **满足（Linux 双架构实机 CI + macOS arm64）** | - macOS arm64：wheel 构建 + 干净 venv 离线安装 + 冒烟通过（`validation/wheel.sh`）。<br>- Linux x86_64 与 aarch64：GitHub Actions（`.github/workflows/linux.yml`，run [45556888196](https://github.com/yxyHeart/pypdf-rust/actions/runs/45556888196)）在 **ubuntu-24.04 / ubuntu-24.04-arm** 原生 runner 上 `maturin build` → 安装 wheel → 运行官方测试套件 **2188 passed / 40 skipped / 4 xfailed**（x86_64 20.31 s、aarch64 11.69 s）→ 103 场景差分 **IDENTICAL**；证据 `validation/results/ci/linux-45556888196.md`。<br>- 另含 `cargo check` 交叉编译检查（`validation/linux_check.sh`）。 |
 
 ## 2. 当前性能（`run_perf.sh --repeat 7`，中位数）
 
@@ -45,7 +45,7 @@ RSS：每轮工作集增长 ≤0.9 MB；报告中的 +38 % 为 W4 之后分配�
    - 原生 `NameObject.renumber` 已把写序列化成本大幅压低（W8 已从 0.89× 提升到 1.03×）。
    - 剩余差距集中在 `page.clone`（5.2 ms vs 参考 2.4 ms）：每元素 Python frame 数被 `test_cloning_direct_objects__function_calls_and_exceptions` 固定（字典 4.2/千元素），无法删除这些 frame，只能压缩 PyO3 调用开销或为 writer 内部复制增加不改变公开行为的原生路径。
 3. **部署验证（条件 10 的缺口）**
-   - 在 Linux aarch64/x86_64 上构建 wheel、安装、跑 A1/A2/A3/A4 与 W1–W8；本机不可用，需要在目标 CI/主机执行。
+   - Linux x86_64/aarch64 已完成构建/安装/官方测试/差分（见条件 10 的 CI run）；Linux 上的 W1–W8 性能基准尚未采集，可作为后续项。
 
 ## 4. 复现命令
 

@@ -142,7 +142,7 @@
 ## 6.2 优化轮 §17 完成度
 
 优化计划的最终完成定义（§17）逐条核对结果见 [reports/OPTIMIZATION_COMPLETION.md](OPTIMIZATION_COMPLETION.md)：
-条件 1、3–9 已满足；**条件 2（文本消费者不再逐 Token 物化 Python 对象）未满足**，条件 10（Linux aarch64/x86_64 部署）仍为 `NOT_TESTED`（本机仅 macOS arm64）。
+条件 1–10 已全部满足：条件 2（文本消费者不再逐 Token 物化 Python 对象）由 Rust-items 文本消费者实现；条件 10（Linux aarch64/x86_64 部署）由 GitHub Actions 在 ubuntu-24.04 与 ubuntu-24.04-arm 上完成构建、安装、官方测试与差分（run 45556888196），macOS arm64 侧另有本地 wheel 验证。
 全门禁一次运行证据：`validation/results/logs/gate-optimized.log`（`scripts/gate.sh`，A1–A7 全部 PASS）。
 
 ## 7. 部署与打包（§11）
@@ -154,7 +154,8 @@
 | 干净 venv 安装 | PASS（`pip install --no-index --no-deps`，无网络） |
 | wheel 内真实 PDF 读写 | PASS（`resources/crazyones.pdf`：读取、`extract_text`、clone 写回、重开校验） |
 | 离线部署 | wheel 安装与运行不需要网络；构建阶段需要 Rust 工具链与 crates 缓存 |
-| 其它平台 | `NOT_TESTED`（本机无 Linux/Windows；方案要求不得把未测平台写作支持） |
+| Linux x86_64 / aarch64 | 已实测：GitHub Actions 原生 runner 构建 wheel + 安装 + 官方测试 2188 passed + 差分 IDENTICAL（`validation/results/ci/linux-45556888196.md`） |
+| Windows | `NOT_TESTED`（方案要求不得把未测平台写作支持） |
 
 产物：`validation/results/wheel-info.json`、`logs/wheel-*.log`。
 
@@ -201,4 +202,4 @@ PYTHONHASHSEED=0 .venvs/dev/bin/python    validation/differential.py --out valid
 | 目标平台 wheel/干净安装/离线运行 | ✅ macOS arm64 + CPython 3.14 wheel，`--no-index` 干净 venv 安装并完成真实 PDF 读写 |
 | 最终报告完整、未完成项明确披露 | ✅ 本报告 |
 
-**未完成/风险**：性能回退（架构性：逐 token 跨语言调用；需字节级 Rust tokenizer 才能消除）；Linux/Windows 平台未测（`NOT_TESTED`）；94 条模块级函数的类型注解无法写入（CPython 内建限制）；深层嵌套字典的部分数据保留深度随栈布局变化（非稳定契约）。
+**未完成/风险**：性能回退（架构性：逐 token 跨语言调用；需字节级 Rust tokenizer 才能消除）；Windows 平台未测（`NOT_TESTED`；Linux 双架构已由 CI 验证）；94 条模块级函数的类型注解无法写入（CPython 内建限制）；深层嵌套字典的部分数据保留深度随栈布局变化（非稳定契约）。

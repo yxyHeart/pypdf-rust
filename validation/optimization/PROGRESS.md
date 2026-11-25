@@ -522,3 +522,17 @@ W5 0.86×, W6 0.93×, W7 0.87×, W8 1.10× (small workloads vary ±10 % run to r
   container with a bind mount (`docker run -d -v …`) hangs indefinitely with no
   logs (reproduced with a 2 GB and a 119 MB source tree).  Left as NOT_TESTED.
 
+## Round 13 (lead, 2026-11-25): Linux CI verification
+
+- Added `.github/workflows/linux.yml` (matrix: `ubuntu-24.04` x86_64 and
+  `ubuntu-24.04-arm` aarch64): checkout → Python 3.14 → stable Rust →
+  `maturin build --release` → install wheel → official suite
+  (`-m "not samples and not enable_socket"`) → 103-scenario differential audit
+  against `pypdf==7.1.1` with identical optional dependencies → upload wheel.
+- Run 45556888196 is green on both architectures: x86_64 `2188 passed,
+  40 skipped, 4 xfailed in 20.31s` + `IDENTICAL`; aarch64 `2188 passed,
+  40 skipped, 4 xfailed in 11.69s` + `IDENTICAL`.  Evidence:
+  `validation/results/ci/linux-45556888196.md`.
+- The earlier local Docker trouble (see round 12) was only a host/engine
+  limitation; the repository now carries a reproducible Linux verification path.
+
