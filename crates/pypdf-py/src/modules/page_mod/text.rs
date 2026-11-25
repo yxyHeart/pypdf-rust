@@ -264,6 +264,18 @@ pub fn page_extract_text_inner<'py>(
         ),
     )?;
     let operations = content.getattr("operations")?;
+    // When the extractor uses its default handler table, operators that no
+    // handler covers can be skipped without entering `process_operation`
+    // (most content-stream operators are pure graphics operators).
+    let fast_dispatch = {
+        let handlers = extractor.getattr("operation_handlers")?;
+        let default = extractor.getattr("_rs_default_handlers")?;
+        handlers.is(&default) && handlers.len()? == 14
+    };
+    const HANDLED_OPERATORS: [&[u8]; 14] = [
+        b"BT", b"ET", b"q", b"Q", b"cm", b"Tz", b"Tc", b"Tw", b"TL", b"Tf", b"Td", b"Tm",
+        b"T*", b"Tj",
+    ];
     for pair in operations.try_iter()? {
         let pair = pair?;
         let operands = pair.get_item(0)?;
@@ -409,6 +421,8 @@ pub fn page_extract_text_inner<'py>(
                 "memo_tm",
                 extractor.getattr("tm_matrix")?.call_method0("copy")?,
             )?;
+        } else if fast_dispatch && !HANDLED_OPERATORS.contains(&operator_bytes) {
+            // No handler for this operator: `process_operation` would do nothing.
         } else {
             crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(operator.clone()), &(operands.clone())) ?;
         }

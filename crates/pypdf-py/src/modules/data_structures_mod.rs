@@ -3097,7 +3097,7 @@ fn datastructures_contentstream_write_to_stream<'py>(
 
 /// Frequently used classes resolved once per process (the `cached_attr` mutex
 /// map costs more than a `PyOnceLock` in per-entry loops).
-fn fast_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, PyAny>> {
+pub(crate) fn fast_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, PyAny>> {
     use pyo3::sync::PyOnceLock;
     static PDF_OBJECT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
     static NAME: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
@@ -3108,6 +3108,10 @@ fn fast_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, P
     static INT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
     static DICT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
     static LEN: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static NUMBER: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static BOOLEAN: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static TEXT_STRING: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static BYTE_STRING: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
     let (cell, module): (&'static PyOnceLock<Py<PyAny>>, &'static str) = match name {
         "PdfObject" => (&PDF_OBJECT, "pypdf.generic._base"),
         "NameObject" => (&NAME, "pypdf.generic._base"),
@@ -3116,6 +3120,10 @@ fn fast_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, P
         "ArrayObject" => (&ARRAY, "pypdf.generic._data_structures"),
         "StreamObject" => (&STREAM, "pypdf.generic._data_structures"),
         "int" => (&INT, "builtins"),
+        "NumberObject" => (&NUMBER, "pypdf.generic._base"),
+        "BooleanObject" => (&BOOLEAN, "pypdf.generic._base"),
+        "TextStringObject" => (&TEXT_STRING, "pypdf.generic._base"),
+        "ByteStringObject" => (&BYTE_STRING, "pypdf.generic._base"),
         "dict" => (&DICT, "builtins"),
         "len" => (&LEN, "builtins"),
         _ => return pyutil::cached_attr(py, "pypdf.generic._base", name),

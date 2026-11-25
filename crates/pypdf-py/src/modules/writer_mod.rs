@@ -253,7 +253,7 @@ fn byte_string_obj<'py>(py: Python<'py>, value: &[u8]) -> PyResult<Bound<'py, Py
 }
 
 fn number_obj<'py>(py: Python<'py>, value: i64) -> PyResult<Bound<'py, PyAny>> {
-    new_g(py, "NumberObject", vec![py_int(py, value)])
+    crate::data_structures_mod::fast_class(py, "NumberObject")?.call1((py_int(py, value),))
 }
 
 fn boolean_obj<'py>(py: Python<'py>, value: bool) -> PyResult<Bound<'py, PyAny>> {
@@ -331,6 +331,12 @@ fn set_item<'py>(
     key: &Bound<'py, PyAny>,
     value: &Bound<'py, PyAny>,
 ) -> PyResult<()> {
+    // DictionaryObject subclasses validate keys/values in `__setitem__`; the
+    // writer only stores NameObject keys and PdfObject values, so the C-level
+    // dict assignment is equivalent and avoids a Python frame per entry.
+    if let Ok(dict) = obj.cast::<PyDict>() {
+        return dict.set_item(key, value);
+    }
     obj.set_item(key, value)
 }
 
@@ -402,6 +408,13 @@ fn gget<'py>(
     key: &Bound<'py, PyAny>,
     default: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    // `dict.get(key, default)` (does not resolve indirect objects, like upstream).
+    if let Ok(dict) = obj.cast::<PyDict>() {
+        if let Some(value) = dict.get_item(key)? {
+            return Ok(value);
+        }
+        return Ok(default.clone());
+    }
     obj.call_method1("get", (key, default))
 }
 
