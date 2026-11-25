@@ -309,66 +309,94 @@ pub fn text_extractor_post_process_text_operation<'py>(
     if !previous_font_space.is_none() {
         space_width = common::min_of(py, &space_width, &previous_font_space)?;
     }
-    let cmtm_prev = common::py_tuple(
-        py,
-        vec![get_attr(slf, "cm_prev")?, get_attr(slf, "tm_prev")?],
-    )?;
-    let cmtm_matrix = common::py_tuple(
-        py,
-        vec![get_attr(slf, "cm_matrix")?, get_attr(slf, "tm_matrix")?],
-    )?;
-    let memo_cmtm = common::py_tuple(
-        py,
-        vec![get_attr(slf, "memo_cm")?, get_attr(slf, "memo_tm")?],
-    )?;
+    let cm_prev = get_attr(slf, "cm_prev")?;
+    let tm_prev = get_attr(slf, "tm_prev")?;
+    let cm_matrix = get_attr(slf, "cm_matrix")?;
+    let tm_matrix = get_attr(slf, "tm_matrix")?;
+    let memo_cm = get_attr(slf, "memo_cm")?;
+    let memo_tm = get_attr(slf, "memo_tm")?;
     let actual_str_size = get_attr(slf, "_actual_str_size")?;
     // `TextExtraction.compute_str_widths` is a thin shim over this Rust
     // function; call it directly (once per text-positioning operation).
     let spacewidth = crate::text_extraction_mod::extractor::text_extractor_compute_str_widths(
         py, slf, &space_width,
     )?;
-    let arguments = PyTuple::new(
-        py,
-        vec![
-            get_attr(slf, "text")?,
-            cmtm_prev,
-            cmtm_matrix,
-            memo_cmtm,
-            get_attr(slf, "font_resource")?,
-            get_attr(slf, "orientations")?,
-            get_attr(slf, "output")?,
-            font_size.clone(),
-            get_attr(slf, "visitor_text")?,
-            str_widths.clone(),
-            spacewidth,
-            actual_str_size.get_item("str_height")?,
-            get_attr(slf, "_line_span")?,
-        ],
-    )?;
     let crlf_fn = common::init_attr(py, "crlf_space_check")?;
-    let result = if crate::text_extraction_mod::init_mod::is_default_function(
+    let crlf_is_default = crate::text_extraction_mod::init_mod::is_default_function(
         py,
         "crlf_space_check",
         &crlf_fn,
-    )? {
-        crate::text_extraction_mod::init_mod::text_extraction_crlf_space_check(
+    )?;
+    let call_object_based = |py: Python<'py>| -> PyResult<Bound<'py, PyAny>> {
+        let arguments = PyTuple::new(
             py,
-            &arguments.get_item(0)?,
-            &arguments.get_item(1)?,
-            &arguments.get_item(2)?,
-            &arguments.get_item(3)?,
-            &arguments.get_item(4)?,
-            &arguments.get_item(5)?,
-            &arguments.get_item(6)?,
-            &arguments.get_item(7)?,
-            &arguments.get_item(8)?,
-            &arguments.get_item(9)?,
-            &arguments.get_item(10)?,
-            &arguments.get_item(11)?,
-            &arguments.get_item(12)?,
-        )
+            vec![
+                text_before.clone(),
+                common::py_tuple(py, vec![cm_prev.clone(), tm_prev.clone()])?,
+                common::py_tuple(py, vec![cm_matrix.clone(), tm_matrix.clone()])?,
+                common::py_tuple(py, vec![memo_cm.clone(), memo_tm.clone()])?,
+                get_attr(slf, "font_resource")?,
+                get_attr(slf, "orientations")?,
+                get_attr(slf, "output")?,
+                font_size.clone(),
+                get_attr(slf, "visitor_text")?,
+                str_widths.clone(),
+                spacewidth.clone(),
+                actual_str_size.get_item("str_height")?,
+                get_attr(slf, "_line_span")?,
+            ],
+        )?;
+        if crlf_is_default {
+            crate::text_extraction_mod::init_mod::text_extraction_crlf_space_check(
+                py,
+                &arguments.get_item(0)?,
+                &arguments.get_item(1)?,
+                &arguments.get_item(2)?,
+                &arguments.get_item(3)?,
+                &arguments.get_item(4)?,
+                &arguments.get_item(5)?,
+                &arguments.get_item(6)?,
+                &arguments.get_item(7)?,
+                &arguments.get_item(8)?,
+                &arguments.get_item(9)?,
+                &arguments.get_item(10)?,
+                &arguments.get_item(11)?,
+                &arguments.get_item(12)?,
+            )
+        } else {
+            crlf_fn.call1(arguments)
+        }
+    };
+    let result = if crlf_is_default {
+        // Native path: matrices stay doubles and no intermediate tuples are
+        // built (this runs for every text-positioning operator).
+        match crate::text_extraction_mod::init_mod::crlf_space_check_native(
+            py,
+            &text_before,
+            &cm_prev,
+            &tm_prev,
+            &cm_matrix,
+            &tm_matrix,
+            &memo_cm,
+            &memo_tm,
+            &get_attr(slf, "font_resource")?,
+            &get_attr(slf, "orientations")?,
+            &get_attr(slf, "output")?,
+            &font_size,
+            &get_attr(slf, "visitor_text")?,
+            &str_widths,
+            &spacewidth,
+            &actual_str_size.get_item("str_height")?,
+            &get_attr(slf, "_line_span")?,
+        ) {
+            // The orientation error is handled by the `match result` below,
+            // exactly like the object-based implementation.
+            Ok(Some(values)) => Ok(values),
+            Ok(None) => call_object_based(py),
+            Err(error) => Err(error),
+        }
     } else {
-        crlf_fn.call1(arguments)
+        call_object_based(py)
     };
     match result {
         Ok(values) => {

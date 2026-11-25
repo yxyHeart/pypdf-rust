@@ -58,6 +58,11 @@ fn text_widths_fast(
     font: &Bound<'_, PyAny>,
     source: &Bound<'_, PyAny>,
 ) -> PyResult<Option<f64>> {
+    // Fast path: `source` is a str, so iterate code points natively and only
+    // create Python characters when `get_text_width` has to be called.
+    let Ok(text) = source.extract::<String>() else {
+        return Ok(None);
+    };
     let space_char = match font.getattr("space_char").and_then(|value| value.extract::<String>()) {
         Ok(value) => value,
         Err(_) => return Ok(None),
@@ -66,30 +71,36 @@ fn text_widths_fast(
         Ok(value) => value,
         Err(_) => return Ok(None),
     };
+    let single_space = {
+        let mut chars = space_char.chars();
+        match (chars.next(), chars.next()) {
+            (Some(character), None) => Some(character),
+            _ => None,
+        }
+    };
     let default_width = font_text_width_is_default(py, font)?;
-    let mut cache: std::collections::HashMap<String, f64> = std::collections::HashMap::new();
+    let mut cache: std::collections::HashMap<char, f64> = std::collections::HashMap::new();
     let mut total = 0.0f64;
-    for character in source.try_iter()? {
-        let character = character?;
-        let Ok(key) = character.extract::<String>() else {
-            return Ok(None);
-        };
-        if key == space_char {
+    for character in text.chars() {
+        if Some(character) == single_space {
             total += space_width;
             continue;
         }
-        let width = match cache.get(&key) {
+        let width = match cache.get(&character) {
             Some(width) => *width,
             None => {
+                let mut buffer = [0u8; 4];
+                let character_object = common::py_str_val(py, character.encode_utf8(&mut buffer));
                 let value = if default_width {
-                    crate::font_mod::font_get_text_width(py, font, &character)?
+                    crate::font_mod::font_get_text_width(py, font, &character_object)?
                 } else {
-                    font.call_method1("get_text_width", (&character,))?.unbind()
+                    font.call_method1("get_text_width", (&character_object,))?
+                        .unbind()
                 };
                 let Ok(width) = value.extract::<f64>(py) else {
                     return Ok(None);
                 };
-                cache.insert(key, width);
+                cache.insert(character, width);
                 width
             }
         };
@@ -166,6 +177,209 @@ pub fn text_extraction_mult<'py>(
 #[pyfunction]
 pub fn text_extraction_orient(py: Python<'_>, m: &Bound<'_, PyAny>) -> PyResult<i32> {
     common::orient(py, m)
+}
+
+
+/// Multiply two 6-element affine matrices with native doubles (same IEEE
+/// operations and order as `pypdf._text_extraction.mult`).
+fn matrix_mult(m: [f64; 6], n: [f64; 6]) -> [f64; 6] {
+    [
+        m[0] * n[0] + m[1] * n[2],
+        m[0] * n[1] + m[1] * n[3],
+        m[2] * n[0] + m[3] * n[2],
+        m[2] * n[1] + m[3] * n[3],
+        m[4] * n[0] + m[5] * n[2] + n[4],
+        m[4] * n[1] + m[5] * n[3] + n[5],
+    ]
+}
+
+fn matrix_orient(m: [f64; 6]) -> i64 {
+    if m[3] > 1e-6 {
+        return 0;
+    }
+    if m[3] < -1e-6 {
+        return 180;
+    }
+    if m[1] > 0.0 {
+        return 90;
+    }
+    270
+}
+
+fn extract_matrix(value: &Bound<'_, PyAny>) -> Option<[f64; 6]> {
+    let values = value.extract::<Vec<f64>>().ok()?;
+    if values.len() != 6 {
+        return None;
+    }
+    let mut matrix = [0.0f64; 6];
+    matrix.copy_from_slice(&values);
+    Some(matrix)
+}
+
+/// Native `crlf_space_check` used when `mult`/`orient` are the defaults.
+///
+/// `None` means the inputs are not plain numeric matrices: the caller falls
+/// back to the object-based implementation.
+pub(crate) fn crlf_space_check_native<'py>(
+    py: Python<'py>,
+    text: &Bound<'py, PyAny>,
+    cm_prev: &Bound<'py, PyAny>,
+    tm_prev: &Bound<'py, PyAny>,
+    cm_matrix: &Bound<'py, PyAny>,
+    tm_matrix: &Bound<'py, PyAny>,
+    memo_cm: &Bound<'py, PyAny>,
+    memo_tm: &Bound<'py, PyAny>,
+    font_resource: &Bound<'py, PyAny>,
+    orientations: &Bound<'py, PyAny>,
+    output: &Bound<'py, PyAny>,
+    font_size: &Bound<'py, PyAny>,
+    visitor_text: &Bound<'py, PyAny>,
+    str_widths: &Bound<'py, PyAny>,
+    spacewidth: &Bound<'py, PyAny>,
+    str_height: &Bound<'py, PyAny>,
+    line_span: &Bound<'py, PyAny>,
+) -> PyResult<Option<Bound<'py, PyAny>>> {
+    if std::env::var_os("PYPDF_RS_LEGACY_CRLF").is_some() {
+        return Ok(None);
+    }
+    let Some(cm_prev_matrix) = extract_matrix(cm_prev) else {
+        return Ok(None);
+    };
+    let Some(tm_prev_matrix) = extract_matrix(tm_prev) else {
+        return Ok(None);
+    };
+    let Some(cm_matrix_values) = extract_matrix(cm_matrix) else {
+        return Ok(None);
+    };
+    let Some(tm_matrix_values) = extract_matrix(tm_matrix) else {
+        return Ok(None);
+    };
+    let (Ok(font_size_value), Ok(str_widths_value), Ok(spacewidth_value), Ok(str_height_value)) = (
+        font_size.extract::<f64>(),
+        str_widths.extract::<f64>(),
+        spacewidth.extract::<f64>(),
+        str_height.extract::<f64>(),
+    ) else {
+        return Ok(None);
+    };
+
+    let m_prev = matrix_mult(tm_prev_matrix, cm_prev_matrix);
+    let m = matrix_mult(tm_matrix_values, cm_matrix_values);
+    let orientation = matrix_orient(m);
+    let delta_x = m[4] - m_prev[4];
+    let delta_y = m[5] - m_prev[5];
+    let scale_prev_x = (m_prev[0] * m_prev[0] + m_prev[1] * m_prev[1]).sqrt();
+    let scale_prev_y = (m_prev[2] * m_prev[2] + m_prev[3] * m_prev[3]).sqrt();
+    let scale_y = (m[2] * m[2] + m[3] * m[3]).sqrt();
+
+    let orientation_object = common::py_int(py, orientation);
+    if !orientations.contains(&orientation_object)? {
+        return Err(common::raise_orientation_not_found(py));
+    }
+    let is_horizontal = orientation == 0 || orientation == 180;
+    let (moved_height, moved_width) = if is_horizontal {
+        (delta_y, delta_x)
+    } else {
+        (delta_x, delta_y)
+    };
+    let axis_index = if is_horizontal { 5usize } else { 4usize };
+    let axis = m[axis_index];
+
+    // line_span: None or (axis index, lower, upper).
+    let mut span: Option<(i64, f64, f64)> = None;
+    if !line_span.is_none() {
+        let index: i64 = match line_span.get_item(0usize).and_then(|value| value.extract()) {
+            Ok(value) => value,
+            Err(_) => return Ok(None),
+        };
+        let lower: f64 = match line_span.get_item(1usize).and_then(|value| value.extract()) {
+            Ok(value) => value,
+            Err(_) => return Ok(None),
+        };
+        let upper: f64 = match line_span.get_item(2usize).and_then(|value| value.extract()) {
+            Ok(value) => value,
+            Err(_) => return Ok(None),
+        };
+        span = Some((index, lower, upper));
+    }
+    let index_matches = span.is_some_and(|(index, _, _)| index == axis_index as i64);
+    let distance = if !index_matches {
+        moved_height.abs()
+    } else {
+        let (_, lower, upper) = span.expect("checked above");
+        if lower <= axis && axis <= upper {
+            0.0
+        } else {
+            (axis - lower).abs().min((axis - upper).abs())
+        }
+    };
+
+    let empty = common::py_str_val(py, "");
+    let newline = common::py_str_val(py, "\n");
+    let last = common::concat(output, text)?.get_item(common::slice_from_end(py)?)?;
+    let last_is_empty = last.eq(&empty)?;
+    let last_is_newline = last.eq(&newline)?;
+    let threshold =
+        0.8 * (str_height_value * scale_prev_y).min(font_size_value * scale_y);
+
+    let mut text = text.clone();
+    let mut output = output.clone();
+    let mut new_span: Bound<'py, PyAny> = line_span.clone();
+    if distance > threshold {
+        if !(last_is_empty || last_is_newline) {
+            let piece = common::concat(&text, &newline)?;
+            output = common::concat(&output, &piece)?;
+            if !visitor_text.is_none() {
+                visitor_text.call1((&piece, memo_cm, memo_tm, font_resource, font_size))?;
+            }
+            text = empty.clone();
+        }
+        new_span = common::py_tuple(
+            py,
+            vec![
+                common::py_int(py, axis_index as i64),
+                common::py_float(py, axis),
+                common::py_float(py, axis),
+            ],
+        )?;
+    } else {
+        let moved_to_other_baseline = moved_height.abs() > threshold;
+        let space = common::py_str_val(py, " ");
+        let gap_needed = moved_to_other_baseline
+            || moved_width >= (spacewidth_value + str_widths_value) * scale_prev_x;
+        let last_is_space = last.eq(&space)?;
+        if gap_needed && !(last_is_empty || last_is_space) {
+            text = common::concat(&text, &space)?;
+        }
+        match span {
+            Some((index, lower, upper)) if index == axis_index as i64 && !last_is_empty && !last_is_newline => {
+                new_span = common::py_tuple(
+                    py,
+                    vec![
+                        common::py_int(py, index),
+                        common::py_float(py, lower.min(axis)),
+                        common::py_float(py, upper.max(axis)),
+                    ],
+                )?;
+            }
+            _ => {
+                new_span = common::py_tuple(
+                    py,
+                    vec![
+                        common::py_int(py, axis_index as i64),
+                        common::py_float(py, axis),
+                        common::py_float(py, axis),
+                    ],
+                )?;
+            }
+        }
+    }
+    let tm_prev_result = tm_matrix.call_method0("copy")?;
+    let cm_prev_result = cm_matrix.call_method0("copy")?;
+    Ok(Some(common::py_tuple(
+        py,
+        vec![text, output, cm_prev_result, tm_prev_result, new_span],
+    )?))
 }
 
 // @pypdf: pypdf._text_extraction.crlf_space_check
@@ -439,10 +653,20 @@ pub fn text_extraction_get_display_str<'py>(
     visitor_text: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let character_map = font.getattr("character_map")?;
+    // `character_map.get(char, char)` through the C-level dict API avoids
+    // creating a bound method for every character.
+    let character_map_dict = character_map.cast::<PyDict>().ok().cloned();
     let mut characters: Vec<Bound<'py, PyAny>> = Vec::new();
     for raw_character in text_operands.try_iter()? {
         let raw_character = raw_character?;
-        characters.push(character_map.call_method1("get", (&raw_character, &raw_character))?);
+        let mapped = match &character_map_dict {
+            Some(dict) => match dict.get_item(&raw_character)? {
+                Some(value) => value,
+                None => raw_character,
+            },
+            None => character_map.call_method1("get", (&raw_character, &raw_character))?,
+        };
+        characters.push(mapped);
     }
 
     let custom_min = common::init_attr(py, "CUSTOM_RTL_MIN")?;
