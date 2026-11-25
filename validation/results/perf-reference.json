@@ -3,8 +3,8 @@
  "plan_section": "§10.2-§10.4",
  "backend": "reference",
  "backend_detected": "reference",
- "generated_at_utc": "2026-11-25T03:34:28Z",
- "generated_at_local": "2026-11-25T11:34:28+0800",
+ "generated_at_utc": "2026-11-25T03:49:50Z",
+ "generated_at_local": "2026-11-25T11:49:50+0800",
  "environment": {
   "python": "3.14.7",
   "executable": "/Users/yxy/Desktop/pypdf-rust/.venvs/oracle/bin/python",
@@ -19,14 +19,14 @@
   "extension_changed_during_run": false,
   "cpu_count": 10,
   "loadavg_start": [
-   5.07958984375,
-   6.43896484375,
-   7.44580078125
+   8.96826171875,
+   7.56103515625,
+   7.20849609375
   ],
   "loadavg_end": [
-   4.90673828125,
-   6.35791015625,
-   7.40478515625
+   8.42529296875,
+   7.4921875,
+   7.18798828125
   ],
   "hashseed": "0"
  },
@@ -157,95 +157,95 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.016938,
-     "cpu_s": 0.015377,
-     "peak_rss_bytes": 49266688,
-     "rss_start_bytes": 48414720,
+     "wall_s": 0.014129,
+     "cpu_s": 0.013971,
+     "peak_rss_bytes": 49594368,
+     "rss_start_bytes": 48758784,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 49381376,
-     "proc_maxrss_before_bytes": 47415296,
+     "proc_maxrss_bytes": 49725440,
+     "proc_maxrss_before_bytes": 47333376,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.002745
+       "seconds": 0.002845
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000503
+       "seconds": 0.00021
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.001224
+       "seconds": 0.000949
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000455
+       "seconds": 0.000457
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.00022
+       "seconds": 0.000234
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.001275
+       "seconds": 0.001039
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000525
+       "seconds": 0.000311
       },
       {
        "path": "resources/issue-297.pdf",
-       "seconds": 0.000503
+       "seconds": 0.000413
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.000473
+       "seconds": 0.000459
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000379
+       "seconds": 0.000237
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.000362
+       "seconds": 0.000327
       },
       {
        "path": "resources/metadata.pdf",
-       "seconds": 0.001281
+       "seconds": 0.000922
       },
       {
        "path": "resources/two-different-pages.pdf",
-       "seconds": 0.000672
+       "seconds": 0.000447
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000428
+       "seconds": 0.000345
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.000307
+       "seconds": 0.00028
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
-       "seconds": 0.000336
+       "seconds": 0.000286
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.000309
+       "seconds": 0.000254
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.001345
+       "seconds": 0.001051
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.001323
+       "seconds": 0.001117
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.001773
+       "seconds": 0.001481
       }
      ],
      "error": null,
@@ -256,95 +256,95 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011517,
-     "cpu_s": 0.011685,
-     "peak_rss_bytes": 49479680,
-     "rss_start_bytes": 49414144,
+     "wall_s": 0.01134,
+     "cpu_s": 0.011461,
+     "peak_rss_bytes": 49774592,
+     "rss_start_bytes": 49709056,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 49496064,
-     "proc_maxrss_before_bytes": 49414144,
+     "proc_maxrss_bytes": 49790976,
+     "proc_maxrss_before_bytes": 49725440,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.000626
+       "seconds": 0.000618
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000193
+       "seconds": 0.00025
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.000857
+       "seconds": 0.000875
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000523
+       "seconds": 0.000438
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.000312
+       "seconds": 0.000316
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.001114
+       "seconds": 0.001125
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000312
-      },
-      {
-       "path": "resources/issue-297.pdf",
-       "seconds": 0.00036
-      },
-      {
-       "path": "resources/hello-world.pdf",
-       "seconds": 0.000343
-      },
-      {
-       "path": "resources/toy.pdf",
-       "seconds": 0.000181
-      },
-      {
-       "path": "resources/multilang.pdf",
-       "seconds": 0.000322
-      },
-      {
-       "path": "resources/metadata.pdf",
-       "seconds": 0.001002
-      },
-      {
-       "path": "resources/two-different-pages.pdf",
        "seconds": 0.000308
       },
       {
+       "path": "resources/issue-297.pdf",
+       "seconds": 0.000362
+      },
+      {
+       "path": "resources/hello-world.pdf",
+       "seconds": 0.000334
+      },
+      {
+       "path": "resources/toy.pdf",
+       "seconds": 0.000173
+      },
+      {
+       "path": "resources/multilang.pdf",
+       "seconds": 0.000305
+      },
+      {
+       "path": "resources/metadata.pdf",
+       "seconds": 0.000916
+      },
+      {
+       "path": "resources/two-different-pages.pdf",
+       "seconds": 0.000298
+      },
+      {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000299
+       "seconds": 0.000283
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.000278
+       "seconds": 0.000256
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
-       "seconds": 0.00027
+       "seconds": 0.000264
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.000253
+       "seconds": 0.000269
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.001089
+       "seconds": 0.001013
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.001131
+       "seconds": 0.001122
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.001369
+       "seconds": 0.001386
       }
      ],
      "error": null,
@@ -353,95 +353,95 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011417,
-     "cpu_s": 0.011553,
-     "peak_rss_bytes": 49643520,
-     "rss_start_bytes": 49528832,
+     "wall_s": 0.011327,
+     "cpu_s": 0.011509,
+     "peak_rss_bytes": 49905664,
+     "rss_start_bytes": 49774592,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 49659904,
-     "proc_maxrss_before_bytes": 49528832,
+     "proc_maxrss_bytes": 49922048,
+     "proc_maxrss_before_bytes": 49790976,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.000633
+       "seconds": 0.000643
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000176
+       "seconds": 0.000191
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.000872
+       "seconds": 0.000869
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000407
+       "seconds": 0.00042
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.00019
+       "seconds": 0.0002
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.001038
+       "seconds": 0.00101
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000282
+       "seconds": 0.00028
       },
       {
        "path": "resources/issue-297.pdf",
-       "seconds": 0.000343
+       "seconds": 0.000326
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.000385
+       "seconds": 0.000306
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000282
+       "seconds": 0.000168
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.000347
+       "seconds": 0.000304
       },
       {
        "path": "resources/metadata.pdf",
-       "seconds": 0.000698
+       "seconds": 0.000812
       },
       {
        "path": "resources/two-different-pages.pdf",
-       "seconds": 0.000539
+       "seconds": 0.000553
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000389
+       "seconds": 0.000268
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.000338
+       "seconds": 0.000384
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
-       "seconds": 0.000274
+       "seconds": 0.000338
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.000258
+       "seconds": 0.000265
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.00106
+       "seconds": 0.001067
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.001075
+       "seconds": 0.001069
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.001468
+       "seconds": 0.001485
       }
      ],
      "error": null,
@@ -450,95 +450,95 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011677,
-     "cpu_s": 0.011799,
-     "peak_rss_bytes": 49741824,
-     "rss_start_bytes": 49627136,
+     "wall_s": 0.011077,
+     "cpu_s": 0.01117,
+     "peak_rss_bytes": 49987584,
+     "rss_start_bytes": 49889280,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 49758208,
-     "proc_maxrss_before_bytes": 49659904,
+     "proc_maxrss_bytes": 50003968,
+     "proc_maxrss_before_bytes": 49922048,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.000318
+       "seconds": 0.000316
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000171
+       "seconds": 0.000178
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.00121
+       "seconds": 0.001107
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000411
+       "seconds": 0.000491
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.000198
+       "seconds": 0.000248
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.001227
+       "seconds": 0.000994
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000359
+       "seconds": 0.000271
       },
       {
        "path": "resources/issue-297.pdf",
-       "seconds": 0.000391
+       "seconds": 0.000324
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.000342
+       "seconds": 0.000314
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000179
+       "seconds": 0.000301
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.00035
+       "seconds": 0.000399
       },
       {
        "path": "resources/metadata.pdf",
-       "seconds": 0.000723
+       "seconds": 0.000751
       },
       {
        "path": "resources/two-different-pages.pdf",
-       "seconds": 0.000315
+       "seconds": 0.000301
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000503
+       "seconds": 0.000495
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.00029
+       "seconds": 0.000264
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
-       "seconds": 0.000289
+       "seconds": 0.000254
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.000255
+       "seconds": 0.000265
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.001124
+       "seconds": 0.001037
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.001135
+       "seconds": 0.000992
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.001505
+       "seconds": 0.001429
       }
      ],
      "error": null,
@@ -547,51 +547,51 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011057,
-     "cpu_s": 0.011221,
-     "peak_rss_bytes": 49905664,
-     "rss_start_bytes": 49725440,
+     "wall_s": 0.011196,
+     "cpu_s": 0.011334,
+     "peak_rss_bytes": 50151424,
+     "rss_start_bytes": 49971200,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 49938432,
-     "proc_maxrss_before_bytes": 49758208,
+     "proc_maxrss_bytes": 50184192,
+     "proc_maxrss_before_bytes": 50003968,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.000381
+       "seconds": 0.000353
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000183
+       "seconds": 0.000188
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.001147
+       "seconds": 0.001161
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000409
+       "seconds": 0.000462
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.000198
+       "seconds": 0.000209
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.001026
+       "seconds": 0.000995
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000296
+       "seconds": 0.000278
       },
       {
        "path": "resources/issue-297.pdf",
-       "seconds": 0.000389
+       "seconds": 0.000349
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.000355
+       "seconds": 0.000335
       },
       {
        "path": "resources/toy.pdf",
@@ -599,43 +599,43 @@
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.000324
+       "seconds": 0.00031
       },
       {
        "path": "resources/metadata.pdf",
-       "seconds": 0.000812
+       "seconds": 0.000688
       },
       {
        "path": "resources/two-different-pages.pdf",
-       "seconds": 0.00036
+       "seconds": 0.000293
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000495
+       "seconds": 0.000467
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.000263
+       "seconds": 0.000256
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
-       "seconds": 0.000255
+       "seconds": 0.000367
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.000241
+       "seconds": 0.000267
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.001013
+       "seconds": 0.001024
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.000998
+       "seconds": 0.000983
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.00136
+       "seconds": 0.001677
       }
      ],
      "error": null,
@@ -644,95 +644,95 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.012159,
-     "cpu_s": 0.012327,
-     "peak_rss_bytes": 49987584,
-     "rss_start_bytes": 49905664,
+     "wall_s": 0.011982,
+     "cpu_s": 0.012086,
+     "peak_rss_bytes": 50233344,
+     "rss_start_bytes": 50151424,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 49987584,
-     "proc_maxrss_before_bytes": 49938432,
+     "proc_maxrss_bytes": 50233344,
+     "proc_maxrss_before_bytes": 50184192,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.000361
+       "seconds": 0.000315
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000187
+       "seconds": 0.00017
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.002005
+       "seconds": 0.001875
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000426
+       "seconds": 0.000433
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.000196
+       "seconds": 0.000198
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.001004
+       "seconds": 0.001122
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000437
+       "seconds": 0.000275
       },
       {
        "path": "resources/issue-297.pdf",
-       "seconds": 0.000423
+       "seconds": 0.000477
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.000349
+       "seconds": 0.000404
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.00018
+       "seconds": 0.000181
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.000308
+       "seconds": 0.000318
       },
       {
        "path": "resources/metadata.pdf",
-       "seconds": 0.00074
+       "seconds": 0.000745
       },
       {
        "path": "resources/two-different-pages.pdf",
-       "seconds": 0.000328
+       "seconds": 0.000307
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000274
+       "seconds": 0.000285
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.000506
+       "seconds": 0.000494
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
-       "seconds": 0.000261
+       "seconds": 0.000264
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.00026
+       "seconds": 0.000252
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.001069
+       "seconds": 0.001057
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.001117
+       "seconds": 0.001009
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.001361
+       "seconds": 0.001412
       }
      ],
      "error": null,
@@ -741,95 +741,95 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011499,
-     "cpu_s": 0.01162,
-     "peak_rss_bytes": 49987584,
-     "rss_start_bytes": 49954816,
+     "wall_s": 0.011247,
+     "cpu_s": 0.011439,
+     "peak_rss_bytes": 50233344,
+     "rss_start_bytes": 50200576,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 49987584,
-     "proc_maxrss_before_bytes": 49987584,
+     "proc_maxrss_bytes": 50233344,
+     "proc_maxrss_before_bytes": 50233344,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.000376
+       "seconds": 0.000486
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000185
+       "seconds": 0.000232
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.001194
+       "seconds": 0.001202
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000417
+       "seconds": 0.000436
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.000194
+       "seconds": 0.000209
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.00101
+       "seconds": 0.001008
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000294
+       "seconds": 0.000276
       },
       {
        "path": "resources/issue-297.pdf",
-       "seconds": 0.000404
+       "seconds": 0.000341
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.000334
+       "seconds": 0.000313
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000189
+       "seconds": 0.000168
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.000334
+       "seconds": 0.0003
       },
       {
        "path": "resources/metadata.pdf",
-       "seconds": 0.000894
+       "seconds": 0.000691
       },
       {
        "path": "resources/two-different-pages.pdf",
-       "seconds": 0.000391
+       "seconds": 0.00029
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.00036
+       "seconds": 0.000264
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.000292
+       "seconds": 0.000257
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
-       "seconds": 0.000273
+       "seconds": 0.000258
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.000263
+       "seconds": 0.000246
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.00105
+       "seconds": 0.001113
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.00102
+       "seconds": 0.000971
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.001363
+       "seconds": 0.001567
       }
      ],
      "error": null,
@@ -838,75 +838,75 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011164,
-     "cpu_s": 0.011309,
-     "peak_rss_bytes": 50003968,
-     "rss_start_bytes": 49954816,
+     "wall_s": 0.011067,
+     "cpu_s": 0.011177,
+     "peak_rss_bytes": 50233344,
+     "rss_start_bytes": 50200576,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 50003968,
-     "proc_maxrss_before_bytes": 49987584,
+     "proc_maxrss_bytes": 50233344,
+     "proc_maxrss_before_bytes": 50233344,
      "output_bytes": 2389,
      "output_sha256": "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44",
      "per_file": [
       {
        "path": "resources/AutoCad_Simple.pdf",
-       "seconds": 0.000309
+       "seconds": 0.000307
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000165
+       "seconds": 0.000167
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.001081
+       "seconds": 0.001095
       },
       {
        "path": "resources/bytes.pdf",
-       "seconds": 0.000405
+       "seconds": 0.0004
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.000188
+       "seconds": 0.000196
       },
       {
        "path": "resources/commented.pdf",
-       "seconds": 0.001112
+       "seconds": 0.001002
       },
       {
        "path": "resources/commented-xmp.pdf",
-       "seconds": 0.000333
+       "seconds": 0.000317
       },
       {
        "path": "resources/issue-297.pdf",
-       "seconds": 0.000361
+       "seconds": 0.000343
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.000319
+       "seconds": 0.000325
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000185
+       "seconds": 0.000218
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.000308
+       "seconds": 0.000322
       },
       {
        "path": "resources/metadata.pdf",
-       "seconds": 0.000714
+       "seconds": 0.000755
       },
       {
        "path": "resources/two-different-pages.pdf",
-       "seconds": 0.000406
+       "seconds": 0.000386
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000316
+       "seconds": 0.000318
       },
       {
        "path": "resources/imagemagick-lzw.pdf",
-       "seconds": 0.000264
+       "seconds": 0.000271
       },
       {
        "path": "resources/imagemagick-CCITTFaxDecode.pdf",
@@ -914,19 +914,19 @@
       },
       {
        "path": "resources/reportlab-inline-image.pdf",
-       "seconds": 0.000537
+       "seconds": 0.000511
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.001035
+       "seconds": 0.00104
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.001052
+       "seconds": 0.000998
       },
       {
        "path": "resources/pdflatex-forms.pdf",
-       "seconds": 0.001462
+       "seconds": 0.001463
       }
      ],
      "error": null,
@@ -1165,27 +1165,27 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.011499,
-     "p95": 0.012014,
-     "min": 0.011057,
-     "max": 0.012159,
-     "mean": 0.011499
+     "median": 0.011247,
+     "p95": 0.011789,
+     "min": 0.011067,
+     "max": 0.011982,
+     "mean": 0.011319
     },
     "cpu": {
      "count": 7,
-     "median": 0.01162,
-     "p95": 0.012169,
-     "min": 0.011221,
-     "max": 0.012327,
-     "mean": 0.011645
+     "median": 0.011439,
+     "p95": 0.011913,
+     "min": 0.01117,
+     "max": 0.012086,
+     "mean": 0.011454
     },
     "peak_rss_bytes": {
-     "max": 50003968,
-     "median": 49905664
+     "max": 50233344,
+     "median": 50151424
     },
     "rss_start_bytes": {
-     "max": 49954816,
-     "median": 49725440
+     "max": 50200576,
+     "median": 49971200
     },
     "rss_growth_bytes": {
      "max": 180224,
@@ -1199,26 +1199,26 @@
      "178c986748074a4ebe3ed13f1b29b9be77bd23659063734ff9652257fe06ff44"
     ],
     "per_file_medians_s": {
-     "resources/AutoCad_Simple.pdf": 0.000376,
-     "resources/Sample_Td-matrix.pdf": 0.000183,
-     "resources/crazyones.pdf": 0.001147,
-     "resources/bytes.pdf": 0.000411,
-     "resources/box.pdf": 0.000196,
-     "resources/commented.pdf": 0.001038,
-     "resources/commented-xmp.pdf": 0.000312,
-     "resources/issue-297.pdf": 0.000389,
-     "resources/hello-world.pdf": 0.000343,
-     "resources/toy.pdf": 0.000181,
-     "resources/multilang.pdf": 0.000324,
-     "resources/metadata.pdf": 0.00074,
-     "resources/two-different-pages.pdf": 0.00036,
-     "resources/imagemagick-ASCII85Decode.pdf": 0.00036,
-     "resources/imagemagick-lzw.pdf": 0.00029,
-     "resources/imagemagick-CCITTFaxDecode.pdf": 0.00027,
-     "resources/reportlab-inline-image.pdf": 0.000258,
-     "resources/selenium-pypdf-issue-177.pdf": 0.00106,
-     "resources/superscript-pdftex.pdf": 0.001075,
-     "resources/pdflatex-forms.pdf": 0.001369
+     "resources/AutoCad_Simple.pdf": 0.000353,
+     "resources/Sample_Td-matrix.pdf": 0.000188,
+     "resources/crazyones.pdf": 0.001107,
+     "resources/bytes.pdf": 0.000436,
+     "resources/box.pdf": 0.000209,
+     "resources/commented.pdf": 0.001008,
+     "resources/commented-xmp.pdf": 0.000278,
+     "resources/issue-297.pdf": 0.000343,
+     "resources/hello-world.pdf": 0.000325,
+     "resources/toy.pdf": 0.000173,
+     "resources/multilang.pdf": 0.00031,
+     "resources/metadata.pdf": 0.000751,
+     "resources/two-different-pages.pdf": 0.000301,
+     "resources/imagemagick-ASCII85Decode.pdf": 0.000285,
+     "resources/imagemagick-lzw.pdf": 0.000264,
+     "resources/imagemagick-CCITTFaxDecode.pdf": 0.000264,
+     "resources/reportlab-inline-image.pdf": 0.000265,
+     "resources/selenium-pypdf-issue-177.pdf": 0.00104,
+     "resources/superscript-pdftex.pdf": 0.000998,
+     "resources/pdflatex-forms.pdf": 0.001463
     },
     "per_file_samples": {
      "resources/AutoCad_Simple.pdf": 7,
@@ -1245,11 +1245,11 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 0.116,
+   "elapsed_s": 0.111,
    "loadavg_before": [
-    5.07958984375,
-    6.43896484375,
-    7.44580078125
+    8.96826171875,
+    7.56103515625,
+    7.20849609375
    ]
   },
   {
@@ -1297,35 +1297,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.170997,
-     "cpu_s": 0.167844,
-     "peak_rss_bytes": 81412096,
-     "rss_start_bytes": 49971200,
+     "wall_s": 0.166884,
+     "cpu_s": 0.165295,
+     "peak_rss_bytes": 82804736,
+     "rss_start_bytes": 50200576,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 83656704,
-     "proc_maxrss_before_bytes": 50003968,
+     "proc_maxrss_bytes": 83214336,
+     "proc_maxrss_before_bytes": 50233344,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.06641
+       "seconds": 0.064522
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.071351
+       "seconds": 0.070458
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.02999
+       "seconds": 0.029385
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.001673
+       "seconds": 0.000951
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.001366
+       "seconds": 0.001386
       }
      ],
      "error": null,
@@ -1336,35 +1336,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.167071,
-     "cpu_s": 0.167098,
-     "peak_rss_bytes": 110821376,
-     "rss_start_bytes": 83755008,
+     "wall_s": 0.16472,
+     "cpu_s": 0.164726,
+     "peak_rss_bytes": 109920256,
+     "rss_start_bytes": 83197952,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 110837760,
-     "proc_maxrss_before_bytes": 83755008,
+     "proc_maxrss_bytes": 109969408,
+     "proc_maxrss_before_bytes": 83214336,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.063556
+       "seconds": 0.063112
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.072488
+       "seconds": 0.071221
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.029357
+       "seconds": 0.028619
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.000834
+       "seconds": 0.000885
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.000666
+       "seconds": 0.000678
       }
      ],
      "error": null,
@@ -1373,35 +1373,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.19708,
-     "cpu_s": 0.196919,
-     "peak_rss_bytes": 131448832,
-     "rss_start_bytes": 110837760,
+     "wall_s": 0.193437,
+     "cpu_s": 0.19354,
+     "peak_rss_bytes": 132284416,
+     "rss_start_bytes": 109953024,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 132153344,
-     "proc_maxrss_before_bytes": 110837760,
+     "proc_maxrss_bytes": 132792320,
+     "proc_maxrss_before_bytes": 109969408,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.06325
+       "seconds": 0.062911
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.101092
+       "seconds": 0.099644
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.031013
+       "seconds": 0.02926
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.00083
+       "seconds": 0.000758
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.000682
+       "seconds": 0.000677
       }
      ],
      "error": null,
@@ -1410,35 +1410,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.163777,
-     "cpu_s": 0.163813,
-     "peak_rss_bytes": 130809856,
-     "rss_start_bytes": 129564672,
+     "wall_s": 0.163525,
+     "cpu_s": 0.163559,
+     "peak_rss_bytes": 131465216,
+     "rss_start_bytes": 130318336,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 132153344,
-     "proc_maxrss_before_bytes": 132153344,
+     "proc_maxrss_bytes": 132792320,
+     "proc_maxrss_before_bytes": 132792320,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.062554
+       "seconds": 0.062936
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.070305
+       "seconds": 0.0695
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.029217
+       "seconds": 0.029246
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.0009
+       "seconds": 0.001033
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.000624
+       "seconds": 0.00065
       }
      ],
      "error": null,
@@ -1447,35 +1447,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.165426,
-     "cpu_s": 0.165411,
-     "peak_rss_bytes": 142655488,
-     "rss_start_bytes": 130777088,
+     "wall_s": 0.165662,
+     "cpu_s": 0.165675,
+     "peak_rss_bytes": 141869056,
+     "rss_start_bytes": 131497984,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 142721024,
-     "proc_maxrss_before_bytes": 132153344,
+     "proc_maxrss_bytes": 142557184,
+     "proc_maxrss_before_bytes": 132792320,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.063364
+       "seconds": 0.06367
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.071483
+       "seconds": 0.070622
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.028867
+       "seconds": 0.029397
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.000925
+       "seconds": 0.000974
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.000602
+       "seconds": 0.00077
       }
      ],
      "error": null,
@@ -1484,35 +1484,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.165193,
-     "cpu_s": 0.165274,
-     "peak_rss_bytes": 171556864,
-     "rss_start_bytes": 142688256,
+     "wall_s": 0.164972,
+     "cpu_s": 0.165023,
+     "peak_rss_bytes": 171687936,
+     "rss_start_bytes": 142573568,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 171737088,
-     "proc_maxrss_before_bytes": 142721024,
+     "proc_maxrss_bytes": 171884544,
+     "proc_maxrss_before_bytes": 142573568,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.063213
+       "seconds": 0.062944
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.071174
+       "seconds": 0.07085
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.029173
+       "seconds": 0.029715
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.000839
+       "seconds": 0.000762
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.000619
+       "seconds": 0.000521
       }
      ],
      "error": null,
@@ -1521,35 +1521,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.233187,
-     "cpu_s": 0.233045,
-     "peak_rss_bytes": 191135744,
-     "rss_start_bytes": 171720704,
+     "wall_s": 0.225428,
+     "cpu_s": 0.225489,
+     "peak_rss_bytes": 191152128,
+     "rss_start_bytes": 171884544,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 191594496,
-     "proc_maxrss_before_bytes": 171737088,
+     "proc_maxrss_bytes": 191889408,
+     "proc_maxrss_before_bytes": 171884544,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.064046
+       "seconds": 0.062756
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.139102
+       "seconds": 0.133066
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.028235
+       "seconds": 0.028035
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.000849
+       "seconds": 0.000765
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.000757
+       "seconds": 0.000614
       }
      ],
      "error": null,
@@ -1558,35 +1558,35 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.164547,
-     "cpu_s": 0.164745,
-     "peak_rss_bytes": 191463424,
-     "rss_start_bytes": 190857216,
+     "wall_s": 0.163312,
+     "cpu_s": 0.163329,
+     "peak_rss_bytes": 191627264,
+     "rss_start_bytes": 190398464,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 191594496,
-     "proc_maxrss_before_bytes": 191594496,
+     "proc_maxrss_bytes": 191889408,
+     "proc_maxrss_before_bytes": 191889408,
      "output_bytes": 47166,
      "output_sha256": "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.064342
+       "seconds": 0.064437
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo.pdf",
-       "seconds": 0.069934
+       "seconds": 0.06907
       },
       {
        "path": "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf",
-       "seconds": 0.028249
+       "seconds": 0.028138
       },
       {
        "path": "resources/fontsampler.pdf",
-       "seconds": 0.000992
+       "seconds": 0.000824
       },
       {
        "path": "sample-files/018-base64-image/base64image.pdf",
-       "seconds": 0.000823
+       "seconds": 0.000657
       }
      ],
      "error": null,
@@ -14698,31 +14698,31 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.165426,
-     "p95": 0.222355,
-     "min": 0.163777,
-     "max": 0.233187,
-     "mean": 0.179469
+     "median": 0.164972,
+     "p95": 0.215831,
+     "min": 0.163312,
+     "max": 0.225428,
+     "mean": 0.177294
     },
     "cpu": {
      "count": 7,
-     "median": 0.165411,
-     "p95": 0.222207,
-     "min": 0.163813,
-     "max": 0.233045,
-     "mean": 0.179472
+     "median": 0.165023,
+     "p95": 0.215904,
+     "min": 0.163329,
+     "max": 0.225489,
+     "mean": 0.177334
     },
     "peak_rss_bytes": {
-     "max": 191463424,
-     "median": 142655488
+     "max": 191627264,
+     "median": 141869056
     },
     "rss_start_bytes": {
-     "max": 190857216,
-     "median": 130777088
+     "max": 190398464,
+     "median": 131497984
     },
     "rss_growth_bytes": {
-     "max": 28868608,
-     "median": 19415040
+     "max": 29114368,
+     "median": 19267584
     },
     "output_bytes_values": [
      47166
@@ -14732,11 +14732,11 @@
      "8c0126b43c5c8e17d1f21cecfcf60c38797f079a0c6c32d6db1896ce6cac77c8"
     ],
     "per_file_medians_s": {
-     "resources/issue-604.pdf": 0.063364,
-     "sample-files/009-pdflatex-geotopo/GeoTopo.pdf": 0.071483,
-     "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf": 0.029173,
-     "resources/fontsampler.pdf": 0.000849,
-     "sample-files/018-base64-image/base64image.pdf": 0.000666
+     "resources/issue-604.pdf": 0.062944,
+     "sample-files/009-pdflatex-geotopo/GeoTopo.pdf": 0.07085,
+     "sample-files/009-pdflatex-geotopo/GeoTopo-komprimiert.pdf": 0.029246,
+     "resources/fontsampler.pdf": 0.000824,
+     "sample-files/018-base64-image/base64image.pdf": 0.000657
     },
     "per_file_samples": {
      "resources/issue-604.pdf": 7,
@@ -14748,11 +14748,11 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 1.442,
+   "elapsed_s": 1.422,
    "loadavg_before": [
-    5.07958984375,
-    6.43896484375,
-    7.44580078125
+    8.96826171875,
+    7.56103515625,
+    7.20849609375
    ]
   },
   {
@@ -14820,63 +14820,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.176457,
-     "cpu_s": 0.175169,
-     "peak_rss_bytes": 191856640,
-     "rss_start_bytes": 191430656,
+     "wall_s": 0.172445,
+     "cpu_s": 0.172606,
+     "peak_rss_bytes": 192200704,
+     "rss_start_bytes": 191692800,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 191856640,
-     "proc_maxrss_before_bytes": 191594496,
+     "proc_maxrss_bytes": 192200704,
+     "proc_maxrss_before_bytes": 191889408,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004385
+       "seconds": 0.004321
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002583
+       "seconds": 0.002607
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002695
+       "seconds": 0.002535
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000877
+       "seconds": 0.000741
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000644
+       "seconds": 0.000593
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.001969
+       "seconds": 0.00196
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.002796
+       "seconds": 0.002815
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.04219
+       "seconds": 0.04095
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.027748
+       "seconds": 0.026931
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.020165
+       "seconds": 0.019429
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.034963
+       "seconds": 0.034292
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.035079
+       "seconds": 0.0349
       }
      ],
      "error": null,
@@ -14887,63 +14887,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.172452,
-     "cpu_s": 0.172638,
-     "peak_rss_bytes": 191971328,
-     "rss_start_bytes": 191840256,
+     "wall_s": 0.171815,
+     "cpu_s": 0.171859,
+     "peak_rss_bytes": 192299008,
+     "rss_start_bytes": 192167936,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 191971328,
-     "proc_maxrss_before_bytes": 191856640,
+     "proc_maxrss_bytes": 192299008,
+     "proc_maxrss_before_bytes": 192200704,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.003977
+       "seconds": 0.003841
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002448
+       "seconds": 0.002471
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002274
+       "seconds": 0.002318
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000889
+       "seconds": 0.000682
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000664
+       "seconds": 0.000568
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.002185
+       "seconds": 0.002344
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.002694
+       "seconds": 0.002764
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.039959
+       "seconds": 0.039481
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.027119
+       "seconds": 0.027287
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.019964
+       "seconds": 0.019994
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.035049
+       "seconds": 0.034467
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.034887
+       "seconds": 0.035218
       }
      ],
      "error": null,
@@ -14952,63 +14952,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.174673,
-     "cpu_s": 0.174582,
-     "peak_rss_bytes": 192233472,
-     "rss_start_bytes": 191971328,
+     "wall_s": 0.170037,
+     "cpu_s": 0.170316,
+     "peak_rss_bytes": 192528384,
+     "rss_start_bytes": 192266240,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 192233472,
-     "proc_maxrss_before_bytes": 191971328,
+     "proc_maxrss_bytes": 192528384,
+     "proc_maxrss_before_bytes": 192299008,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.003847
+       "seconds": 0.003676
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002565
+       "seconds": 0.002581
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002346
+       "seconds": 0.002435
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000904
+       "seconds": 0.000757
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000677
+       "seconds": 0.000578
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.002236
+       "seconds": 0.002052
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.002752
+       "seconds": 0.00253
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.04016
+       "seconds": 0.0389
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.027718
+       "seconds": 0.026743
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.019606
+       "seconds": 0.019482
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.036208
+       "seconds": 0.035245
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.035264
+       "seconds": 0.034709
       }
      ],
      "error": null,
@@ -15017,63 +15017,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.203705,
-     "cpu_s": 0.203666,
-     "peak_rss_bytes": 192544768,
-     "rss_start_bytes": 192200704,
+     "wall_s": 0.203871,
+     "cpu_s": 0.202137,
+     "peak_rss_bytes": 192872448,
+     "rss_start_bytes": 192495616,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 192593920,
-     "proc_maxrss_before_bytes": 192233472,
+     "proc_maxrss_bytes": 192872448,
+     "proc_maxrss_before_bytes": 192528384,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.003762
+       "seconds": 0.003861
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002531
+       "seconds": 0.002349
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002381
+       "seconds": 0.002565
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000845
+       "seconds": 0.000745
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000657
+       "seconds": 0.000602
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.00216
+       "seconds": 0.002113
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.002779
+       "seconds": 0.002645
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.040061
+       "seconds": 0.041241
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.02797
+       "seconds": 0.031269
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.020021
+       "seconds": 0.019855
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.036251
+       "seconds": 0.035228
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.063889
+       "seconds": 0.060962
       }
      ],
      "error": null,
@@ -15082,63 +15082,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.184936,
-     "cpu_s": 0.180896,
-     "peak_rss_bytes": 187547648,
-     "rss_start_bytes": 187318272,
+     "wall_s": 0.170709,
+     "cpu_s": 0.170893,
+     "peak_rss_bytes": 187760640,
+     "rss_start_bytes": 187596800,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 192593920,
-     "proc_maxrss_before_bytes": 192593920,
+     "proc_maxrss_bytes": 192872448,
+     "proc_maxrss_before_bytes": 192872448,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.00391
+       "seconds": 0.004023
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002383
+       "seconds": 0.002373
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002274
+       "seconds": 0.002502
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000696
+       "seconds": 0.00091
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000582
+       "seconds": 0.000692
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.002485
+       "seconds": 0.002174
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.002796
+       "seconds": 0.002629
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.040317
+       "seconds": 0.039257
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.033886
+       "seconds": 0.026907
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.02496
+       "seconds": 0.019736
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.034883
+       "seconds": 0.033817
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.035355
+       "seconds": 0.035283
       }
      ],
      "error": null,
@@ -15147,63 +15147,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.170987,
-     "cpu_s": 0.171057,
-     "peak_rss_bytes": 187547648,
-     "rss_start_bytes": 187514880,
+     "wall_s": 0.171131,
+     "cpu_s": 0.171253,
+     "peak_rss_bytes": 187760640,
+     "rss_start_bytes": 187727872,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 192593920,
-     "proc_maxrss_before_bytes": 192593920,
+     "proc_maxrss_bytes": 192872448,
+     "proc_maxrss_before_bytes": 192872448,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.003724
+       "seconds": 0.003875
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002286
+       "seconds": 0.002555
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002223
+       "seconds": 0.002321
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000705
+       "seconds": 0.000714
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000571
+       "seconds": 0.000589
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.002049
+       "seconds": 0.002176
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.002802
+       "seconds": 0.002808
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.039747
+       "seconds": 0.039253
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.026489
+       "seconds": 0.027152
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.019957
+       "seconds": 0.020051
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.034888
+       "seconds": 0.034739
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.03521
+       "seconds": 0.034549
       }
      ],
      "error": null,
@@ -15212,63 +15212,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.174119,
-     "cpu_s": 0.174375,
-     "peak_rss_bytes": 187645952,
-     "rss_start_bytes": 187514880,
+     "wall_s": 0.171018,
+     "cpu_s": 0.170921,
+     "peak_rss_bytes": 187858944,
+     "rss_start_bytes": 187727872,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 192593920,
-     "proc_maxrss_before_bytes": 192593920,
+     "proc_maxrss_bytes": 192872448,
+     "proc_maxrss_before_bytes": 192872448,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.003988
+       "seconds": 0.00383
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002733
+       "seconds": 0.002428
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002379
+       "seconds": 0.002606
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000717
+       "seconds": 0.00076
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000622
+       "seconds": 0.000585
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.0025
+       "seconds": 0.002062
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.002784
+       "seconds": 0.002724
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.039591
+       "seconds": 0.039097
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.026976
+       "seconds": 0.027318
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.019805
+       "seconds": 0.01952
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.036077
+       "seconds": 0.034733
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.035586
+       "seconds": 0.034912
       }
      ],
      "error": null,
@@ -15277,63 +15277,63 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.175611,
-     "cpu_s": 0.175872,
-     "peak_rss_bytes": 187645952,
-     "rss_start_bytes": 187613184,
+     "wall_s": 0.171415,
+     "cpu_s": 0.171513,
+     "peak_rss_bytes": 187858944,
+     "rss_start_bytes": 187826176,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 192593920,
-     "proc_maxrss_before_bytes": 192593920,
+     "proc_maxrss_bytes": 192872448,
+     "proc_maxrss_before_bytes": 192872448,
      "output_bytes": 35165,
      "output_sha256": "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831",
      "per_file": [
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004026
+       "seconds": 0.003808
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002492
+       "seconds": 0.002317
       },
       {
        "path": "resources/hello-world.pdf",
-       "seconds": 0.002624
+       "seconds": 0.002236
       },
       {
        "path": "resources/toy.pdf",
-       "seconds": 0.000833
+       "seconds": 0.000666
       },
       {
        "path": "resources/Sample_Td-matrix.pdf",
-       "seconds": 0.000636
+       "seconds": 0.000578
       },
       {
        "path": "resources/superscript-pdftex.pdf",
-       "seconds": 0.002213
+       "seconds": 0.002239
       },
       {
        "path": "resources/selenium-pypdf-issue-177.pdf",
-       "seconds": 0.003019
+       "seconds": 0.0028
       },
       {
        "path": "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf",
-       "seconds": 0.040155
+       "seconds": 0.039036
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.027339
+       "seconds": 0.027701
       },
       {
        "path": "sample-files/026-latex-multicolumn/multicolumn.pdf",
-       "seconds": 0.020016
+       "seconds": 0.019643
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.036462
+       "seconds": 0.035426
       },
       {
        "path": "resources/test Orient.pdf",
-       "seconds": 0.035456
+       "seconds": 0.034612
       }
      ],
      "error": null,
@@ -15412,30 +15412,30 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.174673,
-     "p95": 0.198074,
-     "min": 0.170987,
-     "max": 0.203705,
-     "mean": 0.179498
+     "median": 0.171131,
+     "p95": 0.194254,
+     "min": 0.170037,
+     "max": 0.203871,
+     "mean": 0.175714
     },
     "cpu": {
      "count": 7,
-     "median": 0.174582,
-     "p95": 0.196835,
-     "min": 0.171057,
-     "max": 0.203666,
-     "mean": 0.179012
+     "median": 0.171253,
+     "p95": 0.193054,
+     "min": 0.170316,
+     "max": 0.202137,
+     "mean": 0.175556
     },
     "peak_rss_bytes": {
-     "max": 192544768,
-     "median": 187645952
+     "max": 192872448,
+     "median": 187858944
     },
     "rss_start_bytes": {
-     "max": 192200704,
-     "median": 187613184
+     "max": 192495616,
+     "median": 187826176
     },
     "rss_growth_bytes": {
-     "max": 344064,
+     "max": 376832,
      "median": 131072
     },
     "output_bytes_values": [
@@ -15446,18 +15446,18 @@
      "b185f13139934de8fb2c2cf69fb5a3eaf23a6bfea79ac0980849d4733f7bd831"
     ],
     "per_file_medians_s": {
-     "resources/crazyones.pdf": 0.00391,
-     "resources/multilang.pdf": 0.002492,
-     "resources/hello-world.pdf": 0.002346,
-     "resources/toy.pdf": 0.000833,
-     "resources/Sample_Td-matrix.pdf": 0.000636,
-     "resources/superscript-pdftex.pdf": 0.002213,
-     "resources/selenium-pypdf-issue-177.pdf": 0.002784,
-     "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf": 0.040061,
-     "resources/pdflatex-outline.pdf": 0.027339,
-     "sample-files/026-latex-multicolumn/multicolumn.pdf": 0.019964,
-     "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf": 0.036077,
-     "resources/test Orient.pdf": 0.035355
+     "resources/crazyones.pdf": 0.003841,
+     "resources/multilang.pdf": 0.002428,
+     "resources/hello-world.pdf": 0.002435,
+     "resources/toy.pdf": 0.000745,
+     "resources/Sample_Td-matrix.pdf": 0.000585,
+     "resources/superscript-pdftex.pdf": 0.002174,
+     "resources/selenium-pypdf-issue-177.pdf": 0.002724,
+     "sample-files/004-pdflatex-4-pages/pdflatex-4-pages.pdf": 0.039253,
+     "resources/pdflatex-outline.pdf": 0.027287,
+     "sample-files/026-latex-multicolumn/multicolumn.pdf": 0.019736,
+     "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf": 0.034739,
+     "resources/test Orient.pdf": 0.034912
     },
     "per_file_samples": {
      "resources/crazyones.pdf": 7,
@@ -15476,11 +15476,11 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 1.438,
+   "elapsed_s": 1.408,
    "loadavg_before": [
-    5.07958984375,
-    6.43896484375,
-    7.44580078125
+    8.96826171875,
+    7.56103515625,
+    7.20849609375
    ]
   },
   {
@@ -15541,55 +15541,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.635408,
-     "cpu_s": 0.619331,
-     "peak_rss_bytes": 216793088,
-     "rss_start_bytes": 187613184,
+     "wall_s": 0.628638,
+     "cpu_s": 0.613478,
+     "peak_rss_bytes": 216924160,
+     "rss_start_bytes": 187826176,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 216793088,
-     "proc_maxrss_before_bytes": 192593920,
+     "proc_maxrss_bytes": 216924160,
+     "proc_maxrss_before_bytes": 192872448,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.043731
+       "seconds": 0.042287
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.057661
+       "seconds": 0.056275
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.002923
+       "seconds": 0.002691
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.456132
+       "seconds": 0.453549
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.018001
+       "seconds": 0.01668
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000579
+       "seconds": 0.00061
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.001578
+       "seconds": 0.002097
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002754
+       "seconds": 0.002565
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.008512
+       "seconds": 0.008504
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.043183
+       "seconds": 0.043006
       }
      ],
      "error": null,
@@ -15600,55 +15600,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.594932,
-     "cpu_s": 0.594623,
-     "peak_rss_bytes": 228130816,
-     "rss_start_bytes": 216760320,
+     "wall_s": 0.600112,
+     "cpu_s": 0.596006,
+     "peak_rss_bytes": 221315072,
+     "rss_start_bytes": 216891392,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 228130816,
-     "proc_maxrss_before_bytes": 216793088,
+     "proc_maxrss_bytes": 221315072,
+     "proc_maxrss_before_bytes": 216924160,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002824
+       "seconds": 0.003007
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.055612
+       "seconds": 0.065145
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.002362
+       "seconds": 0.002335
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.4614
+       "seconds": 0.45744
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.017044
+       "seconds": 0.016779
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000884
+       "seconds": 0.000642
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.000609
+       "seconds": 0.000573
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002598
+       "seconds": 0.002457
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.00849
+       "seconds": 0.008506
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.042754
+       "seconds": 0.042885
       }
      ],
      "error": null,
@@ -15657,55 +15657,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.574228,
-     "cpu_s": 0.574107,
-     "peak_rss_bytes": 230096896,
-     "rss_start_bytes": 228098048,
+     "wall_s": 0.580471,
+     "cpu_s": 0.57597,
+     "peak_rss_bytes": 221380608,
+     "rss_start_bytes": 221282304,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230096896,
-     "proc_maxrss_before_bytes": 228130816,
+     "proc_maxrss_bytes": 221380608,
+     "proc_maxrss_before_bytes": 221315072,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002869
+       "seconds": 0.002719
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.055489
+       "seconds": 0.062917
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.002499
+       "seconds": 0.002527
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.441439
+       "seconds": 0.440144
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.016796
+       "seconds": 0.016894
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000609
+       "seconds": 0.000684
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.000732
+       "seconds": 0.000534
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002492
+       "seconds": 0.002431
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.008487
+       "seconds": 0.008467
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.042481
+       "seconds": 0.042782
       }
      ],
      "error": null,
@@ -15714,55 +15714,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.583639,
-     "cpu_s": 0.58324,
-     "peak_rss_bytes": 230129664,
-     "rss_start_bytes": 230064128,
+     "wall_s": 0.581142,
+     "cpu_s": 0.581212,
+     "peak_rss_bytes": 222003200,
+     "rss_start_bytes": 221347840,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230129664,
-     "proc_maxrss_before_bytes": 230096896,
+     "proc_maxrss_bytes": 222003200,
+     "proc_maxrss_before_bytes": 221380608,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002948
+       "seconds": 0.002799
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.054039
+       "seconds": 0.054068
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.002388
+       "seconds": 0.002383
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.453257
+       "seconds": 0.450336
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.016696
+       "seconds": 0.016658
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.00054
+       "seconds": 0.00069
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.000474
+       "seconds": 0.000574
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002359
+       "seconds": 0.002451
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.008356
+       "seconds": 0.008374
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.042285
+       "seconds": 0.042469
       }
      ],
      "error": null,
@@ -15771,55 +15771,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.606123,
-     "cpu_s": 0.602879,
-     "peak_rss_bytes": 230162432,
-     "rss_start_bytes": 230096896,
+     "wall_s": 0.605715,
+     "cpu_s": 0.597374,
+     "peak_rss_bytes": 222363648,
+     "rss_start_bytes": 221970432,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230162432,
-     "proc_maxrss_before_bytes": 230129664,
+     "proc_maxrss_bytes": 222363648,
+     "proc_maxrss_before_bytes": 222003200,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002675
+       "seconds": 0.002876
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.054386
+       "seconds": 0.054278
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.002439
+       "seconds": 0.002497
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.473925
+       "seconds": 0.474704
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.017231
+       "seconds": 0.016663
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.00066
+       "seconds": 0.00051
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.000731
+       "seconds": 0.000701
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002532
+       "seconds": 0.002527
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.008755
+       "seconds": 0.008365
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.042402
+       "seconds": 0.04227
       }
      ],
      "error": null,
@@ -15828,55 +15828,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.57619,
-     "cpu_s": 0.575777,
-     "peak_rss_bytes": 230211584,
-     "rss_start_bytes": 230129664,
+     "wall_s": 0.57357,
+     "cpu_s": 0.572897,
+     "peak_rss_bytes": 234012672,
+     "rss_start_bytes": 222330880,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230211584,
-     "proc_maxrss_before_bytes": 230162432,
+     "proc_maxrss_bytes": 234012672,
+     "proc_maxrss_before_bytes": 222363648,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.003154
+       "seconds": 0.003064
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.054949
+       "seconds": 0.054835
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.00256
+       "seconds": 0.002489
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.443342
+       "seconds": 0.441198
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.016908
+       "seconds": 0.016871
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000697
+       "seconds": 0.000638
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.000575
+       "seconds": 0.000692
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002459
+       "seconds": 0.002458
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.008482
+       "seconds": 0.008432
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.042713
+       "seconds": 0.042521
       }
      ],
      "error": null,
@@ -15885,55 +15885,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.586229,
-     "cpu_s": 0.58543,
-     "peak_rss_bytes": 230555648,
-     "rss_start_bytes": 230178816,
+     "wall_s": 0.580763,
+     "cpu_s": 0.580653,
+     "peak_rss_bytes": 234340352,
+     "rss_start_bytes": 233979904,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230555648,
-     "proc_maxrss_before_bytes": 230211584,
+     "proc_maxrss_bytes": 234340352,
+     "proc_maxrss_before_bytes": 234012672,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.00277
+       "seconds": 0.002832
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.054186
+       "seconds": 0.053423
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.00231
+       "seconds": 0.002342
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.454507
+       "seconds": 0.449928
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.017115
+       "seconds": 0.016854
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.000765
+       "seconds": 0.000658
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.000501
+       "seconds": 0.000818
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002511
+       "seconds": 0.002588
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.008533
+       "seconds": 0.008364
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.042613
+       "seconds": 0.042637
       }
      ],
      "error": null,
@@ -15942,55 +15942,55 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.591657,
-     "cpu_s": 0.591775,
-     "peak_rss_bytes": 230572032,
-     "rss_start_bytes": 230522880,
+     "wall_s": 0.588442,
+     "cpu_s": 0.588169,
+     "peak_rss_bytes": 234946560,
+     "rss_start_bytes": 234307584,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230572032,
-     "proc_maxrss_before_bytes": 230555648,
+     "proc_maxrss_bytes": 234946560,
+     "proc_maxrss_before_bytes": 234340352,
      "output_bytes": 1620399,
      "output_sha256": "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f",
      "per_file": [
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002685
+       "seconds": 0.002719
       },
       {
        "path": "resources/jpeg.pdf",
-       "seconds": 0.054419
+       "seconds": 0.054277
       },
       {
        "path": "resources/box.pdf",
-       "seconds": 0.002296
+       "seconds": 0.002313
       },
       {
        "path": "resources/issue-301.pdf",
-       "seconds": 0.461018
+       "seconds": 0.457671
       },
       {
        "path": "sample-files/031-png-predictors/png-predictors.pdf",
-       "seconds": 0.016675
+       "seconds": 0.01677
       },
       {
        "path": "resources/imagemagick-ASCII85Decode.pdf",
-       "seconds": 0.00054
+       "seconds": 0.000605
       },
       {
        "path": "sample-files/008-reportlab-inline-image/inline-image.pdf",
-       "seconds": 0.000722
+       "seconds": 0.000487
       },
       {
        "path": "sample-files/019-grayscale-image/grayscale-image.pdf",
-       "seconds": 0.002535
+       "seconds": 0.00236
       },
       {
        "path": "resources/git.pdf",
-       "seconds": 0.008221
+       "seconds": 0.008524
       },
       {
        "path": "sample-files/023-cmyk-image/cmyk-image.pdf",
-       "seconds": 0.042239
+       "seconds": 0.042342
       }
      ],
      "error": null,
@@ -16213,31 +16213,31 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.586229,
-     "p95": 0.602766,
-     "min": 0.574228,
-     "max": 0.606123,
-     "mean": 0.587571
+     "median": 0.581142,
+     "p95": 0.604034,
+     "min": 0.57357,
+     "max": 0.605715,
+     "mean": 0.587174
     },
     "cpu": {
      "count": 7,
-     "median": 0.58543,
-     "p95": 0.600402,
-     "min": 0.574107,
-     "max": 0.602879,
-     "mean": 0.586833
+     "median": 0.581212,
+     "p95": 0.596964,
+     "min": 0.572897,
+     "max": 0.597374,
+     "mean": 0.584612
     },
     "peak_rss_bytes": {
-     "max": 230572032,
-     "median": 230162432
+     "max": 234946560,
+     "median": 222363648
     },
     "rss_start_bytes": {
-     "max": 230522880,
-     "median": 230096896
+     "max": 234307584,
+     "median": 221970432
     },
     "rss_growth_bytes": {
-     "max": 11370496,
-     "median": 81920
+     "max": 11681792,
+     "median": 638976
     },
     "output_bytes_values": [
      1620399
@@ -16247,16 +16247,16 @@
      "527c68f2492812d7e28651cfa8e917b18f44be2c7cc11bbd1d622bfb9b617e6f"
     ],
     "per_file_medians_s": {
-     "resources/imagemagick-images.pdf": 0.002824,
-     "resources/jpeg.pdf": 0.054419,
-     "resources/box.pdf": 0.002388,
-     "resources/issue-301.pdf": 0.454507,
-     "sample-files/031-png-predictors/png-predictors.pdf": 0.016908,
-     "resources/imagemagick-ASCII85Decode.pdf": 0.00066,
-     "sample-files/008-reportlab-inline-image/inline-image.pdf": 0.000609,
-     "sample-files/019-grayscale-image/grayscale-image.pdf": 0.002511,
-     "resources/git.pdf": 0.008487,
-     "sample-files/023-cmyk-image/cmyk-image.pdf": 0.042481
+     "resources/imagemagick-images.pdf": 0.002832,
+     "resources/jpeg.pdf": 0.054278,
+     "resources/box.pdf": 0.002383,
+     "resources/issue-301.pdf": 0.450336,
+     "sample-files/031-png-predictors/png-predictors.pdf": 0.016779,
+     "resources/imagemagick-ASCII85Decode.pdf": 0.000642,
+     "sample-files/008-reportlab-inline-image/inline-image.pdf": 0.000574,
+     "sample-files/019-grayscale-image/grayscale-image.pdf": 0.002457,
+     "resources/git.pdf": 0.008432,
+     "sample-files/023-cmyk-image/cmyk-image.pdf": 0.042521
     },
     "per_file_samples": {
      "resources/imagemagick-images.pdf": 7,
@@ -16273,11 +16273,11 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 4.758,
+   "elapsed_s": 4.749,
    "loadavg_before": [
-    5.07958984375,
-    6.43896484375,
-    7.44580078125
+    8.96826171875,
+    7.56103515625,
+    7.20849609375
    ]
   },
   {
@@ -16315,13 +16315,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.013128,
-     "cpu_s": 0.012408,
-     "peak_rss_bytes": 230588416,
-     "rss_start_bytes": 230539264,
+     "wall_s": 0.012064,
+     "cpu_s": 0.012188,
+     "peak_rss_bytes": 234962944,
+     "rss_start_bytes": 234913792,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230588416,
-     "proc_maxrss_before_bytes": 230572032,
+     "proc_maxrss_bytes": 234962944,
+     "proc_maxrss_before_bytes": 234946560,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16333,13 +16333,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011423,
-     "cpu_s": 0.011525,
-     "peak_rss_bytes": 230588416,
-     "rss_start_bytes": 230555648,
+     "wall_s": 0.011373,
+     "cpu_s": 0.011492,
+     "peak_rss_bytes": 234962944,
+     "rss_start_bytes": 234930176,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230588416,
-     "proc_maxrss_before_bytes": 230588416,
+     "proc_maxrss_bytes": 234962944,
+     "proc_maxrss_before_bytes": 234962944,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16349,13 +16349,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011188,
-     "cpu_s": 0.01126,
-     "peak_rss_bytes": 230604800,
-     "rss_start_bytes": 230555648,
+     "wall_s": 0.011273,
+     "cpu_s": 0.011408,
+     "peak_rss_bytes": 234979328,
+     "rss_start_bytes": 234930176,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230604800,
-     "proc_maxrss_before_bytes": 230588416,
+     "proc_maxrss_bytes": 234979328,
+     "proc_maxrss_before_bytes": 234962944,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16365,13 +16365,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.010989,
-     "cpu_s": 0.011101,
-     "peak_rss_bytes": 230653952,
-     "rss_start_bytes": 230572032,
+     "wall_s": 0.011222,
+     "cpu_s": 0.011281,
+     "peak_rss_bytes": 235012096,
+     "rss_start_bytes": 234946560,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230653952,
-     "proc_maxrss_before_bytes": 230604800,
+     "proc_maxrss_bytes": 235044864,
+     "proc_maxrss_before_bytes": 234979328,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16381,13 +16381,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.014297,
-     "cpu_s": 0.014184,
-     "peak_rss_bytes": 230703104,
-     "rss_start_bytes": 230621184,
+     "wall_s": 0.013843,
+     "cpu_s": 0.013993,
+     "peak_rss_bytes": 235126784,
+     "rss_start_bytes": 235012096,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230703104,
-     "proc_maxrss_before_bytes": 230653952,
+     "proc_maxrss_bytes": 235126784,
+     "proc_maxrss_before_bytes": 235044864,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16397,13 +16397,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.011539,
-     "cpu_s": 0.011676,
-     "peak_rss_bytes": 230735872,
-     "rss_start_bytes": 230670336,
+     "wall_s": 0.0113,
+     "cpu_s": 0.011382,
+     "peak_rss_bytes": 235159552,
+     "rss_start_bytes": 235094016,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230735872,
-     "proc_maxrss_before_bytes": 230703104,
+     "proc_maxrss_bytes": 235159552,
+     "proc_maxrss_before_bytes": 235126784,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16413,13 +16413,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.010885,
-     "cpu_s": 0.010985,
-     "peak_rss_bytes": 230752256,
-     "rss_start_bytes": 230703104,
+     "wall_s": 0.011315,
+     "cpu_s": 0.011412,
+     "peak_rss_bytes": 235175936,
+     "rss_start_bytes": 235126784,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230752256,
-     "proc_maxrss_before_bytes": 230735872,
+     "proc_maxrss_bytes": 235175936,
+     "proc_maxrss_before_bytes": 235159552,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16429,13 +16429,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.01126,
-     "cpu_s": 0.011379,
-     "peak_rss_bytes": 230752256,
-     "rss_start_bytes": 230719488,
+     "wall_s": 0.011172,
+     "cpu_s": 0.011264,
+     "peak_rss_bytes": 235192320,
+     "rss_start_bytes": 235143168,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230801408,
-     "proc_maxrss_before_bytes": 230752256,
+     "proc_maxrss_bytes": 235208704,
+     "proc_maxrss_before_bytes": 235175936,
      "output_bytes": 185316,
      "output_sha256": "14f9f869a1335192360a49275a9e886ec4d4638561487a7cbb3fa7e32ffcb106",
      "per_file": [],
@@ -16462,30 +16462,30 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.01126,
-     "p95": 0.01347,
-     "min": 0.010885,
-     "max": 0.014297,
-     "mean": 0.011654
+     "median": 0.0113,
+     "p95": 0.013102,
+     "min": 0.011172,
+     "max": 0.013843,
+     "mean": 0.011643
     },
     "cpu": {
      "count": 7,
-     "median": 0.011379,
-     "p95": 0.013432,
-     "min": 0.010985,
-     "max": 0.014184,
-     "mean": 0.01173
+     "median": 0.011408,
+     "p95": 0.013243,
+     "min": 0.011264,
+     "max": 0.013993,
+     "mean": 0.011747
     },
     "peak_rss_bytes": {
-     "max": 230752256,
-     "median": 230703104
+     "max": 235192320,
+     "median": 235126784
     },
     "rss_start_bytes": {
-     "max": 230719488,
-     "median": 230621184
+     "max": 235143168,
+     "median": 235012096
     },
     "rss_growth_bytes": {
-     "max": 81920,
+     "max": 114688,
      "median": 49152
     },
     "output_bytes_values": [
@@ -16500,11 +16500,11 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 0.099,
+   "elapsed_s": 0.098,
    "loadavg_before": [
-    5.07275390625,
-    6.4150390625,
-    7.43115234375
+    8.810546875,
+    7.55126953125,
+    7.20703125
    ]
   },
   {
@@ -16556,13 +16556,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.018729,
-     "cpu_s": 0.017922,
-     "peak_rss_bytes": 230801408,
-     "rss_start_bytes": 230768640,
+     "wall_s": 0.017668,
+     "cpu_s": 0.017779,
+     "peak_rss_bytes": 235208704,
+     "rss_start_bytes": 235175936,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230801408,
-     "proc_maxrss_before_bytes": 230801408,
+     "proc_maxrss_bytes": 235208704,
+     "proc_maxrss_before_bytes": 235208704,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16574,13 +16574,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.015138,
-     "cpu_s": 0.015252,
-     "peak_rss_bytes": 230801408,
-     "rss_start_bytes": 230768640,
+     "wall_s": 0.014617,
+     "cpu_s": 0.014727,
+     "peak_rss_bytes": 235241472,
+     "rss_start_bytes": 235175936,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230801408,
-     "proc_maxrss_before_bytes": 230801408,
+     "proc_maxrss_bytes": 235241472,
+     "proc_maxrss_before_bytes": 235208704,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16590,13 +16590,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.014526,
-     "cpu_s": 0.014621,
-     "peak_rss_bytes": 230801408,
-     "rss_start_bytes": 230768640,
+     "wall_s": 0.014431,
+     "cpu_s": 0.014561,
+     "peak_rss_bytes": 235290624,
+     "rss_start_bytes": 235208704,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230817792,
-     "proc_maxrss_before_bytes": 230801408,
+     "proc_maxrss_bytes": 235339776,
+     "proc_maxrss_before_bytes": 235241472,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16606,13 +16606,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.018164,
-     "cpu_s": 0.018319,
-     "peak_rss_bytes": 230817792,
-     "rss_start_bytes": 230785024,
+     "wall_s": 0.017324,
+     "cpu_s": 0.017446,
+     "peak_rss_bytes": 235339776,
+     "rss_start_bytes": 235307008,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230817792,
-     "proc_maxrss_before_bytes": 230817792,
+     "proc_maxrss_bytes": 235339776,
+     "proc_maxrss_before_bytes": 235339776,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16622,13 +16622,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.014356,
-     "cpu_s": 0.014495,
-     "peak_rss_bytes": 230817792,
-     "rss_start_bytes": 230785024,
+     "wall_s": 0.015103,
+     "cpu_s": 0.015253,
+     "peak_rss_bytes": 235339776,
+     "rss_start_bytes": 235307008,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230817792,
-     "proc_maxrss_before_bytes": 230817792,
+     "proc_maxrss_bytes": 235339776,
+     "proc_maxrss_before_bytes": 235339776,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16638,13 +16638,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.016784,
-     "cpu_s": 0.016908,
-     "peak_rss_bytes": 230850560,
-     "rss_start_bytes": 230785024,
+     "wall_s": 0.016783,
+     "cpu_s": 0.016864,
+     "peak_rss_bytes": 235421696,
+     "rss_start_bytes": 235307008,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230866944,
-     "proc_maxrss_before_bytes": 230817792,
+     "proc_maxrss_bytes": 235421696,
+     "proc_maxrss_before_bytes": 235339776,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16654,13 +16654,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.015319,
-     "cpu_s": 0.015371,
-     "peak_rss_bytes": 230866944,
-     "rss_start_bytes": 230834176,
+     "wall_s": 0.014653,
+     "cpu_s": 0.014766,
+     "peak_rss_bytes": 235421696,
+     "rss_start_bytes": 235388928,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230883328,
-     "proc_maxrss_before_bytes": 230866944,
+     "proc_maxrss_bytes": 235421696,
+     "proc_maxrss_before_bytes": 235421696,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16670,13 +16670,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.014609,
-     "cpu_s": 0.014744,
-     "peak_rss_bytes": 230883328,
-     "rss_start_bytes": 230850560,
+     "wall_s": 0.014159,
+     "cpu_s": 0.014239,
+     "peak_rss_bytes": 235470848,
+     "rss_start_bytes": 235388928,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230916096,
-     "proc_maxrss_before_bytes": 230883328,
+     "proc_maxrss_bytes": 235520000,
+     "proc_maxrss_before_bytes": 235421696,
      "output_bytes": 245923,
      "output_sha256": "98412243edeaaa0fe8612c8c1079ef93b37fea2521383c00a6e251db0b2cd716",
      "per_file": [],
@@ -16703,31 +16703,31 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.015138,
-     "p95": 0.01775,
-     "min": 0.014356,
-     "max": 0.018164,
-     "mean": 0.015557
+     "median": 0.014653,
+     "p95": 0.017162,
+     "min": 0.014159,
+     "max": 0.017324,
+     "mean": 0.015296
     },
     "cpu": {
      "count": 7,
-     "median": 0.015252,
-     "p95": 0.017896,
-     "min": 0.014495,
-     "max": 0.018319,
-     "mean": 0.015673
+     "median": 0.014766,
+     "p95": 0.017271,
+     "min": 0.014239,
+     "max": 0.017446,
+     "mean": 0.015408
     },
     "peak_rss_bytes": {
-     "max": 230883328,
-     "median": 230817792
+     "max": 235470848,
+     "median": 235339776
     },
     "rss_start_bytes": {
-     "max": 230850560,
-     "median": 230785024
+     "max": 235388928,
+     "median": 235307008
     },
     "rss_growth_bytes": {
-     "max": 65536,
-     "median": 32768
+     "max": 114688,
+     "median": 65536
     },
     "output_bytes_values": [
      245923
@@ -16741,11 +16741,11 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 0.133,
+   "elapsed_s": 0.13,
    "loadavg_before": [
-    5.07275390625,
-    6.4150390625,
-    7.43115234375
+    8.810546875,
+    7.55126953125,
+    7.20703125
    ]
   },
   {
@@ -16803,13 +16803,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.024807,
-     "cpu_s": 0.022629,
-     "peak_rss_bytes": 230965248,
-     "rss_start_bytes": 230883328,
+     "wall_s": 0.024564,
+     "cpu_s": 0.022818,
+     "peak_rss_bytes": 235552768,
+     "rss_start_bytes": 235487232,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230965248,
-     "proc_maxrss_before_bytes": 230916096,
+     "proc_maxrss_bytes": 235552768,
+     "proc_maxrss_before_bytes": 235520000,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16821,13 +16821,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.019724,
-     "cpu_s": 0.01984,
-     "peak_rss_bytes": 230998016,
-     "rss_start_bytes": 230932480,
+     "wall_s": 0.019192,
+     "cpu_s": 0.019257,
+     "peak_rss_bytes": 235552768,
+     "rss_start_bytes": 235520000,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 230998016,
-     "proc_maxrss_before_bytes": 230965248,
+     "proc_maxrss_bytes": 235552768,
+     "proc_maxrss_before_bytes": 235552768,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16837,13 +16837,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.021482,
-     "cpu_s": 0.021621,
-     "peak_rss_bytes": 231129088,
-     "rss_start_bytes": 230965248,
+     "wall_s": 0.02104,
+     "cpu_s": 0.021187,
+     "peak_rss_bytes": 235765760,
+     "rss_start_bytes": 235536384,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 231129088,
-     "proc_maxrss_before_bytes": 230998016,
+     "proc_maxrss_bytes": 235765760,
+     "proc_maxrss_before_bytes": 235552768,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16853,13 +16853,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.018615,
-     "cpu_s": 0.018745,
-     "peak_rss_bytes": 231194624,
-     "rss_start_bytes": 231096320,
+     "wall_s": 0.019247,
+     "cpu_s": 0.019377,
+     "peak_rss_bytes": 235880448,
+     "rss_start_bytes": 235732992,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 231194624,
-     "proc_maxrss_before_bytes": 231129088,
+     "proc_maxrss_bytes": 235880448,
+     "proc_maxrss_before_bytes": 235765760,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16869,13 +16869,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.021216,
-     "cpu_s": 0.021335,
-     "peak_rss_bytes": 231374848,
-     "rss_start_bytes": 231161856,
+     "wall_s": 0.020838,
+     "cpu_s": 0.020978,
+     "peak_rss_bytes": 236142592,
+     "rss_start_bytes": 235847680,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 231374848,
-     "proc_maxrss_before_bytes": 231194624,
+     "proc_maxrss_bytes": 236142592,
+     "proc_maxrss_before_bytes": 235880448,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16885,13 +16885,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.019333,
-     "cpu_s": 0.019457,
-     "peak_rss_bytes": 231456768,
-     "rss_start_bytes": 231342080,
+     "wall_s": 0.019242,
+     "cpu_s": 0.019346,
+     "peak_rss_bytes": 236273664,
+     "rss_start_bytes": 236109824,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 231489536,
-     "proc_maxrss_before_bytes": 231374848,
+     "proc_maxrss_bytes": 236290048,
+     "proc_maxrss_before_bytes": 236142592,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16901,13 +16901,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.02085,
-     "cpu_s": 0.021008,
-     "peak_rss_bytes": 231653376,
-     "rss_start_bytes": 231456768,
+     "wall_s": 0.020782,
+     "cpu_s": 0.02095,
+     "peak_rss_bytes": 236486656,
+     "rss_start_bytes": 236257280,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 231653376,
-     "proc_maxrss_before_bytes": 231489536,
+     "proc_maxrss_bytes": 236486656,
+     "proc_maxrss_before_bytes": 236290048,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16917,13 +16917,13 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.019312,
-     "cpu_s": 0.019405,
-     "peak_rss_bytes": 231718912,
-     "rss_start_bytes": 231620608,
+     "wall_s": 0.019424,
+     "cpu_s": 0.01953,
+     "peak_rss_bytes": 236552192,
+     "rss_start_bytes": 236453888,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 231735296,
-     "proc_maxrss_before_bytes": 231653376,
+     "proc_maxrss_bytes": 236568576,
+     "proc_maxrss_before_bytes": 236486656,
      "output_bytes": 298006,
      "output_sha256": "1ba70bae93b510d96abe8082d6b240c1318a90958f2215464cfa06a83ad6b9a1",
      "per_file": [],
@@ -16955,31 +16955,31 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.019724,
-     "p95": 0.021402,
-     "min": 0.018615,
-     "max": 0.021482,
-     "mean": 0.020076
+     "median": 0.019424,
+     "p95": 0.020979,
+     "min": 0.019192,
+     "max": 0.02104,
+     "mean": 0.019966
     },
     "cpu": {
      "count": 7,
-     "median": 0.01984,
-     "p95": 0.021535,
-     "min": 0.018745,
-     "max": 0.021621,
-     "mean": 0.020202
+     "median": 0.01953,
+     "p95": 0.021124,
+     "min": 0.019257,
+     "max": 0.021187,
+     "mean": 0.020089
     },
     "peak_rss_bytes": {
-     "max": 231718912,
-     "median": 231374848
+     "max": 236552192,
+     "median": 236142592
     },
     "rss_start_bytes": {
-     "max": 231620608,
-     "median": 231161856
+     "max": 236453888,
+     "median": 235847680
     },
     "rss_growth_bytes": {
-     "max": 212992,
-     "median": 114688
+     "max": 294912,
+     "median": 163840
     },
     "output_bytes_values": [
      298006
@@ -16993,11 +16993,11 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 0.171,
+   "elapsed_s": 0.17,
    "loadavg_before": [
-    5.07275390625,
-    6.4150390625,
-    7.43115234375
+    8.810546875,
+    7.55126953125,
+    7.20703125
    ]
   },
   {
@@ -17045,43 +17045,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.403555,
-     "cpu_s": 0.391927,
-     "peak_rss_bytes": 236650496,
-     "rss_start_bytes": 231702528,
+     "wall_s": 0.381235,
+     "cpu_s": 0.381071,
+     "peak_rss_bytes": 241664000,
+     "rss_start_bytes": 236535808,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 236650496,
-     "proc_maxrss_before_bytes": 231735296,
+     "proc_maxrss_bytes": 241664000,
+     "proc_maxrss_before_bytes": 236568576,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.243562
+       "seconds": 0.24113
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.020455
+       "seconds": 0.020126
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.005741
+       "seconds": 0.005356
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004184
+       "seconds": 0.004162
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002804
+       "seconds": 0.00253
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002625
+       "seconds": 0.002578
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.01387
+       "seconds": 0.014224
       }
      ],
      "error": null,
@@ -17092,43 +17092,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.413151,
-     "cpu_s": 0.412902,
-     "peak_rss_bytes": 245743616,
-     "rss_start_bytes": 236617728,
+     "wall_s": 0.407996,
+     "cpu_s": 0.407849,
+     "peak_rss_bytes": 252149760,
+     "rss_start_bytes": 241631232,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 245743616,
-     "proc_maxrss_before_bytes": 236650496,
+     "proc_maxrss_bytes": 252149760,
+     "proc_maxrss_before_bytes": 241664000,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.270469
+       "seconds": 0.267008
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.020766
+       "seconds": 0.020845
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.00535
+       "seconds": 0.005637
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004316
+       "seconds": 0.004073
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002941
+       "seconds": 0.002589
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002648
+       "seconds": 0.002769
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.014547
+       "seconds": 0.013853
       }
      ],
      "error": null,
@@ -17137,43 +17137,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.364538,
-     "cpu_s": 0.364461,
-     "peak_rss_bytes": 258490368,
-     "rss_start_bytes": 245710848,
+     "wall_s": 0.362197,
+     "cpu_s": 0.361945,
+     "peak_rss_bytes": 265715712,
+     "rss_start_bytes": 252116992,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 259538944,
-     "proc_maxrss_before_bytes": 245743616,
+     "proc_maxrss_bytes": 266059776,
+     "proc_maxrss_before_bytes": 252149760,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.222062
+       "seconds": 0.221213
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.020992
+       "seconds": 0.020317
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.005488
+       "seconds": 0.005767
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004234
+       "seconds": 0.004218
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.00273
+       "seconds": 0.002598
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002921
+       "seconds": 0.002843
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.014231
+       "seconds": 0.014377
       }
      ],
      "error": null,
@@ -17182,43 +17182,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.449127,
-     "cpu_s": 0.448929,
-     "peak_rss_bytes": 272564224,
-     "rss_start_bytes": 259506176,
+     "wall_s": 0.447384,
+     "cpu_s": 0.447002,
+     "peak_rss_bytes": 279461888,
+     "rss_start_bytes": 266027008,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 272564224,
-     "proc_maxrss_before_bytes": 259538944,
+     "proc_maxrss_bytes": 279461888,
+     "proc_maxrss_before_bytes": 266059776,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.306468
+       "seconds": 0.303365
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.021797
+       "seconds": 0.022392
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.005592
+       "seconds": 0.005627
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004181
+       "seconds": 0.004259
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002708
+       "seconds": 0.002681
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002894
+       "seconds": 0.00287
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.014233
+       "seconds": 0.014419
       }
      ],
      "error": null,
@@ -17227,43 +17227,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.416912,
-     "cpu_s": 0.416669,
-     "peak_rss_bytes": 276725760,
-     "rss_start_bytes": 272531456,
+     "wall_s": 0.416003,
+     "cpu_s": 0.415887,
+     "peak_rss_bytes": 283623424,
+     "rss_start_bytes": 279429120,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 276725760,
-     "proc_maxrss_before_bytes": 272564224,
+     "proc_maxrss_bytes": 283623424,
+     "proc_maxrss_before_bytes": 279461888,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.219195
+       "seconds": 0.218768
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.076179
+       "seconds": 0.075665
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.00581
+       "seconds": 0.005807
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004324
+       "seconds": 0.004315
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002524
+       "seconds": 0.002869
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002865
+       "seconds": 0.002653
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.014561
+       "seconds": 0.014457
       }
      ],
      "error": null,
@@ -17272,43 +17272,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.363545,
-     "cpu_s": 0.363204,
-     "peak_rss_bytes": 282951680,
-     "rss_start_bytes": 276692992,
+     "wall_s": 0.362447,
+     "cpu_s": 0.362374,
+     "peak_rss_bytes": 288800768,
+     "rss_start_bytes": 282542080,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 282951680,
-     "proc_maxrss_before_bytes": 276725760,
+     "proc_maxrss_bytes": 288800768,
+     "proc_maxrss_before_bytes": 283623424,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.221829
+       "seconds": 0.221091
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.02144
+       "seconds": 0.021489
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.005384
+       "seconds": 0.005744
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.003905
+       "seconds": 0.004264
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002791
+       "seconds": 0.002528
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002598
+       "seconds": 0.002777
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.014486
+       "seconds": 0.014089
       }
      ],
      "error": null,
@@ -17317,43 +17317,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.47307,
-     "cpu_s": 0.472767,
-     "peak_rss_bytes": 296763392,
-     "rss_start_bytes": 282918912,
+     "wall_s": 0.469082,
+     "cpu_s": 0.468657,
+     "peak_rss_bytes": 303677440,
+     "rss_start_bytes": 288768000,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 296763392,
-     "proc_maxrss_before_bytes": 282951680,
+     "proc_maxrss_bytes": 303677440,
+     "proc_maxrss_before_bytes": 288800768,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.33061
+       "seconds": 0.326288
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.022138
+       "seconds": 0.021465
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.005684
+       "seconds": 0.005265
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004159
+       "seconds": 0.004306
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002512
+       "seconds": 0.002576
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002722
+       "seconds": 0.002895
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.014262
+       "seconds": 0.014856
       }
      ],
      "error": null,
@@ -17362,43 +17362,43 @@
     {
      "success": true,
      "timeout": false,
-     "wall_s": 0.420211,
-     "cpu_s": 0.419573,
-     "peak_rss_bytes": 303005696,
-     "rss_start_bytes": 296730624,
+     "wall_s": 0.421367,
+     "cpu_s": 0.420947,
+     "peak_rss_bytes": 309919744,
+     "rss_start_bytes": 303644672,
      "rss_source": "sampled",
-     "proc_maxrss_bytes": 303005696,
-     "proc_maxrss_before_bytes": 296763392,
+     "proc_maxrss_bytes": 309919744,
+     "proc_maxrss_before_bytes": 303677440,
      "output_bytes": 6194871,
      "output_sha256": "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167",
      "per_file": [
       {
        "path": "resources/issue-604.pdf",
-       "seconds": 0.221401
+       "seconds": 0.221452
       },
       {
        "path": "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf",
-       "seconds": 0.021754
+       "seconds": 0.021359
       },
       {
        "path": "resources/side-by-side-subfig.pdf",
-       "seconds": 0.005541
+       "seconds": 0.005573
       },
       {
        "path": "resources/crazyones.pdf",
-       "seconds": 0.004175
+       "seconds": 0.004167
       },
       {
        "path": "resources/multilang.pdf",
-       "seconds": 0.002514
+       "seconds": 0.002738
       },
       {
        "path": "resources/imagemagick-images.pdf",
-       "seconds": 0.002715
+       "seconds": 0.002856
       },
       {
        "path": "resources/pdflatex-outline.pdf",
-       "seconds": 0.014387
+       "seconds": 0.014581
       }
      ],
      "error": null,
@@ -17455,31 +17455,31 @@
     "n_timeout": 0,
     "wall": {
      "count": 7,
-     "median": 0.416912,
-     "p95": 0.465887,
-     "min": 0.363545,
-     "max": 0.47307,
-     "mean": 0.414365
+     "median": 0.416003,
+     "p95": 0.462573,
+     "min": 0.362197,
+     "max": 0.469082,
+     "mean": 0.412354
     },
     "cpu": {
      "count": 7,
-     "median": 0.416669,
-     "p95": 0.465616,
-     "min": 0.363204,
-     "max": 0.472767,
-     "mean": 0.414072
+     "median": 0.415887,
+     "p95": 0.46216,
+     "min": 0.361945,
+     "max": 0.468657,
+     "mean": 0.412094
     },
     "peak_rss_bytes": {
-     "max": 303005696,
-     "median": 276725760
+     "max": 309919744,
+     "median": 283623424
     },
     "rss_start_bytes": {
-     "max": 296730624,
-     "median": 272531456
+     "max": 303644672,
+     "median": 279429120
     },
     "rss_growth_bytes": {
-     "max": 13844480,
-     "median": 9125888
+     "max": 14909440,
+     "median": 10518528
     },
     "output_bytes_values": [
      6194871
@@ -17489,13 +17489,13 @@
      "843007b176d5236844c066275adbea97b3f6da0a7d4f460618b2a82166423167"
     ],
     "per_file_medians_s": {
-     "resources/issue-604.pdf": 0.222062,
-     "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf": 0.021754,
-     "resources/side-by-side-subfig.pdf": 0.005541,
-     "resources/crazyones.pdf": 0.004181,
-     "resources/multilang.pdf": 0.002708,
-     "resources/imagemagick-images.pdf": 0.002722,
-     "resources/pdflatex-outline.pdf": 0.014387
+     "resources/issue-604.pdf": 0.221452,
+     "resources/GeoBase_NHNC1_Data_Model_UML_EN.pdf": 0.021465,
+     "resources/side-by-side-subfig.pdf": 0.005637,
+     "resources/crazyones.pdf": 0.004259,
+     "resources/multilang.pdf": 0.002598,
+     "resources/imagemagick-images.pdf": 0.002843,
+     "resources/pdflatex-outline.pdf": 0.014419
     },
     "per_file_samples": {
      "resources/issue-604.pdf": 7,
@@ -17509,16 +17509,16 @@
     "failure_indices": [],
     "failures": []
    },
-   "elapsed_s": 3.33,
+   "elapsed_s": 3.293,
    "loadavg_before": [
-    5.07275390625,
-    6.4150390625,
-    7.43115234375
+    8.42529296875,
+    7.4921875,
+    7.18798828125
    ]
   }
  ],
  "machine_state_shell": {
-  "uptime_before": "11:34  up 11:44, 2 users, load averages: 5.08 6.44 7.45",
-  "uptime_after": "11:34  up 11:44, 2 users, load averages: 4.91 6.36 7.40"
+  "uptime_before": "11:49  up 11:59, 2 users, load averages: 8.97 7.56 7.21",
+  "uptime_after": "11:49  up 11:59, 2 users, load averages: 8.43 7.49 7.19"
  }
 }

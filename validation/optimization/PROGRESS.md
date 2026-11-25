@@ -390,3 +390,25 @@ W8 at 387 ms vs 417 ms reference in one pass.)
 Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
 200/200 IDENTICAL.
 
+## Round 10 attempts (lead, 2026-11-25): mostly neutral
+
+- C-level `set_item`/`gget` for writer dictionaries and a `PyOnceLock` class
+  cache for NumberObject/BooleanObject/TextStringObject/ByteStringObject:
+  no measurable change (W5/W6/W7 within noise).
+- Skipping content-stream operators that no text handler covers: no gain for
+  W3 (the W3 corpus is text-heavy) and reverted to keep the loop simple.
+- Cached Rust `character_map` (bounded 32-font cache keyed by dict address,
+  validated by length) + Rust-side LTR display-string assembly: W3 225 → 218 ms
+  (within noise; kept because it removes N Python string creations per Tj and is
+  covered by the cmap/text tests).
+
+Final `run_perf.sh --repeat 7`: W1 1.11×, W2 1.26×, W3 0.79×, W4 1.85×,
+W5 0.67×, W6 0.70×, W7 0.64×, W8 0.89×.  Gates: A1 MATCH, differential
+IDENTICAL, roundtrip/security/fuzz PASS.
+
+**Conclusion for the remaining gap:** W3 is limited by per-operator Python
+attribute traffic inside the text state machine (22 getattr/setattr per
+positioning operator) and W5–W7 by the clone Python-frame count pinned by the
+upstream tests; both need structural changes (native typed state / cheaper PyO3
+trampolines), not further micro-optimisation.
+
