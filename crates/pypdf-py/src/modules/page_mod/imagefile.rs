@@ -36,7 +36,7 @@ pub fn page_imagefile_replace<'py>(
         ));
     }
     // Upstream late imports: `PdfReader`, `_xobj_to_image`.
-    let reader_class = py.import("pypdf._reader")?.getattr("PdfReader")?;
+    let reader_class = crate::pyutil::cached_module(py, "pypdf._reader")?.getattr("PdfReader")?;
     let xobj_to_image = py
         .import("pypdf.generic._image_xobject")?
         .getattr("_xobj_to_image")?;

@@ -16,7 +16,7 @@ pub const SOURCE: &str = "pypdf._page";
 
 /// The hand-written shim module (`python/pypdf/_page.py`).
 pub fn shim(py: Python<'_>) -> PyResult<Bound<'_, PyModule>> {
-    py.import("pypdf._page")
+    crate::pyutil::cached_module(py, "pypdf._page")
 }
 
 /// Fetch a module-global from the shim.  Upstream resolves these names through
@@ -26,7 +26,7 @@ pub fn globals<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> 
 }
 
 pub fn generic<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic")
+    crate::pyutil::cached_module(py, "pypdf.generic")
 }
 
 /// Fetch a class from `pypdf.generic` (the same objects the shim imports).
@@ -35,7 +35,7 @@ pub fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, Py
 }
 
 pub fn constants<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.constants")
+    crate::pyutil::cached_module(py, "pypdf.constants")
 }
 
 /// `pypdf.constants.<class>.<name>`.
@@ -53,7 +53,7 @@ pub fn constants_str(py: Python<'_>, class_name: &str, name: &str) -> PyResult<S
 }
 
 pub fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 /// `operator.<name>` (binary operator without short-circuit surprises).

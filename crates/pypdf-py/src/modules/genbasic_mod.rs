@@ -53,7 +53,7 @@ const DATA_STRUCTURES_MODULE: &str = "pypdf.generic._data_structures";
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn module<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyModule>> {

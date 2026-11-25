@@ -29,7 +29,7 @@ use pyo3::types::{PyAny, PyBytes, PyTuple};
 
 /// `tuple[...]` generic alias, exactly like the upstream annotations.
 fn tuple_alias<'py>(py: Python<'py>, items: Vec<Bound<'py, PyAny>>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("builtins")?
+    crate::pyutil::cached_module(py, "builtins")?
         .getattr("tuple")?
         .get_item(PyTuple::new(py, items)?)
 }
@@ -41,7 +41,7 @@ const AUTHOR_EMAIL: &str = "biziqe@mathieu.fenniak.net";
 
 // @pypdf: pypdf._utils.TransformationMatrixType
 fn transformation_matrix_type(py: Python<'_>) -> PyResult<Py<PyAny>> {
-    let float_type = py.import("builtins")?.getattr("float")?;
+    let float_type = crate::pyutil::cached_module(py, "builtins")?.getattr("float")?;
     let triple = tuple_alias(
         py,
         vec![float_type.clone(), float_type.clone(), float_type.clone()],
@@ -51,7 +51,7 @@ fn transformation_matrix_type(py: Python<'_>) -> PyResult<Py<PyAny>> {
 
 // @pypdf: pypdf._utils.CompressedTransformationMatrix
 fn compressed_transformation_matrix(py: Python<'_>) -> PyResult<Py<PyAny>> {
-    let float_type = py.import("builtins")?.getattr("float")?;
+    let float_type = crate::pyutil::cached_module(py, "builtins")?.getattr("float")?;
     let items: Vec<Bound<'_, PyAny>> = (0..6).map(|_| float_type.clone()).collect();
     Ok(tuple_alias(py, items)?.unbind())
 }
@@ -65,13 +65,13 @@ fn stream_type(py: Python<'_>) -> PyResult<Bound<'_, PyAny>> {
 // @pypdf: pypdf._utils.BinaryStreamType
 fn binary_stream_type(py: Python<'_>) -> PyResult<Bound<'_, PyAny>> {
     let typing = py.import("typing")?;
-    let bytes_type = py.import("builtins")?.getattr("bytes")?;
+    let bytes_type = crate::pyutil::cached_module(py, "builtins")?.getattr("bytes")?;
     typing.getattr("IO")?.get_item(bytes_type)
 }
 
 // @pypdf: pypdf._utils.StrByteType
 fn str_byte_type(py: Python<'_>) -> PyResult<Py<PyAny>> {
-    let str_type = py.import("builtins")?.getattr("str")?;
+    let str_type = crate::pyutil::cached_module(py, "builtins")?.getattr("str")?;
     let stream = stream_type(py)?;
     // `str | StreamType` via the `|` operator (falls back to `StreamType.__ror__`).
     Ok(py

@@ -235,7 +235,7 @@ fn doccommon_attachment_list<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let embedded_file = py.import("pypdf.generic._files")?.getattr("EmbeddedFile")?;
+    let embedded_file = crate::pyutil::cached_module(py, "pypdf.generic._files")?.getattr("EmbeddedFile")?;
     let kwargs = PyDict::new(py);
     kwargs.set_item("strict", slf.getattr("strict")?)?;
     embedded_file

@@ -341,7 +341,7 @@ pub(super) fn get_stream_data(py: Python<'_>, stream: &Bound<'_, PyAny>) -> PyRe
     if stream.hasattr("getbuffer")? {
         let buffer_object = stream.call_method0("getbuffer")?;
         let view = buffer_object.call_method0("__enter__")?;
-        let data = py.import("builtins")?.getattr("bytes")?.call1((view,))?;
+        let data = crate::pyutil::cached_module(py, "builtins")?.getattr("bytes")?.call1((view,))?;
         buffer_object.call_method1("__exit__", (py.None(), py.None(), py.None()))?;
         return Ok(data.unbind());
     }

@@ -38,11 +38,11 @@ const MAXIMUM_PAGE_LABEL_LENGTH: usize = 512;
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf._page_labels")
+    crate::pyutil::cached_module(py, "pypdf._page_labels")
 }
 
 /// Fetch a name from the module's Python shim (upstream references module
@@ -52,7 +52,7 @@ fn shim_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 }
 
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 fn py_int<'py>(py: Python<'py>, value: i64) -> Bound<'py, PyAny> {

@@ -16,7 +16,7 @@ use crate::pyutil;
 /// where `stacklevel` is already expressed in *visible* Python frames.
 fn warn_deprecation(py: Python<'_>, message: &Bound<'_, PyAny>, stacklevel: i64) -> PyResult<()> {
     let warnings = py.import("warnings")?;
-    let category = py.import("builtins")?.getattr("DeprecationWarning")?;
+    let category = crate::pyutil::cached_module(py, "builtins")?.getattr("DeprecationWarning")?;
     let kwargs = PyDict::new(py);
     kwargs.set_item("stacklevel", stacklevel.max(1))?;
     warnings.call_method("warn", (message, category), Some(&kwargs))?;

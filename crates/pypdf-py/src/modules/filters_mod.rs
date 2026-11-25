@@ -47,11 +47,11 @@ const WHITESPACES_BYTES: [u8; 6] = [0x00, b'\t', b'\n', 0x0c, b'\r', b' '];
 // ---------------------------------------------------------------------------
 
 fn filters_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.filters")
+    crate::pyutil::cached_module(py, "pypdf.filters")
 }
 
 fn generic_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic")
+    crate::pyutil::cached_module(py, "pypdf.generic")
 }
 
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
@@ -68,7 +68,7 @@ fn builtin<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 
 /// `pypdf._configuration.get_configuration()`.
 fn configuration<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._configuration")?
+    crate::pyutil::cached_module(py, "pypdf._configuration")?
         .getattr("get_configuration")?
         .call0()
 }
@@ -119,7 +119,7 @@ fn py_slice_i64<'py>(
             None => Ok(py.None().into_bound(py)),
         }
     };
-    py.import("builtins")?
+    crate::pyutil::cached_module(py, "builtins")?
         .getattr("slice")?
         .call1((to_obj(start)?, to_obj(stop)?, py.None()))
 }
@@ -769,7 +769,7 @@ fn filters_lzw_decoder_decode<'py>(
     let max_output_length = config_value(py, "lzw_maximum_output_length")?;
     let kwargs = PyDict::new(py);
     kwargs.set_item("max_output_length", max_output_length)?;
-    let codecs = py.import("pypdf._codecs._codecs")?;
+    let codecs = crate::pyutil::cached_module(py, "pypdf._codecs._codecs")?;
     let codec = codecs.getattr("LzwCodec")?.call((), Some(&kwargs))?;
     Ok(codec.call_method1("decode", (data,))?.unbind())
 }
@@ -796,7 +796,7 @@ fn filters_ascii85_decode<'py>(py: Python<'py>, data: &Bound<'py, PyAny>) -> PyR
     } else {
         data.clone()
     };
-    let whitespaces = py.import("pypdf._utils")?.getattr("WHITESPACES_AS_BYTES")?;
+    let whitespaces = crate::pyutil::cached_module(py, "pypdf._utils")?.getattr("WHITESPACES_AS_BYTES")?;
 
     let mut data = data.call_method1("strip", (&whitespaces,))?;
     let length = data.len()?;
@@ -1329,7 +1329,7 @@ fn filters_jbig2_is_binary_compatible(py: Python<'_>) -> PyResult<bool> {
     let parts = stdout.call_method("split", (" ",), Some(&split_kwargs))?;
     let version = parts.get_item(1)?;
 
-    let version_class = py.import("pypdf._utils")?.getattr("Version")?;
+    let version_class = crate::pyutil::cached_module(py, "pypdf._utils")?.getattr("Version")?;
     let parsed = version_class.call1((version,))?;
     let minimum = version_class.call1(("0.19",))?;
     parsed.ge(&minimum)

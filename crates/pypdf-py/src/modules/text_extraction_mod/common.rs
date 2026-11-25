@@ -39,7 +39,7 @@ pub fn init_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>
 }
 
 pub fn generic<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic")
+    crate::pyutil::cached_module(py, "pypdf.generic")
 }
 
 pub fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
@@ -47,11 +47,11 @@ pub fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, Py
 }
 
 pub fn font_class<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic._font")?.getattr("Font")
+    crate::pyutil::cached_module(py, "pypdf.generic._font")?.getattr("Font")
 }
 
 pub fn font_descriptor_class<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic._font")?.getattr("FontDescriptor")
+    crate::pyutil::cached_module(py, "pypdf.generic._font")?.getattr("FontDescriptor")
 }
 
 pub fn orientation_error<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
@@ -411,7 +411,7 @@ pub fn bool_kwargs<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyDi
 
 /// `mult` as resolved from the shim module globals (upstream `from .. import mult`).
 pub fn manager_mult<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._text_extraction._layout_mode._text_state_manager")?
+    crate::pyutil::cached_module(py, "pypdf._text_extraction._layout_mode._text_state_manager")?
         .getattr("mult")
 }
 

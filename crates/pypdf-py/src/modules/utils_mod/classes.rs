@@ -155,7 +155,7 @@ fn parse_version(py: Python<'_>, version_str: &Bound<'_, PyAny>) -> PyResult<Py<
     let pattern = py.get_type::<Version>().getattr("COMPONENT_PATTERN")?;
     let components = version_str.call_method1("split", (".",))?;
     let parsed = PyList::empty(py);
-    let int_type = py.import("builtins")?.getattr("int")?;
+    let int_type = crate::pyutil::cached_module(py, "builtins")?.getattr("int")?;
     for component in components.try_iter()? {
         let component = component?;
         let matched = pattern.call_method1("match", (component.clone(),))?;

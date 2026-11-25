@@ -85,7 +85,7 @@ pub(super) fn format_iso8824_date(py: Python<'_>, dt: &Bound<'_, PyAny>) -> PyRe
         if offset.is_none() {
             return Err(PyAssertionError::new_err(()));
         }
-        let builtins = py.import("builtins")?;
+        let builtins = crate::pyutil::cached_module(py, "builtins")?;
         let total_seconds = builtins
             .getattr("int")?
             .call1((offset.call_method0("total_seconds")?,))?;

@@ -15,7 +15,7 @@ use super::callables::{GroupKey, SortByTx, SortKey, TjDefault};
 use super::common;
 
 fn layout_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, pyo3::types::PyModule>> {
-    py.import("pypdf._text_extraction._layout_mode._fixed_width_page")
+    crate::pyutil::cached_module(py, "pypdf._text_extraction._layout_mode._fixed_width_page")
 }
 
 fn module_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {

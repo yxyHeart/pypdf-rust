@@ -75,7 +75,7 @@ fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf._doc_common")
+    crate::pyutil::cached_module(py, "pypdf._doc_common")
 }
 
 /// Fetch a global (class, sentinel, ...) from this module's shim: upstream code
@@ -91,20 +91,20 @@ fn shim_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 /// Fetch a class/function re-exported by `pypdf.generic` (upstream's
 /// `from .generic import ...`).
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 fn utils_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._utils")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf._utils")?.getattr(name)
 }
 
 fn constants_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.constants")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.constants")?.getattr(name)
 }
 
 /// `from ._configuration import get_configuration` then calling it.
 fn configuration<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._configuration")?
+    crate::pyutil::cached_module(py, "pypdf._configuration")?
         .getattr("get_configuration")?
         .call0()
 }

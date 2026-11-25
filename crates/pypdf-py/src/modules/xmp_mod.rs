@@ -124,7 +124,7 @@ fn compiled_iso8601(py: Python<'_>) -> PyResult<Bound<'_, PyAny>> {
 // ---------------------------------------------------------------------------
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.xmp")
+    crate::pyutil::cached_module(py, "pypdf.xmp")
 }
 
 /// Fetch a name from this module's shim (upstream references these as globals).
@@ -137,13 +137,13 @@ fn shim_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 }
 
 fn configuration<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._configuration")?
+    crate::pyutil::cached_module(py, "pypdf._configuration")?
         .getattr("get_configuration")?
         .call0()
 }
 
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 fn py_bytes<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, PyAny> {
@@ -187,7 +187,7 @@ fn error_message(py: Python<'_>, error: &PyErr) -> PyResult<String> {
 
 /// `int(value)` as a Python object (upstream passes the result straight on).
 fn int_of<'py>(py: Python<'py>, value: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("builtins")?.getattr("int")?.call1((value,))
+    crate::pyutil::cached_module(py, "builtins")?.getattr("int")?.call1((value,))
 }
 
 /// `slice(start, stop, None)` with optional bounds.
@@ -842,7 +842,7 @@ fn xmpmod_xmpinformation_custom_properties(
                     .import("builtins")?
                     .getattr("int")?
                     .call((&hex_id,), Some(&kwargs))?;
-                let replacement = py.import("builtins")?.getattr("chr")?.call1((code,))?;
+                let replacement = crate::pyutil::cached_module(py, "builtins")?.getattr("chr")?.call1((code,))?;
                 let head = key.get_item(py_slice(py, None, Some(index))?)?;
                 let tail = key.get_item(py_slice(py, Some(index + 5), None)?)?;
                 let joined = pyutil::py_add(&head, &replacement)?;

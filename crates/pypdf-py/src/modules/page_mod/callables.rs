@@ -41,7 +41,7 @@ pub struct TransformationCallable {
 #[pymethods]
 impl TransformationCallable {
     fn __call__(&self, py: Python<'_>, page2_content: &Bound<'_, PyAny>) -> PyResult<Py<PyAny>> {
-        let shim = py.import("pypdf._page")?;
+        let shim = crate::pyutil::cached_module(py, "pypdf._page")?;
         let page_object = shim.getattr("PageObject")?;
         let pdf = self.page2.bind(py).getattr("pdf")?;
         let result = page_object.getattr("_add_transformation_matrix")?.call1((

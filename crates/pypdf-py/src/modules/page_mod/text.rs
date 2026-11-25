@@ -238,7 +238,7 @@ pub fn page_extract_text_inner<'py>(
             }
         }
     }
-    let text_extraction = py.import("pypdf._text_extraction")?;
+    let text_extraction = crate::pyutil::cached_module(py, "pypdf._text_extraction")?;
     let has_visitor = !(visitor_operand_before.is_none()
         && visitor_operand_after.is_none()
         && visitor_text.is_none());
@@ -276,10 +276,16 @@ pub fn page_extract_text_inner<'py>(
                 extractor.getattr("tm_matrix")?,
             ))?;
         }
-        if operator.eq(common::py_bytes(py, b"'"))? {
+        // Compare the operator bytes without allocating a fresh `bytes` object
+        // for every comparison (this loop runs once per content-stream op).
+        let operator_bytes: &[u8] = match operator.cast::<pyo3::types::PyBytes>() {
+            Ok(bytes) => bytes.as_bytes(),
+            Err(_) => b"",
+        };
+        if operator_bytes == b"'" {
             crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"T*")), &(py_list(py, vec![])?)) ?;
             crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tj")), &(operands.clone())) ?;
-        } else if operator.eq(common::py_bytes(py, b"\""))? && py_len(&operands)? >= 3 {
+        } else if operator_bytes == b"\"" && py_len(&operands)? >= 3 {
             crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tw")), &(py_list(py, vec![operands.get_item(0)?])?)) ?;
             crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Tc")), &(py_list(py, vec![operands.get_item(1)?])?)) ?;
             crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"T*")), &(py_list(py, vec![])?)) ?;
@@ -289,7 +295,7 @@ pub fn page_extract_text_inner<'py>(
                         None,
                         None,
                     )?)?)) ?;
-        } else if operator.eq(common::py_bytes(py, b"TJ"))? {
+        } else if operator_bytes == b"TJ" {
             // The space width may be smaller than the font width, so the width should be 95%.
             let space_width_value = extractor.getattr("_space_width")?;
             let confirm_space_width = op_mul(py, &space_width_value, &common::py_float(py, 0.95))?;
@@ -315,13 +321,13 @@ pub fn page_extract_text_inner<'py>(
                     }
                 }
             }
-        } else if operator.eq(common::py_bytes(py, b"TD"))? && py_len(&operands)? >= 2 {
+        } else if operator_bytes == b"TD" && py_len(&operands)? >= 2 {
             // a non-numeric ty leaves the leading unchanged, like a non-numeric TL
             if is_instance_int_or_float(py, &operands.get_item(1)?)? {
                 crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"TL")), &(py_list(py, vec![op_neg(py, &operands.get_item(1)?)?])?)) ?;
             }
             crate::text_extraction_mod::extractor::text_extractor_process_operation(py, &extractor, &(common::py_bytes(py, b"Td")), &(operands.clone())) ?;
-        } else if operator.eq(common::py_bytes(py, b"Do"))? && operands.is_truthy()? {
+        } else if operator_bytes == b"Do" && operands.is_truthy()? {
             add_assign(py, &extractor, "output", &extractor.getattr("text")?)?;
             if !visitor_text.is_none() {
                 visitor_text.call1((

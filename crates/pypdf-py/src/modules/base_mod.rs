@@ -1537,7 +1537,7 @@ struct LeafClasses {
 fn leaf_classes(py: Python<'_>) -> PyResult<&'static LeafClasses> {
     static CLASSES: pyo3::sync::PyOnceLock<LeafClasses> = pyo3::sync::PyOnceLock::new();
     CLASSES.get_or_try_init(py, || {
-        let base = py.import("pypdf.generic._base")?;
+        let base = crate::pyutil::cached_module(py, "pypdf.generic._base")?;
         Ok(LeafClasses {
             name: base.getattr("NameObject")?.unbind(),
             number: base.getattr("NumberObject")?.unbind(),

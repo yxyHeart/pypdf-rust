@@ -40,7 +40,7 @@ pub(super) fn _get_max_pdf_version_header(
 }
 
 fn format_divided(py: Python<'_>, value: &Bound<'_, PyAny>, divisor: i64) -> PyResult<String> {
-    let divisor = py.import("builtins")?.getattr("int")?.call1((divisor,))?;
+    let divisor = crate::pyutil::cached_module(py, "builtins")?.getattr("int")?.call1((divisor,))?;
     let divided = value.call_method1("__truediv__", (divisor,))?;
     let number: f64 = divided.extract()?;
     Ok(py_float_fixed(number, 1))
@@ -54,7 +54,7 @@ pub(super) fn _human_readable_bytes(py: Python<'_>, bytes: &Bound<'_, PyAny>) ->
 
 /// Shared implementation of `_human_readable_bytes` (also used by `File.__str__`).
 pub(super) fn human_readable_bytes(py: Python<'_>, value: &Bound<'_, PyAny>) -> PyResult<String> {
-    let builtins = py.import("builtins")?;
+    let builtins = crate::pyutil::cached_module(py, "builtins")?;
     let int_type = builtins.getattr("int")?;
     if value.lt(int_type.call1((1_000,))?)? {
         return Ok(format!("{} Byte", pyutil::py_str(value)?));
@@ -84,7 +84,7 @@ pub(super) fn matrix_multiply(
     // `zip(*b)` stops at the shortest row of `b`.
     let column_count = b_matrix.iter().map(Vec::len).min().unwrap_or(0);
 
-    let builtins = py.import("builtins")?;
+    let builtins = crate::pyutil::cached_module(py, "builtins")?;
     let float_type = builtins.getattr("float")?;
     let sum_function = builtins.getattr("sum")?;
 

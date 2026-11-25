@@ -1218,7 +1218,7 @@ pub fn page_replace_contents<'py>(
     let Some(indirect) = indirect else {
         return Err(pyo3::exceptions::PyAssertionError::new_err("checked above"));
     };
-    let writer_class = py.import("pypdf._writer")?.getattr("PdfWriter")?;
+    let writer_class = crate::pyutil::cached_module(py, "pypdf._writer")?.getattr("PdfWriter")?;
     let pdf = indirect.getattr("pdf")?;
     if !pdf.is_instance(&writer_class)? {
         globals(py, "deprecation")?.call1((
@@ -2400,8 +2400,8 @@ pub fn page_get_fonts<'py>(py: Python<'py>, slf: &Bound<'py, PyAny>) -> PyResult
     if !obj.is_instance(&generic_class(py, "DictionaryObject")?)? {
         return Err(pyo3::exceptions::PyAssertionError::new_err(()));
     }
-    let fonts = py.import("builtins")?.getattr("set")?.call0()?;
-    let embedded = py.import("builtins")?.getattr("set")?.call0()?;
+    let fonts = crate::pyutil::cached_module(py, "builtins")?.getattr("set")?.call0()?;
+    let embedded = crate::pyutil::cached_module(py, "builtins")?.getattr("set")?.call0()?;
     let result = globals(py, "_get_fonts_walk")?.call1((obj, fonts.clone(), embedded.clone()))?;
     let fonts = result.get_item(0)?;
     let embedded = result.get_item(1)?;

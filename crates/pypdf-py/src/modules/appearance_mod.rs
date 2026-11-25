@@ -62,7 +62,7 @@ const SOURCE: &str = "pypdf.generic._appearance_stream";
 // ---------------------------------------------------------------------------
 
 fn shim_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic._appearance_stream")
+    crate::pyutil::cached_module(py, "pypdf.generic._appearance_stream")
 }
 
 /// Fetch a name from the shim module.
@@ -76,7 +76,7 @@ fn shim_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 }
 
 fn builtin<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("builtins")?.getattr(name)
+    crate::pyutil::cached_module(py, "builtins")?.getattr(name)
 }
 
 fn none<'py>(py: Python<'py>) -> Bound<'py, PyAny> {

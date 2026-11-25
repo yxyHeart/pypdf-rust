@@ -1213,17 +1213,16 @@ fn datastructures_dictionaryobject_setitem<'py>(
     key: &Bound<'py, PyAny>,
     value: &Bound<'py, PyAny>,
 ) -> PyResult<Py<PyAny>> {
-    if !base_mod::is_pdf_object_like(py, key)? {
+    let pdf_object_class = fast_class(py, "PdfObject")?;
+    if !key.is_instance(&pdf_object_class)? {
         return Err(message_exception(py, "ValueError", "Key must be a PdfObject"));
     }
-    if !base_mod::is_pdf_object_like(py, value)? {
+    if !value.is_instance(&pdf_object_class)? {
         return Err(message_exception(py, "ValueError", "Value must be a PdfObject"));
     }
-    let dict_type = builtins(py)?.getattr("dict")?;
-    Ok(dict_type
-        .getattr("__setitem__")?
-        .call1((slf, key, value))?
-        .unbind())
+    // `dict.__setitem__(self, key, value)` through the C API.
+    slf.cast::<PyDict>()?.set_item(key, value)?;
+    Ok(py.None())
 }
 
 // @pypdf: pypdf.generic._data_structures.DictionaryObject.setdefault
@@ -1259,8 +1258,18 @@ fn datastructures_dictionaryobject_getitem<'py>(
     slf: &Bound<'py, PyAny>,
     key: &Bound<'py, PyAny>,
 ) -> PyResult<Py<PyAny>> {
-    let dict_type = builtins(py)?.getattr("dict")?;
-    let value = dict_type.getattr("__getitem__")?.call1((slf, key))?;
+    // `dict.__getitem__(self, key)` through the C API (same KeyError).
+    let value = match slf.cast::<PyDict>()?.get_item(key)? {
+        Some(value) => value,
+        None => {
+            // `raise KeyError(key)` exactly like `dict.__getitem__`.
+            let key_error = py
+                .import("builtins")?
+                .getattr("KeyError")?
+                .call1((key,))?;
+            return Err(PyErr::from_value(key_error));
+        }
+    };
     Ok(value.call_method0("get_object")?.unbind())
 }
 
@@ -1270,7 +1279,7 @@ fn datastructures_dictionaryobject_xmp_metadata<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
 ) -> PyResult<Py<PyAny>> {
-    let xmp_class = py.import("pypdf.xmp")?.getattr("XmpInformation")?;
+    let xmp_class = crate::pyutil::cached_module(py, "pypdf.xmp")?.getattr("XmpInformation")?;
     let metadata = dict_get(slf, &py_str(py, "/Metadata"), py.None().into_bound(py))?;
     let is_null = base_class(py, "is_null_or_none")?
         .call1((&metadata,))?
@@ -2450,7 +2459,7 @@ fn datastructures_streamobject_flate_encode<'py>(
     if let Some(params) = params {
         retval.set_item(name_class.call1((&decode_parms_key,))?, params)?;
     }
-    let flate = py.import("pypdf.filters")?.getattr("FlateDecode")?;
+    let flate = crate::pyutil::cached_module(py, "pypdf.filters")?.getattr("FlateDecode")?;
     let data = slf.getattr("_data")?;
     let encoded = flate.call_method1("encode", (data, level))?;
     retval.setattr("_data", encoded)?;
@@ -2544,7 +2553,7 @@ fn datastructures_encodedstreamobject_get_data<'py>(
     }
     // Create the decoded object.
     let decoded = shim_class(py, "DecodedStreamObject")?.call0()?;
-    let filters = py.import("pypdf.filters")?;
+    let filters = crate::pyutil::cached_module(py, "pypdf.filters")?;
     let stream_data = filters.call_method1("decode_stream_data", (slf,))?;
     decoded.call_method1("set_data", (stream_data,))?;
     let items = slf.call_method0("items")?;
@@ -2574,7 +2583,7 @@ fn datastructures_encodedstreamobject_set_data<'py>(
     slf: &Bound<'py, PyAny>,
     data: &Bound<'py, PyAny>,
 ) -> PyResult<()> {
-    let filters = py.import("pypdf.filters")?;
+    let filters = crate::pyutil::cached_module(py, "pypdf.filters")?;
     let flate = filters.getattr("FlateDecode")?;
     let filter_value = dict_get(slf, &py_str(py, "/Filter"), py_str(py, ""))?;
     let flate_name = filters.getattr("FilterTypes")?.getattr("FLATE_DECODE")?;
@@ -3083,6 +3092,38 @@ fn datastructures_contentstream_write_to_stream<'py>(
         .getattr("write_to_stream")?
         .call1((slf, stream))?;
     Ok(())
+}
+
+
+/// Frequently used classes resolved once per process (the `cached_attr` mutex
+/// map costs more than a `PyOnceLock` in per-entry loops).
+fn fast_class<'py>(py: Python<'py>, name: &'static str) -> PyResult<Bound<'py, PyAny>> {
+    use pyo3::sync::PyOnceLock;
+    static PDF_OBJECT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static NAME: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static INDIRECT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static DICTIONARY: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static ARRAY: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static STREAM: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static INT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static DICT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static LEN: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    let (cell, module): (&'static PyOnceLock<Py<PyAny>>, &'static str) = match name {
+        "PdfObject" => (&PDF_OBJECT, "pypdf.generic._base"),
+        "NameObject" => (&NAME, "pypdf.generic._base"),
+        "IndirectObject" => (&INDIRECT, "pypdf.generic._base"),
+        "DictionaryObject" => (&DICTIONARY, "pypdf.generic._data_structures"),
+        "ArrayObject" => (&ARRAY, "pypdf.generic._data_structures"),
+        "StreamObject" => (&STREAM, "pypdf.generic._data_structures"),
+        "int" => (&INT, "builtins"),
+        "dict" => (&DICT, "builtins"),
+        "len" => (&LEN, "builtins"),
+        _ => return pyutil::cached_attr(py, "pypdf.generic._base", name),
+    };
+    let value = cell.get_or_try_init(py, || {
+        pyutil::cached_attr(py, module, name).map(|value| value.unbind())
+    })?;
+    Ok(value.bind(py).clone())
 }
 
 // ---------------------------------------------------------------------------
@@ -3844,7 +3885,7 @@ struct ContainerClasses {
 fn container_classes(py: Python<'_>) -> PyResult<&'static ContainerClasses> {
     static CLASSES: pyo3::sync::PyOnceLock<ContainerClasses> = pyo3::sync::PyOnceLock::new();
     CLASSES.get_or_try_init(py, || {
-        let shim = py.import("pypdf.generic._data_structures")?;
+        let shim = crate::pyutil::cached_module(py, "pypdf.generic._data_structures")?;
         Ok(ContainerClasses {
             array: shim.getattr("ArrayObject")?.unbind(),
             dictionary: shim.getattr("DictionaryObject")?.unbind(),
@@ -3927,7 +3968,7 @@ const LEGACY_SWITCH: &str = "PYPDF_RS_LEGACY_CONTENT_STREAM";
 /// publishes (and avoids a Python frame per call, which the upstream
 /// function-call-counting tests measure).
 fn current_configuration<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._configuration")?
+    crate::pyutil::cached_module(py, "pypdf._configuration")?
         .getattr("CURRENT_CONFIGURATION")?
         .call_method0("get")
 }
@@ -4101,7 +4142,7 @@ fn cs_emit_warnings(py: Python<'_>, warnings: &[cs::WarningEvent], base: i64) ->
             cs::WarningEvent::NonNameKeyValue(value) => {
                 let none = py.None().into_bound(py);
                 let key = cs_materialize_value(py, value, &none, &none)?;
-                let repr = py.import("builtins")?.getattr("repr")?.call1((key,))?;
+                let repr = crate::pyutil::cached_module(py, "builtins")?.getattr("repr")?.call1((key,))?;
                 let message = format!(
                     "Expecting a NameObject for key but found {}",
                     repr.extract::<String>()?

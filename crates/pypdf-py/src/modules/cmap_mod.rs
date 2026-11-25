@@ -58,7 +58,7 @@ fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
 }
 
 fn shim<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf._cmap")
+    crate::pyutil::cached_module(py, "pypdf._cmap")
 }
 
 /// Fetch a name from the module's Python shim (upstream references module
@@ -69,7 +69,7 @@ fn shim_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 }
 
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 fn builtin_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
@@ -724,7 +724,7 @@ fn glyph_name_to_unicode_impl<'py>(
     py: Python<'py>,
     glyph_name: &Bound<'py, PyAny>,
 ) -> PyResult<Option<Bound<'py, PyAny>>> {
-    let adobe_glyphs = py.import("pypdf._codecs")?.getattr("adobe_glyphs")?;
+    let adobe_glyphs = crate::pyutil::cached_module(py, "pypdf._codecs")?.getattr("adobe_glyphs")?;
     match adobe_glyphs.get_item(glyph_name) {
         Ok(value) => return Ok(Some(value)),
         Err(error) if error.is_instance_of::<PyKeyError>(py) => {}
@@ -966,7 +966,7 @@ fn parse_encoding_impl<'py>(
     ft: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let mut encoding: Bound<'py, PyAny> = PyList::empty(py).into_any();
-    let charset_encoding = py.import("pypdf._codecs")?.getattr("charset_encoding")?;
+    let charset_encoding = crate::pyutil::cached_module(py, "pypdf._codecs")?.getattr("charset_encoding")?;
     let _predefined_cmap = shim_attr(py, "_predefined_cmap")?;
     let standard_encoding = || -> PyResult<Bound<'py, PyAny>> {
         charset_encoding

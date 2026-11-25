@@ -144,7 +144,7 @@ fn items<'py>(obj: &Bound<'py, PyAny>) -> PyResult<Vec<Bound<'py, PyAny>>> {
 
 /// `list(obj)` through Python.
 fn py_list<'py>(py: Python<'py>, obj: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("builtins")?.getattr("list")?.call1((obj,))
+    crate::pyutil::cached_module(py, "builtins")?.getattr("list")?.call1((obj,))
 }
 
 fn py_len(obj: &Bound<'_, PyAny>) -> PyResult<usize> {
@@ -185,7 +185,7 @@ fn new_g<'py>(
 
 /// `isinstance(obj, pypdf._page.PageObject)` (PageObject is not re-exported by `pypdf.generic`).
 fn is_page_object(py: Python<'_>, obj: &Bound<'_, PyAny>) -> PyResult<bool> {
-    let class = py.import("pypdf._page")?.getattr("PageObject")?;
+    let class = crate::pyutil::cached_module(py, "pypdf._page")?.getattr("PageObject")?;
     obj.is_instance(&class)
 }
 
@@ -924,7 +924,7 @@ fn writermod_pdfwriter_property_set_xmp_metadata<'py>(
     } else {
         call0(&metadata, "get_object")?
     };
-    let xmp_class = py.import("pypdf.xmp")?.getattr("XmpInformation")?;
+    let xmp_class = crate::pyutil::cached_module(py, "pypdf.xmp")?.getattr("XmpInformation")?;
     let bytes_data = if is_instance_of(&value, &xmp_class)? {
         let stream = get(&value, "stream")?;
         call0(&stream, "get_data")?
@@ -1411,7 +1411,7 @@ fn writermod_pdfwriter_get_open_destination<'py>(
     args: &Bound<'py, PyTuple>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let slf = arg(args, 0)?;
-    py.import("pypdf._doc_common")?
+    crate::pyutil::cached_module(py, "pypdf._doc_common")?
         .getattr("PdfDocCommon")?
         .getattr("open_destination")?
         .getattr("fget")?
@@ -1446,10 +1446,10 @@ fn writermod_pdfwriter_property_set_open_destination<'py>(
         } else {
             reference
         };
-        let destination = py.import("pypdf.generic")?.getattr("Destination")?.call1((
+        let destination = crate::pyutil::cached_module(py, "pypdf.generic")?.getattr("Destination")?.call1((
             "Opening",
             reference,
-            py.import("pypdf.generic")?.getattr("PAGE_FIT")?,
+            crate::pyutil::cached_module(py, "pypdf.generic")?.getattr("PAGE_FIT")?,
         ))?;
         let value = get(&destination, "dest_array")?;
         set_item(&root, &open_action, &value)?;
@@ -1480,7 +1480,7 @@ fn writermod_pdfwriter_add_open_action<'py>(
 ) -> PyResult<Bound<'py, PyAny>> {
     let slf = arg(args, 0)?;
     let action = arg(args, 1)?;
-    py.import("pypdf.actions")?
+    crate::pyutil::cached_module(py, "pypdf.actions")?
         .getattr("Action")?
         .getattr("_create_open_action")?
         .call1((slf, action))?;
@@ -1497,7 +1497,7 @@ fn writermod_pdfwriter_add_attachment<'py>(
     let slf = arg(args, 0)?;
     let filename = arg(args, 1)?;
     let data = arg(args, 2)?;
-    py.import("pypdf.generic")?
+    crate::pyutil::cached_module(py, "pypdf.generic")?
         .getattr("EmbeddedFile")?
         .getattr("_create_new")?
         .call1((slf, filename, data))
@@ -1665,7 +1665,7 @@ fn writermod_pdfwriter_encrypt<'py>(
     if is_none(&owner_password) {
         owner_password = user_password.clone();
     }
-    let encryption_module = py.import("pypdf._encryption")?;
+    let encryption_module = crate::pyutil::cached_module(py, "pypdf._encryption")?;
     let algorithm_enum = encryption_module.getattr("EncryptAlgorithm")?;
     let alg = if !is_none(&algorithm) {
         let name = to_string(&algorithm)?.replace('-', "_");
@@ -2160,7 +2160,7 @@ fn writermod_pdfwriter_get_metadata<'py>(
     args: &Bound<'py, PyTuple>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let slf = arg(args, 0)?;
-    py.import("pypdf._doc_common")?
+    crate::pyutil::cached_module(py, "pypdf._doc_common")?
         .getattr("PdfDocCommon")?
         .getattr("metadata")?
         .getattr("fget")?
@@ -2274,7 +2274,7 @@ fn writermod_pdfwriter_compress_identical_objects<'py>(
     let remove_duplicates = arg(args, 3)?;
     let remove_unreferenced = arg(args, 4)?;
     let unset = get(&slf, "_UNSET")?;
-    let utils = py.import("pypdf._utils")?;
+    let utils = crate::pyutil::cached_module(py, "pypdf._utils")?;
     if !eq(&remove_identicals, &unset)? {
         utils.getattr("deprecation_with_replacement")?.call1((
             "remove_identicals",
@@ -2619,7 +2619,7 @@ fn writermod_pdfwriter_clone_reader_document_root<'py>(
 
 /// `pypdf._writer.ObjectDeletionFlag.<name>`.
 fn odf<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._writer")?
+    crate::pyutil::cached_module(py, "pypdf._writer")?
         .getattr("ObjectDeletionFlag")?
         .getattr(name)
 }
@@ -2636,7 +2636,7 @@ fn py_or<'py>(a: &Bound<'py, PyAny>, b: &Bound<'py, PyAny>) -> PyResult<Bound<'p
 
 /// `pypdf.constants.ImageType.<name>`.
 fn image_type<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.constants")?
+    crate::pyutil::cached_module(py, "pypdf.constants")?
         .getattr("ImageType")?
         .getattr(name)
 }
@@ -4224,7 +4224,7 @@ fn writermod_pdfwriter_reset_translation<'py>(
 ) -> PyResult<Bound<'py, PyAny>> {
     let slf = arg(args, 0)?;
     let reader = arg(args, 1)?;
-    let reader_class = py.import("pypdf._reader")?.getattr("PdfReader")?;
+    let reader_class = crate::pyutil::cached_module(py, "pypdf._reader")?.getattr("PdfReader")?;
     if is_none(&reader) {
         slf.setattr("_id_translated", PyDict::new(py))?;
     } else if is_instance_of(&reader, &reader_class)? {
@@ -4367,7 +4367,7 @@ fn writer_create_outline_item<'py>(
         py,
         vec![(
             name_obj(py, "/Title")?,
-            py.import("pypdf.generic")?
+            crate::pyutil::cached_module(py, "pypdf.generic")?
                 .getattr("create_string_object")?
                 .call1((title.clone(),))?,
         )],
@@ -4375,7 +4375,7 @@ fn writer_create_outline_item<'py>(
     call1(&outline_item, "update", update)?;
     if truthy(color)? {
         let color = if is_inst_builtin(color, "str")? {
-            py.import("pypdf.generic")?
+            crate::pyutil::cached_module(py, "pypdf.generic")?
                 .getattr("hex_to_rgb")?
                 .call1((color.clone(),))?
         } else {
@@ -4389,7 +4389,7 @@ fn writer_create_outline_item<'py>(
         call1(&outline_item, "update", update)?;
     }
     if truthy(italic)? || truthy(bold)? {
-        let flag = py.import("pypdf.constants")?.getattr("OutlineFontFlag")?;
+        let flag = crate::pyutil::cached_module(py, "pypdf.constants")?.getattr("OutlineFontFlag")?;
         let mut format_flag = py_int(py, 0);
         if truthy(italic)? {
             format_flag = py_or(&format_flag, &flag.getattr("italic")?)?;
@@ -4441,7 +4441,7 @@ fn writermod_pdfwriter_append<'py>(
     }
     let is_page_range = is_instance_of(
         &outline_item,
-        &py.import("pypdf.pagerange")?.getattr("PageRange")?,
+        &crate::pyutil::cached_module(py, "pypdf.pagerange")?.getattr("PageRange")?,
     )?;
     if is_inst_builtin(&outline_item, "tuple")?
         || is_inst_builtin(&outline_item, "list")?
@@ -4497,7 +4497,7 @@ fn writermod_pdfwriter_merge<'py>(
     let mut pages = arg(args, 4)?;
     let import_outline = arg(args, 5)?;
     let mut excluded_fields = arg(args, 6)?;
-    let doc_common = py.import("pypdf._doc_common")?.getattr("PdfDocCommon")?;
+    let doc_common = crate::pyutil::cached_module(py, "pypdf._doc_common")?.getattr("PdfDocCommon")?;
     let reader = if is_instance_of(&fileobj, &doc_common)? {
         fileobj.clone()
     } else {
@@ -4519,7 +4519,7 @@ fn writermod_pdfwriter_merge<'py>(
                 .map(|index| py_int(py, index as i64))
                 .collect(),
         )?;
-    } else if is_instance_of(&pages, &py.import("pypdf.pagerange")?.getattr("PageRange")?)? {
+    } else if is_instance_of(&pages, &crate::pyutil::cached_module(py, "pypdf.pagerange")?.getattr("PageRange")?)? {
         let indices = call1(&pages, "indices", py_int(py, py_len(&reader_pages)? as i64))?;
         let range_module = builtins(py)?.getattr("range")?;
         let range_object = range_module.call1(indices.cast_into::<PyTuple>()?)?;
@@ -4579,7 +4579,7 @@ fn writermod_pdfwriter_merge<'py>(
     }
     let reader_named_destinations = get(&reader, "named_destinations")?;
     reader.setattr("_named_destinations", reader_named_destinations.clone())?;
-    let writer_module = py.import("pypdf._writer")?;
+    let writer_module = crate::pyutil::cached_module(py, "pypdf._writer")?;
     let index_minimum = to_usize(&writer_module.getattr("_NAMED_DESTINATION_INDEX_MINIMUM")?)?;
     let kwargs = PyDict::new(py);
     kwargs.set_item(
@@ -4617,7 +4617,7 @@ fn writermod_pdfwriter_merge<'py>(
             vec![
                 ("title", text_obj(py, &to_string(&outline_item)?)?),
                 ("page_number", page_number),
-                ("fit", py.import("pypdf.generic")?.getattr("PAGE_FIT")?),
+                ("fit", crate::pyutil::cached_module(py, "pypdf.generic")?.getattr("PAGE_FIT")?),
             ],
         )?;
         call0(&added, "get_object")?
@@ -5917,7 +5917,7 @@ fn writermod_pdfwriter_set_page_label<'py>(
     let style = arg(args, 3)?;
     let prefix = arg(args, 4)?;
     let start = arg(args, 5)?;
-    let style_enum = py.import("pypdf.constants")?.getattr("PageLabelStyle")?;
+    let style_enum = crate::pyutil::cached_module(py, "pypdf.constants")?.getattr("PageLabelStyle")?;
     if is_none(&style) && is_none(&prefix) {
         return Err(value_error(
             py,
@@ -6011,7 +6011,7 @@ fn writermod_pdfwriter_private_set_page_label<'py>(
     let labels_key = const_str(py, "CatalogAttributes", "PAGE_LABELS")?;
     if !root.contains(&labels_key)? {
         let nums = array_obj(py, vec![])?;
-        py.import("pypdf._page_labels")?
+        crate::pyutil::cached_module(py, "pypdf._page_labels")?
             .getattr("nums_insert")?
             .call1((number_obj(py, 0)?, default_label.clone(), nums.clone()))?;
         let page_labels = gclass(py, "TreeObject")?.call0()?;
@@ -6021,13 +6021,13 @@ fn writermod_pdfwriter_private_set_page_label<'py>(
     }
     let page_labels = get_item(&root, &name_obj(py, &to_string(&labels_key)?)?)?;
     let nums = get_item(&page_labels, &name_obj(py, "/Nums")?)?;
-    let nums_insert = py.import("pypdf._page_labels")?.getattr("nums_insert")?;
+    let nums_insert = crate::pyutil::cached_module(py, "pypdf._page_labels")?.getattr("nums_insert")?;
     nums_insert.call1((
         number_obj(py, to_i64(&page_index_from)?)?,
         new_label,
         nums.clone(),
     ))?;
-    py.import("pypdf._page_labels")?
+    crate::pyutil::cached_module(py, "pypdf._page_labels")?
         .getattr("nums_clear_range")?
         .call1((
             number_obj(py, to_i64(&page_index_from)?)?,

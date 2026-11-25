@@ -76,12 +76,12 @@ fn is_whitespace_byte(byte: u8) -> bool {
 // ---------------------------------------------------------------------------
 
 fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("builtins")
+    crate::pyutil::cached_module(py, "builtins")
 }
 
 /// `pypdf.get_configuration()` (upstream imports `get_configuration` directly).
 fn configuration<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf._configuration")?
+    crate::pyutil::cached_module(py, "pypdf._configuration")?
         .getattr("get_configuration")?
         .call0()
 }
@@ -93,7 +93,7 @@ fn config_item<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> 
 /// Fetch a class from `pypdf.generic` (upstream `from ..generic import ...` /
 /// `from ._base import ...` names).
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 /// Fetch a name from one of this port's Python shim modules (used for the
@@ -120,7 +120,7 @@ fn constant<'py>(
     class_name: &str,
     attribute: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.constants")?
+    crate::pyutil::cached_module(py, "pypdf.constants")?
         .getattr(class_name)?
         .getattr(attribute)
 }

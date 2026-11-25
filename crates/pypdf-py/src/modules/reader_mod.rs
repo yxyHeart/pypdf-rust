@@ -451,7 +451,7 @@ fn reader_handle_encryption<'py>(
             "/Encrypt entry of the trailer is not a dictionary",
         ));
     }
-    let encryption_class = py.import("pypdf._encryption")?.getattr("Encryption")?;
+    let encryption_class = crate::pyutil::cached_module(py, "pypdf._encryption")?.getattr("Encryption")?;
     let encryption = encryption_class
         .getattr("read")?
         .call1((encrypt_entry, id1_entry))?;
@@ -466,7 +466,7 @@ fn reader_handle_encryption<'py>(
     let kwargs = PyDict::new(py);
     kwargs.set_item("strict", strict_flag(py, slf)?)?;
     let password_type = encryption.call_method("verify", (pwd,), Some(&kwargs))?;
-    let password_type_class = py.import("pypdf._encryption")?.getattr("PasswordType")?;
+    let password_type_class = crate::pyutil::cached_module(py, "pypdf._encryption")?.getattr("PasswordType")?;
     let not_decrypted = password_type_class.getattr("NOT_DECRYPTED")?;
     if password_type.eq(&not_decrypted)? && !password.is_none() {
         return Err(errors::wrong_password_error(py));

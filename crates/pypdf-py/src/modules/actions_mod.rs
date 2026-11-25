@@ -31,7 +31,7 @@ const ACTIONS_MODULE: &str = "pypdf.actions._actions";
 // ---------------------------------------------------------------------------
 
 fn generic_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
@@ -43,11 +43,11 @@ fn actions_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>>
 }
 
 fn constants_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.constants")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.constants")?.getattr(name)
 }
 
 fn name_object<'py>(py: Python<'py>, value: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic._base")?
+    crate::pyutil::cached_module(py, "pypdf.generic._base")?
         .getattr("NameObject")?
         .call1((value,))
 }
@@ -77,7 +77,7 @@ fn type_name(value: &Bound<'_, PyAny>) -> PyResult<String> {
 
 /// `id(value)` as a Python int (used as a set member, exactly like upstream).
 fn object_id<'py>(py: Python<'py>, value: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-    py.import("builtins")?.getattr("id")?.call1((value,))
+    crate::pyutil::cached_module(py, "builtins")?.getattr("id")?.call1((value,))
 }
 
 /// `str(uuid.uuid4())`.
@@ -122,7 +122,7 @@ fn actionsmod_page_trigger_name_object(
 // @pypdf: pypdf.actions._actions.Action.__init__
 #[pyfunction]
 fn actionsmod_action_init(py: Python<'_>, slf: &Bound<'_, PyAny>) -> PyResult<()> {
-    py.import("pypdf.generic._data_structures")?
+    crate::pyutil::cached_module(py, "pypdf.generic._data_structures")?
         .getattr("DictionaryObject")?
         .getattr("__init__")?
         .call1((slf,))?;
@@ -344,7 +344,7 @@ fn actionsmod_javascript_init(
     slf.set_item(name_object(py, "/S")?, name_object(py, "/JavaScript")?)?;
     slf.set_item(
         name_object(py, "/JS")?,
-        py.import("pypdf.generic._base")?
+        crate::pyutil::cached_module(py, "pypdf.generic._base")?
             .getattr("TextStringObject")?
             .call1((java_script,))?,
     )?;

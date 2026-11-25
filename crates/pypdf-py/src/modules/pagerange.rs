@@ -49,7 +49,7 @@ impl PageRange {
     // @pypdf: pypdf.pagerange.PageRange.__init__
     #[new]
     fn new(py: Python<'_>, arg: &Bound<'_, PyAny>) -> PyResult<Self> {
-        let builtins = py.import("builtins")?;
+        let builtins = crate::pyutil::cached_module(py, "builtins")?;
         let slice_type = builtins.getattr("slice")?;
         let int_type = builtins.getattr("int")?;
         let zero = int_type.call1((0,))?;
@@ -123,7 +123,7 @@ impl PageRange {
     // @pypdf: pypdf.pagerange.PageRange.valid
     #[staticmethod]
     fn valid(py: Python<'_>, input: &Bound<'_, PyAny>) -> PyResult<bool> {
-        let builtins = py.import("builtins")?;
+        let builtins = crate::pyutil::cached_module(py, "builtins")?;
         let slice_type = builtins.getattr("slice")?;
         if input.is_instance_of::<PageRange>() {
             return Ok(true);
@@ -163,7 +163,7 @@ impl PageRange {
         let start = slice.getattr("start")?;
         let stop = slice.getattr("stop")?;
         let step = slice.getattr("step")?;
-        let int_type = py.import("builtins")?.getattr("int")?;
+        let int_type = crate::pyutil::cached_module(py, "builtins")?.getattr("int")?;
 
         let mut indices: Vec<Bound<'_, PyAny>> = Vec::with_capacity(3);
         if step.is_none() {
@@ -209,7 +209,7 @@ impl PageRange {
 
     fn __hash__(&self, py: Python<'_>) -> PyResult<isize> {
         // Upstream: hash((self.__class__, (start, stop, step)))
-        let class = py.import("pypdf.pagerange")?.getattr("PageRange")?;
+        let class = crate::pyutil::cached_module(py, "pypdf.pagerange")?.getattr("PageRange")?;
         let slice = self.slice.bind(py);
         let triple = PyTuple::new(
             py,
@@ -246,7 +246,7 @@ impl PageRange {
         let mut b_start = b.getattr("start")?;
         let mut b_stop = b.getattr("stop")?;
 
-        let float_type = py.import("builtins")?.getattr("float")?;
+        let float_type = crate::pyutil::cached_module(py, "builtins")?.getattr("float")?;
         let neg_inf = float_type.call1(("-inf",))?;
         let pos_inf = float_type.call1(("inf",))?;
 
@@ -302,14 +302,14 @@ impl PageRange {
 }
 
 fn is_parse_error(py: Python<'_>, error: &PyErr) -> PyResult<bool> {
-    let parse_error = py.import("pypdf.errors")?.getattr("ParseError")?;
+    let parse_error = crate::pyutil::cached_module(py, "pypdf.errors")?.getattr("ParseError")?;
     error.get_type(py).is_subclass(&parse_error)
 }
 
 // @pypdf: pypdf.pagerange.parse_filename_page_ranges
 #[pyfunction]
 fn parse_filename_page_ranges(py: Python<'_>, args: &Bound<'_, PyAny>) -> PyResult<Py<PyList>> {
-    let module = py.import("pypdf.pagerange")?;
+    let module = crate::pyutil::cached_module(py, "pypdf.pagerange")?;
     let page_range_class = module.getattr("PageRange")?;
     let page_range_all = module.getattr("PAGE_RANGE_ALL")?;
 

@@ -245,11 +245,11 @@ fn bounding_rectangle<'py>(
     let first = vertices.get_item(0)?;
     let minimum_of =
         |left: Bound<'py, PyAny>, right: Bound<'py, PyAny>| -> PyResult<Bound<'py, PyAny>> {
-            py.import("builtins")?.getattr("min")?.call1((left, right))
+            crate::pyutil::cached_module(py, "builtins")?.getattr("min")?.call1((left, right))
         };
     let maximum_of =
         |left: Bound<'py, PyAny>, right: Bound<'py, PyAny>| -> PyResult<Bound<'py, PyAny>> {
-            py.import("builtins")?.getattr("max")?.call1((left, right))
+            crate::pyutil::cached_module(py, "builtins")?.getattr("max")?.call1((left, right))
         };
     let mut x_min = first.get_item(0)?;
     let mut y_min = first.get_item(1)?;

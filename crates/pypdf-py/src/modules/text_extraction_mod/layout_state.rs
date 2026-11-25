@@ -13,11 +13,11 @@ use pyo3::types::{PyAny, PyDict, PyList, PyTuple};
 use super::common;
 
 fn manager_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, pyo3::types::PyModule>> {
-    py.import("pypdf._text_extraction._layout_mode._text_state_manager")
+    crate::pyutil::cached_module(py, "pypdf._text_extraction._layout_mode._text_state_manager")
 }
 
 fn params_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, pyo3::types::PyModule>> {
-    py.import("pypdf._text_extraction._layout_mode._text_state_params")
+    crate::pyutil::cached_module(py, "pypdf._text_extraction._layout_mode._text_state_params")
 }
 
 fn get_attr<'py>(slf: &Bound<'py, PyAny>, name: &str) -> PyResult<Bound<'py, PyAny>> {

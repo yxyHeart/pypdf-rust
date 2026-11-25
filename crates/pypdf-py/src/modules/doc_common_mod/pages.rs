@@ -136,7 +136,7 @@ fn doccommon_get_page_in_node<'py>(
 // @pypdf: pypdf._doc_common.PdfDocCommon.pages
 #[pyfunction]
 fn doccommon_pages<'py>(py: Python<'py>, slf: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
-    let virtual_list = py.import("pypdf._page")?.getattr("_VirtualList")?;
+    let virtual_list = crate::pyutil::cached_module(py, "pypdf._page")?.getattr("_VirtualList")?;
     virtual_list.call1((slf.getattr("get_num_pages")?, slf.getattr("get_page")?))
 }
 
@@ -146,7 +146,7 @@ fn doccommon_page_labels<'py>(
     py: Python<'py>,
     slf: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let index2labels = py.import("pypdf._page_labels")?.getattr("index2labels")?;
+    let index2labels = crate::pyutil::cached_module(py, "pypdf._page_labels")?.getattr("index2labels")?;
     let pages = slf.getattr("pages")?;
     index2labels.call1((slf, py_len(py, &pages)?))
 }
@@ -360,7 +360,7 @@ fn doccommon_flatten_leaf_page<'py>(
         ));
     }
 
-    let page_class = py.import("pypdf._page")?.getattr("PageObject")?;
+    let page_class = crate::pyutil::cached_module(py, "pypdf._page")?.getattr("PageObject")?;
     let page = page_class.call1((slf, indirect_reference))?;
     if !list_only {
         page.call_method1("update", (node.clone(),))?;
@@ -506,7 +506,7 @@ fn doccommon_remove_page<'py>(
     let mut page = page.clone();
     if is_generic_instance(py, &page, "IndirectObject")? {
         let resolved = page.call_method0("get_object")?;
-        if !resolved.is_instance(&py.import("pypdf._page")?.getattr("PageObject")?)? {
+        if !resolved.is_instance(&crate::pyutil::cached_module(py, "pypdf._page")?.getattr("PageObject")?)? {
             log_warning(py, "IndirectObject is not referencing a page", None)?;
             return Ok(());
         }

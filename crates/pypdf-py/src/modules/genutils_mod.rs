@@ -33,7 +33,7 @@ fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
 
 /// The `pypdf.generic._utils` module; upstream reads/writes these globals.
 fn utils_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic._utils")
+    crate::pyutil::cached_module(py, "pypdf.generic._utils")
 }
 
 /// A module-level global of `pypdf.generic._utils` (class, constant, function).
@@ -60,7 +60,7 @@ fn slice_range<'py>(
 
 /// `pypdf.errors.STREAM_TRUNCATED_PREMATURELY` (the upstream constant).
 fn stream_truncated_message(py: Python<'_>) -> PyResult<String> {
-    py.import("pypdf.errors")?
+    crate::pyutil::cached_module(py, "pypdf.errors")?
         .getattr("STREAM_TRUNCATED_PREMATURELY")?
         .extract()
 }

@@ -683,7 +683,7 @@ fn doccommon_get_pages_showing_field<'py>(
         }
     }
 
-    let page_class = py.import("pypdf._page")?.getattr("PageObject")?;
+    let page_class = crate::pyutil::cached_module(py, "pypdf._page")?.getattr("PageObject")?;
     let result = PyList::empty(py);
     let mut iterator = ret.try_iter()?;
     while let Some(item) = next_item(&mut iterator)? {

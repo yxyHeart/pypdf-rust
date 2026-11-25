@@ -74,7 +74,7 @@ fn builtins<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
 }
 
 fn font_module<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyModule>> {
-    py.import("pypdf.generic._font")
+    crate::pyutil::cached_module(py, "pypdf.generic._font")
 }
 
 /// Fetch a name from the shim module.  Upstream's functions read module globals
@@ -85,7 +85,7 @@ fn font_attr<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
 }
 
 fn generic_class<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
-    py.import("pypdf.generic")?.getattr(name)
+    crate::pyutil::cached_module(py, "pypdf.generic")?.getattr(name)
 }
 
 fn builtin<'py>(py: Python<'py>, name: &str) -> PyResult<Bound<'py, PyAny>> {
@@ -811,7 +811,7 @@ fn parse_font_descriptor_impl<'py>(
     }
 
     // Find the binary stream for this font if there is one
-    let pdf_read_error_class = py.import("pypdf.errors")?.getattr("PdfReadError")?;
+    let pdf_read_error_class = crate::pyutil::cached_module(py, "pypdf.errors")?.getattr("PdfReadError")?;
     for source_key in ["/FontFile", "/FontFile2", "/FontFile3"] {
         if font_descriptor_obj.contains(source_key)? {
             if font_descriptor_kwargs.contains("font_file")? {
