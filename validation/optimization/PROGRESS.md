@@ -145,3 +145,40 @@ A1 stays `2691 passed / 25 skipped / 8 xfailed` (baseline MATCH), differential
 operation, ~300 ms of W3), then W1/W2 reader object parsing and W5–W7 object-graph
 copy (48–56 % of W5–W7).
 
+## P4 implementation result (lead, 2026-11-25)
+
+**P4 (OPT-050/OPT-060, DONE for object syntax)** — byte-level `read_object`.
+- `content_stream::parse_object` + `read_object_fast`: one chunked `read()` per
+  object (256 B, ×8 on truncation), Rust grammar scan, one materialisation per
+  operand, single `seek` back to the consumed offset; any uncertainty (stream
+  objects, strict readers, indirect refs without `pdf`, malformed input) falls
+  back to the legacy per-token parser; `PYPDF_RS_LEGACY_READ_OBJECT=1` rolls back.
+- Fidelity pinned by new core tests: partial-buffer `Truncated`, table/stream
+  boundary detection, bytes `repr` in errors, duplicate-key warning positions
+  (absolute offsets), `IndirectPattern` assertion, deep nesting
+  (`MAX_PARSE_DEPTH = 400` → upstream's `PdfReadError("Error reading PDF file.")`).
+- Text extraction: `_handle_tj` / `get_text_operands` / `get_display_str` are now
+  called as Rust functions instead of through Python shims; configuration read via
+  `CURRENT_CONFIGURATION.get()` (no Python frame per object).
+
+**Measured (`run_perf.sh --repeat 5`, same machine):**
+
+| W | before P4 | after P4 |
+|---|---|---|
+| W1 | 0.33× | **0.71×** |
+| W2 | 0.30× | **0.62×** |
+| W3 | 0.39× | **0.46×** |
+| W4 | 1.39× | **1.39×** |
+| W5 | 0.29× | **0.39×** |
+| W6 | 0.26× | **0.46×** |
+| W7 | 0.27× | **0.42×** |
+| W8 | 0.34× | **0.62×** |
+
+Gates: A1 baseline MATCH, differential IDENTICAL, roundtrip PASS, security 57/57
+PASS (including the deep-nesting reject cases), fuzz 200/200 IDENTICAL.
+
+**Next targets:** writer clone/serialisation (−58 % remains: per-entry
+`replicate`/`setitem`/`write_to_stream` crossings in `dictionaryobject_clone_inner`
+and `dictionaryobject_write_to_stream`), text display per-character
+`character_map.get` crossings, page-tree/box reads.
+
