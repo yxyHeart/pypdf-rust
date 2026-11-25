@@ -41,7 +41,7 @@ jobs:
 
       - name: Test dependencies
         run: |
-          python -m pip install pytest pytest-xdist pytest-socket pytest-timeout cryptography fonttools pillow
+          python -m pip install pytest pytest-xdist pytest-socket pytest-timeout cryptography fonttools pillow pyyaml
 
       - name: Official test suite (network-independent subset)
         run: |
