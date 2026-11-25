@@ -197,3 +197,47 @@ Consequences for the remaining writer work (W5–W7):
   stay identical (A2/roundtrip gate).
 - Any reader/clone change must be checked against these two tests first.
 
+## P6 + reader header + text helpers (lead, 2026-11-25, round 2)
+
+**P6 writer** — `render_pdf_object` / `render_leaf_bytes` compose the exact
+`write_to_stream` bytes for plain `ArrayObject`/`DictionaryObject` trees and write
+once per object; unsupported nodes (streams, subclasses, big ints, cycles > 200)
+fall back to the per-entry writer unchanged. Applied to
+`dictionaryobject_write_to_stream` / `arrayobject_write_to_stream`.
+
+**Reader header** — `read_object_header` gained a buffered parser: one 512 B read
+(grows ×8 while the buffer can't decide), header grammar (comment/whitespace/
+idnum/generation/"obj"/trailing byte) reproduced byte-for-byte including the
+`Token exceeds maximum length of 64 bytes.` warning/limit and
+`Invalid indirect object reference (...)` message with cause. This removes ~18
+Python-level stream calls per header (21 270 headers per W2 run).
+
+**Text helpers** — `mult`/`orient` are called as Rust functions unless the module
+attribute was replaced (identity check keeps monkeypatching working);
+`get_text_width` stays a Python call because
+`tests/text_extraction/test_text_extraction_cache.py` monkeypatches it (reverted
+after A1 caught it).
+
+**Measured (`run_perf.sh --repeat 5`):**
+
+| W | before round 2 | after round 2 |
+|---|---|---|
+| W1 | 0.69× | 0.71× |
+| W2 | 0.61× | **0.85×** |
+| W3 | 0.45× | 0.45× |
+| W4 | 1.42× | **1.46×** |
+| W5 | 0.46× | 0.47× |
+| W6 | 0.47× | 0.48× |
+| W7 | 0.43× | 0.46× |
+| W8 | 0.53× | **0.64×** |
+
+Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS after each step.
+
+**Lessons:** `tests/text_extraction/test_text_extraction_cache.py` pins
+`font.get_text_width` call counts and instance monkeypatching; the clone tests pin
+frame counts. Optimisations must check these three tests first.
+
+**Next targets:** W3 (text consumer remains 2.2× slower: per-character width
+lookups + `_handle_tj` dispatch), W1 (small-file reader overhead), W5–W7 (clone
+dominates and its frame count is pinned; focus on `_add_page`/`_add_object`).
+
