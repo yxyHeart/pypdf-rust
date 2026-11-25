@@ -295,3 +295,33 @@ object-based call.
 workloads (W5–W7, ~12–20 ms reference) swing by ±25 % between runs. W3/W4 are the
 stable ones (±3 %).
 
+## Cached Python lookups (lead, 2026-11-25, round 5)
+
+`pyutil::cached_module` / `cached_attr` / `cached_attr2` keep imported module
+objects and class/constant references in process-wide caches (leaked on purpose:
+`Py` values must not be dropped after interpreter finalisation). Wired into the
+hot helpers of `data_structures_mod` (`shim`, `base_class`, `utils_module`,
+`generic_utils_module`, `constants_class`, `configuration`, `_SCALAR_TYPES`),
+`base_mod`, `reader_mod` and `writer_mod`; `configuration()` now reads
+`CURRENT_CONFIGURATION.get()` directly.
+
+Clone internals also reuse cached classes, skip `ignore_fields.contains()` when
+the list is empty, and check `PdfObject` instead of `hasattr("clone")` per entry
+(C-level only, so the call-count tests keep passing).
+
+**Measured (`run_perf.sh --repeat 7`):**
+
+| W | before | after |
+|---|---|---|
+| W1 | 0.74× | **0.95×** |
+| W2 | 0.80× | **1.16×** |
+| W3 | 0.56× | **0.66×** |
+| W4 | 1.39× | **1.69×** |
+| W5 | 0.35× | 0.47× |
+| W6 | 0.48× | 0.58× |
+| W7 | 0.47× | 0.55× |
+| W8 | 0.57× | **0.76×** |
+
+Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
+200/200 IDENTICAL.
+
