@@ -35,12 +35,13 @@ RSS：每轮工作集增长 ≤0.9 MB；报告中的 +38 % 为 W4 之后分配�
 
 ## 3. 剩余工作与优先级
 
-1. **P3：文本原生消费者（最高优先级，W3 0.79×、W8 0.89×）**
+1. **P3：文本原生消费者（最高优先级，W3 0.83×）**
    - 文本解释阶段 340 ms vs 参考 236 ms（解析阶段已持平：95 ms vs 95 ms）。
    - 根因：文本状态机以 Python 属性承载（每个定位操作 ~22 次 getattr/setattr），矩阵以 Python list 传递。
    - 方案：`TextExtraction` 改为 Rust 状态结构（`[f64;6]` 矩阵、原生计数/文本缓冲），Python 属性通过 getter/setter 物化；`page_mod/text.rs` 直接消费 Rust 解析的 items。
-2. **W5–W7 clone 路径（0.64–0.70×）**
-   - `page.clone` 5.2 ms vs 参考 2.4 ms；每元素 Python frame 数被 `test_cloning_direct_objects__function_calls_and_exceptions` 固定（字典 4.2/千元素），无法删除这些 frame，只能压缩 PyO3 调用开销或为 writer 内部复制增加不改变公开行为的原生路径。
+2. **W5–W7 写路径（0.75–0.78×）**
+   - 原生 `NameObject.renumber` 已把写序列化成本大幅压低（W8 已从 0.89× 提升到 1.03×）。
+   - 剩余差距集中在 `page.clone`（5.2 ms vs 参考 2.4 ms）：每元素 Python frame 数被 `test_cloning_direct_objects__function_calls_and_exceptions` 固定（字典 4.2/千元素），无法删除这些 frame，只能压缩 PyO3 调用开销或为 writer 内部复制增加不改变公开行为的原生路径。
 3. **部署验证（条件 10 的缺口）**
    - 在 Linux aarch64/x86_64 上构建 wheel、安装、跑 A1/A2/A3/A4 与 W1–W8；本机不可用，需要在目标 CI/主机执行。
 
