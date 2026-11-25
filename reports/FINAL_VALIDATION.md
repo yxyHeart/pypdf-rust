@@ -139,6 +139,12 @@
 
 产物：`validation/perf/workloads.json`、`run.py`、`compare.py`、`run_perf.sh`、`validation/results/perf-{reference,rust}.json`、`perf-report.md`、`logs/perf-*`。
 
+## 6.2 优化轮 §17 完成度
+
+优化计划的最终完成定义（§17）逐条核对结果见 [reports/OPTIMIZATION_COMPLETION.md](OPTIMIZATION_COMPLETION.md)：
+条件 1、3–9 已满足；**条件 2（文本消费者不再逐 Token 物化 Python 对象）未满足**，条件 10（Linux aarch64/x86_64 部署）仍为 `NOT_TESTED`（本机仅 macOS arm64）。
+全门禁一次运行证据：`validation/results/logs/gate-optimized.log`（`scripts/gate.sh`，A1–A7 全部 PASS）。
+
 ## 7. 部署与打包（§11）
 
 | 项目 | 结果 |
