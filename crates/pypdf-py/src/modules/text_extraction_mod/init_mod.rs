@@ -637,6 +637,76 @@ pub fn text_extraction_get_text_operands<'py>(
     common::py_tuple(py, vec![text, common::py_bool(py, is_str_operands), widths])
 }
 
+
+/// Process-wide cache of a font's `character_map` as a Rust map.
+///
+/// Keyed by the dict's address (the dict object is kept alive to prevent address
+/// reuse) and validated by its length; the cache is bounded to 32 fonts.
+fn character_map_lookup(
+    py: Python<'_>,
+    character_map: &Bound<'_, PyAny>,
+) -> PyResult<Option<std::sync::Arc<std::collections::HashMap<char, String>>>> {
+    type Entry = (
+        Py<PyAny>,
+        usize,
+        std::sync::Arc<std::collections::HashMap<char, String>>,
+    );
+    type Cache = std::sync::Mutex<std::collections::HashMap<usize, Entry>>;
+    static CACHE: std::sync::OnceLock<&'static Cache> = std::sync::OnceLock::new();
+    let cache = CACHE.get_or_init(|| Box::leak(Box::new(std::sync::Mutex::new(std::collections::HashMap::new()))));
+    let Ok(dict) = character_map.cast::<PyDict>() else {
+        return Ok(None);
+    };
+    let key = character_map.as_ptr() as usize;
+    let length = dict.len();
+    if let Some((_, cached_len, map)) = cache.lock().expect("char map cache").get(&key) {
+        if *cached_len == length {
+            return Ok(Some(map.clone()));
+        }
+    }
+    let mut map = std::collections::HashMap::with_capacity(length);
+    for (raw, mapped) in dict.iter() {
+        let Ok(raw_char) = raw.extract::<String>() else {
+            return Ok(None);
+        };
+        let mut chars = raw_char.chars();
+        let (Some(character), None) = (chars.next(), chars.next()) else {
+            return Ok(None);
+        };
+        let Ok(mapped_string) = mapped.extract::<String>() else {
+            return Ok(None);
+        };
+        map.insert(character, mapped_string);
+    }
+    let map = std::sync::Arc::new(map);
+    let mut guard = cache.lock().expect("char map cache");
+    if guard.len() >= 32 {
+        guard.clear();
+    }
+    guard.insert(key, (character_map.clone().unbind(), length, map.clone()));
+    Ok(Some(map))
+}
+
+/// Build the display string of `text_operands` with the cached Rust character
+/// map; `None` when a character mapping is not representable (caller falls back).
+fn mapped_text<'py>(
+    py: Python<'py>,
+    text_operands: &Bound<'py, PyAny>,
+    map: &std::collections::HashMap<char, String>,
+) -> PyResult<Option<Bound<'py, pyo3::types::PyString>>> {
+    let Ok(text) = text_operands.extract::<String>() else {
+        return Ok(None);
+    };
+    let mut joined = String::with_capacity(text.len());
+    for character in text.chars() {
+        match map.get(&character) {
+            Some(mapped) => joined.push_str(mapped),
+            None => joined.push(character),
+        }
+    }
+    Ok(Some(pyo3::types::PyString::new(py, &joined)))
+}
+
 // @pypdf: pypdf._text_extraction.get_display_str
 #[pyfunction]
 #[allow(clippy::too_many_arguments)]
@@ -653,6 +723,24 @@ pub fn text_extraction_get_display_str<'py>(
     visitor_text: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let character_map = font.getattr("character_map")?;
+    // Fast LTR path: map the whole operand string with a cached Rust character
+    // map and only build Python strings when the result is needed.
+    if let Some(map) = character_map_lookup(py, &character_map)? {
+        if let Some(joined) = mapped_text(py, text_operands, &map)? {
+            let custom_min = common::init_attr(py, "CUSTOM_RTL_MIN")?;
+            let custom_max = common::init_attr(py, "CUSTOM_RTL_MAX")?;
+            if !rtl_dir.is_truthy()? && !(custom_min.is_truthy()? && custom_max.is_truthy()?) {
+                let pattern = common::init_attr(py, "RTL_CHARACTER_PATTERN")?;
+                if pattern.call_method1("search", (&joined,))?.is_none() {
+                    let new_text = common::concat(text, &joined)?;
+                    return common::py_tuple(
+                        py,
+                        vec![new_text, rtl_dir.clone(), common::py_str_val(py, "")],
+                    );
+                }
+            }
+        }
+    }
     // `character_map.get(char, char)` through the C-level dict API avoids
     // creating a bound method for every character.
     let character_map_dict = character_map.cast::<PyDict>().ok().cloned();
