@@ -129,6 +129,31 @@ pub fn cached_module<'py>(
     py: Python<'py>,
     name: &'static str,
 ) -> PyResult<Bound<'py, pyo3::types::PyModule>> {
+    // Lock-free fast path for the modules used by the hottest helper functions.
+    {
+        use pyo3::sync::PyOnceLock;
+        static BUILTINS: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static TEXT_EXTRACTION: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static GENERIC_BASE: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static GENERIC_DATA: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static GENERIC: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        static UTILS: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+        let cell = match name {
+            "builtins" => Some(&BUILTINS),
+            "pypdf._text_extraction" => Some(&TEXT_EXTRACTION),
+            "pypdf.generic._base" => Some(&GENERIC_BASE),
+            "pypdf.generic._data_structures" => Some(&GENERIC_DATA),
+            "pypdf.generic" => Some(&GENERIC),
+            "pypdf._utils" => Some(&UTILS),
+            _ => None,
+        };
+        if let Some(cell) = cell {
+            let module = cell.get_or_try_init(py, || {
+                py.import(name).map(|module| module.into_any().unbind())
+            })?;
+            return Ok(module.bind(py).clone().cast_into::<pyo3::types::PyModule>()?);
+        }
+    }
     if let Some(module) = module_cache()
         .lock()
         .expect("module cache")

@@ -197,7 +197,7 @@ pub fn slice_of<'py>(
     stop: Option<&Bound<'py, PyAny>>,
     step: Option<&Bound<'py, PyAny>>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let slice_type = builtins(py)?.getattr("slice")?;
+    let slice_type = crate::pyutil::cached_attr(py, "builtins", "slice")?;
     let start = match start {
         Some(value) => value.clone(),
         None => none(py),
@@ -245,7 +245,36 @@ pub fn is_instance(obj: &Bound<'_, PyAny>, class: &Bound<'_, PyAny>) -> PyResult
 
 /// `isinstance(obj, <builtins name>)`, e.g. `is_int`, `is_str`.
 pub fn is_instance_builtin(py: Python<'_>, obj: &Bound<'_, PyAny>, name: &str) -> PyResult<bool> {
-    obj.is_instance(&builtins(py)?.getattr(name)?)
+    use pyo3::sync::PyOnceLock;
+    static INT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static FLOAT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static STR: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static BYTES: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static LIST: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static DICT: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static TUPLE: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    static BOOL: PyOnceLock<Py<PyAny>> = PyOnceLock::new();
+    let cell = match name {
+        "int" => Some(&INT),
+        "float" => Some(&FLOAT),
+        "str" => Some(&STR),
+        "bytes" => Some(&BYTES),
+        "list" => Some(&LIST),
+        "dict" => Some(&DICT),
+        "tuple" => Some(&TUPLE),
+        "bool" => Some(&BOOL),
+        _ => None,
+    };
+    let class = match cell {
+        Some(cell) => cell
+            .get_or_try_init(py, || {
+                builtins(py)?.getattr(name).map(|class| class.unbind())
+            })?
+            .bind(py)
+            .clone(),
+        None => builtins(py)?.getattr(name)?,
+    };
+    obj.is_instance(&class)
 }
 
 pub fn is_int(py: Python<'_>, obj: &Bound<'_, PyAny>) -> PyResult<bool> {
