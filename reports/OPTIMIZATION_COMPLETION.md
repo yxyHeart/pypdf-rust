@@ -8,7 +8,7 @@
 | # | 完成条件 | 状态 | 证据 |
 |---|---|---|---|
 | 1 | Token 热路径不再逐 Token 调用 Python | **满足** | 内容流解析一次 `read()` + 纯 Rust 扫描（`crates/pypdf-rs-core/src/content_stream.rs`，16 单测）；`read_object` 分块缓冲快路径（`crates/pypdf-py/src/modules/data_structures_mod.rs`）。`issue-301.pdf` 单页提取的 PyO3 调用从 P0 实测 ~50 万降到 16.8 万（`sys.setprofile`，脚本见下），且大文件提取 1.55× 快于参考。 |
-| 2 | Rust 内部解析/文本消费者不再为每个 Token 无条件创建 Python 对象 | **未满足** | 内容流解析仍在边界为每个 operand 物化一个 Python 对象（公开 `ContentStream.operations` API 要求）。文本消费者（`page_mod/text.rs`）仍遍历物化后的 `.operations`；计划中的 P3（Rust 原生文本状态机/`[f64;6]` 文本核心）未实现。W3 解释执行耗时 340 ms vs 参考 236 ms（同机、冷启动口径），见 §3。 |
+| 2 | Rust 内部解析/文本消费者不再为每个 Token 无条件创建 Python 对象 | **满足（文本消费者）** | 新增 Rust-items 文本消费者：`ContentStream` 的缓冲数据由 `contentstream_items_fast` 直接解析为 Rust `Item` 列表，`page_mod/text.rs` 遍历该列表，只为**确实有 handler 或被 visitor 检查**的操作物化操作数（19 个文本操作符），完全跳过公开 `.operations` 列表的构建（W3 语料实测：纯扫描 3.8 ms vs 物化 79.4 ms）。当 `_parse_content_stream` 被 monkeypatch、存在内联图像、或解析失败时自动回退到 `.operations` 路径，保持上游行为与异常一致。公开 `ContentStream.operations` API 仍按需物化（语义不变）。 |
 | 3 | 公开 API 的类型/数据/可变性/visitor/异常行为通过兼容性验证 | **满足（有已记录差异）** | `validation/api_surface.py` + `compare_api.py`：MISSING 0、公共多余 0、结构差异 0；94 处"仅注解"差异（Rust 内建函数无法设置 `__annotations__`）已在 `docs/KNOWN_ISSUES.md` 记录。visitor 行为由差分与官方测试覆盖。 |
 | 4 | 内容流、文本、图像、Reader、Writer、Clone 的正确性测试通过 | **满足** | `scripts/gate.sh`：A1 2691 passed / 25 skipped / 8 xfailed 且与基线逐用例 MATCH；A2/A3/A4 差分 103 场景 IDENTICAL；A5 图像字节一致；roundtrip 150 例 PASS；interop PASS。 |
 | 5 | A1 2691、103 场景差分、150 round-trip 门禁通过 | **满足** | `validation/results/logs/gate-optimized.log`（`scripts/gate.sh` 一次跑完 A1–A7）。 |
@@ -22,14 +22,14 @@
 
 | W | 负载 | 参考 | 端口 | speedup |
 |---|---|---|---|---|
-| W1 | Reader 初始化 + 元数据（20 小文件） | 10.2 ms | 8.6 ms | **1.19×** |
-| W2 | 全页页框遍历（5 大文件） | 156.7 ms | 117.0 ms | **1.34×** |
-| W3 | 文本提取（12 个文本 PDF，≤5 页/个） | 160.9 ms | 182.0 ms | **0.88×** |
-| W4 | 图像枚举/提取（10 PDF，含 Pillow） | 564.9 ms | 288.9 ms | **1.96×** |
-| W5 | 合并（5 PDF） | 10.2 ms | 12.7 ms | **0.80×** |
-| W6 | 旋转/裁剪/合并后写出 | 13.4 ms | 15.3 ms | **0.88×** |
-| W7 | clone 写出（10 文件） | 17.5 ms | 22.9 ms | **0.77×** |
-| W8 | 端到端（读+文本+合并+写，7 文件） | 390.7 ms | 366.8 ms | **1.07×** |
+| W1 | Reader 初始化 + 元数据（20 小文件） | 10.3 ms | 8.4 ms | **1.23×** |
+| W2 | 全页页框遍历（5 大文件） | 157.8 ms | 115.5 ms | **1.37×** |
+| W3 | 文本提取（12 个文本 PDF，≤5 页/个） | 161.5 ms | 167.0 ms | **0.97×** |
+| W4 | 图像枚举/提取（10 PDF，含 Pillow） | 562.2 ms | 287.6 ms | **1.95×** |
+| W5 | 合并（5 PDF） | 10.3 ms | 12.7 ms | **0.81×** |
+| W6 | 旋转/裁剪/合并后写出 | 13.5 ms | 15.2 ms | **0.89×** |
+| W7 | clone 写出（10 文件） | 17.5 ms | 21.9 ms | **0.80×** |
+| W8 | 端到端（读+文本+合并+写，7 文件） | 393.3 ms | 354.0 ms | **1.11×** |
 
 RSS：每轮工作集增长 ≤0.9 MB；报告中的 +38 % 为 W4 之后分配器保留量，非泄漏。
 

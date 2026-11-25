@@ -466,3 +466,33 @@ list/tuple/bool/slice.  `text_extraction_mod::common::is_instance_builtin` and
 Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
 200/200 IDENTICAL.
 
+## Rust-items text consumer (lead, 2026-11-25, round 10)
+
+`ContentStream` keeps its buffered `_data`; `contentstream_items_fast` parses it
+straight into `pypdf_rs_core::content_stream::Item`s without building the Python
+`operations` list.  `page_mod/text.rs` tries that path first and materializes
+operands only for the 19 operators that have handlers (or for every operation
+when a visitor is installed).  Measured on the W3 corpus: scanning 13.5k
+operations takes 3.8 ms, while building `.operations` costs 79.4 ms.
+
+Fallbacks keep upstream behavior: a monkeypatched `ContentStream._parse_content_stream`
+(checked via the shim function's `__qualname__`/`__module__` and the instance
+dict), inline images, any parse failure, or an already materialized
+`_operations` list all route back to `.operations`.
+
+**Measured (`run_perf.sh --repeat 7`):**
+
+| W | round 9 | round 10 |
+|---|---|---|
+| W1 | 1.19× | **1.23×** |
+| W2 | 1.34× | **1.37×** |
+| W3 | 0.88× | **0.97×** |
+| W4 | 1.96× | **1.95×** |
+| W5 | 0.80× | **0.81×** |
+| W6 | 0.88× | **0.89×** |
+| W7 | 0.77× | **0.80×** |
+| W8 | 1.07× | **1.11×** |
+
+Gates: A1 MATCH, differential IDENTICAL, roundtrip PASS, security 57/57 + fuzz
+200/200 IDENTICAL.
+
