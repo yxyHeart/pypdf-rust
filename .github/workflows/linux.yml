@@ -41,7 +41,9 @@ jobs:
 
       - name: Test dependencies
         run: |
-          python -m pip install pytest pytest-xdist pytest-socket pytest-timeout cryptography fonttools pillow pyyaml
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq jbig2dec
+          python -m pip install pytest pytest-xdist pytest-socket pytest-timeout cryptography fonttools pillow pyyaml pycryptodome
 
       - name: Official test suite (network-independent subset)
         run: |
@@ -51,7 +53,7 @@ jobs:
         run: |
           PYTHONHASHSEED=0 python tools/oracle/audit.py --out .audit/rust --seed 42
           python -m venv /tmp/oracle
-          /tmp/oracle/bin/python -m pip install -q "pypdf==7.1.1"
+          /tmp/oracle/bin/python -m pip install -q "pypdf==7.1.1" pillow cryptography fonttools pycryptodome
           PYTHONHASHSEED=0 /tmp/oracle/bin/python tools/oracle/audit.py --out .audit/oracle --seed 42
           PYTHONHASHSEED=0 python tools/oracle/compare.py .audit/oracle .audit/rust
 
